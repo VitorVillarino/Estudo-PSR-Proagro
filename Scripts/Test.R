@@ -33,3 +33,14 @@ data_PSR <- read_xlsx("./Dados/Raw/PSR - 2016.xlsx",
                         "numeric"  #CD_PROCESSO_SUSEP
                     ))
 
+data_PSR$NM_MUNICIPIO_PROPRIEDADE <- toupper(data_PSR$NM_MUNICIPIO_PROPRIEDADE)
+
+municipios <- read_xlsx("./Dados/Auxiliares/Municipios.xlsx",
+                      col_types = c(
+                        "text", #UF
+                        "text", #Sigla UF
+                        "numeric", #CodUF
+                        "text", #NomeMunic
+                        "numeric", #Codmun
+                        "numeric"  #Codmundv
+                      ))
