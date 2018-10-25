@@ -113,7 +113,7 @@ data_PSR <- data_PSR %>% mutate(NM_MUNICIPIO_PROPRIEDADE_CORRIGIDO =
                           "text", #Nome_Distrito
                           "text" #Nome_Distrito_Maiuscula
                         ))
-
+ 
 
 
 
