@@ -249,18 +249,49 @@ data_Proagro <- read_xlsx("./Dados/Raw/PLANILHA_CONTRATACAO_PROAGRO 2016-2017 fi
                         "numeric" # RBE 
                       ))
 
+data_Proagro <- data_Proagro %>% mutate(MUNICIPIO_CORRIGIDO = 
+                                  case_when( 
+                                    MUNICIPIO == "BIRITIBA-MIRIM" & UF == "SP" ~ "BIRITIBA MIRIM",
+                                    MUNICIPIO == "MOJI MIRIM" & UF == "SP" ~ "MOGI MIRIM",
+                                    MUNICIPIO == "RESTINGA SECA" & UF == "RS" ~ "SANTO ÂNGELO",
+                                    MUNICIPIO == "FLORÍNIA" & UF == "SP" ~ "FLORÍNEA",
+                                    MUNICIPIO == "LAURO MULLER" & UF == "SC" ~ "LAURO MÜLLER",
+                                    MUNICIPIO == "SÃO CRISTOVÃO DO SUL" & UF == "SC" ~ "SÃO CRISTÓVÃO DO SUL",
+                                    MUNICIPIO == "VESPASIANO CORREA" & UF == "RS" ~ "VESPASIANO CORRÊA",
+                                    MUNICIPIO == "ATILIO VIVACQUA" & UF == "ES" ~ "ATÍLIO VIVACQUA",
+                                    MUNICIPIO == "SÃO VICENTE FERRER" & UF == "PE" ~ "SÃO VICENTE FÉRRER",
+                                    MUNICIPIO == "WESTFALIA" & UF == "RS" ~ "WESTFÁLIA",
+                                    MUNICIPIO == "SÃO LUÍZ DO NORTE" & UF == "GO" ~ "SÃO LUIZ DO NORTE",
+                                    MUNICIPIO == "POXORÉO" & UF == "MT" ~ "POXORÉU",
+                                    TRUE ~ MUNICIPIO)
+                                  )
 
 
 
-#municipios_nao_encontrados_PSR <- anti_join(data_PSR, municipios, by = c("SG_UF_PROPRIEDADE" = "Sigla_UF", "NM_MUNICIPIO_PROPRIEDADE_CORRIGIDO" = "Nome_Município_Maiuscula"))  %>% 
-#  left_join(distritos, by =c("SG_UF_PROPRIEDADE" = "Sigla_UF", "NM_MUNICIPIO_PROPRIEDADE_CORRIGIDO" = "Nome_Distrito_Maiuscula")) %>% 
-#  distinct(NM_MUNICIPIO_PROPRIEDADE_CORRIGIDO, SG_UF_PROPRIEDADE, Município, Nome_Município, Nome_Distrito) 
+# municipios_nao_encontrados_PSR <- anti_join(data_PSR, municipios, by = c("SG_UF_PROPRIEDADE" = "Sigla_UF", "NM_MUNICIPIO_PROPRIEDADE_CORRIGIDO" = "Nome_Município_Maiuscula"))  %>%
+#   left_join(distritos, by =c("SG_UF_PROPRIEDADE" = "Sigla_UF", "NM_MUNICIPIO_PROPRIEDADE_CORRIGIDO" = "Nome_Distrito_Maiuscula")) %>%
+#   distinct(NM_MUNICIPIO_PROPRIEDADE_CORRIGIDO, SG_UF_PROPRIEDADE, Município, Nome_Município, Nome_Distrito)
 
-municipios_nao_encontrados_Proagro <- anti_join(data_Proagro, municipios, by = c("UF" = "Sigla_UF", "MUNICIPIO" = "Nome_Município_Maiuscula"))  %>% 
-  left_join(distritos, by =c("UF" = "Sigla_UF", "MUNICIPIO" = "Nome_Distrito_Maiuscula")) %>% 
-  distinct(MUNICIPIO, UF, Município, Nome_Município, Nome_Distrito) 
+# municipios_nao_encontrados_Proagro <- anti_join(data_Proagro, municipios, by = c("UF" = "Sigla_UF", "MUNICIPIO_CORRIGIDO" = "Nome_Município_Maiuscula"))  %>%
+#   left_join(distritos, by =c("UF" = "Sigla_UF", "MUNICIPIO_CORRIGIDO" = "Nome_Distrito_Maiuscula")) %>%
+#   distinct(MUNICIPIO, UF, Município, Nome_Município, Nome_Distrito)
+
+# write.xlsx(municipios_nao_encontrados_Proagro, file = 'municipios_nao_encontrados.xlsx')
 
 
+produtos_padronizados <- read_xlsx("./Dados/Auxiliares/Padronização de Produtos.xlsx",
+                          col_types = c(
+                            "numeric", #idProduto
+                            "text", #Proagro
+                            "text", #PSR
+                            "text", #Tabela 949 - 2006
+                            "text", #Tabela 822 - 2006
+                            "text", #Tabela 6615 - 2017
+                            "text", #Tabela 6616 - 2017
+                            "text"  #Padronizado
+                          ))
 
-write.xlsx(municipios_nao_encontrados_Proagro, file = 'municipios_nao_encontrados.xlsx')
+
+data_PSR <- data_PSR %>% left_join(produtos_padronizados, by =c("NM_CULTURA_GLOBAL" = "PSR"))
+data_Proagro <- data_Proagro %>% left_join(produtos_padronizados, by =c("PRODUTO" = "Proagro"))
 
