@@ -38,10 +38,23 @@ distritos <- read_xls("./Dados/Auxiliares/DTB_BRASIL_DISTRITO.xls",
                       ))
 
 
+produtos_padronizados <- read_xlsx("./Dados/Auxiliares/Padronização de Produtos.xlsx",
+                                   col_types = c(
+                                     "numeric", #idProduto
+                                     "text", #Proagro
+                                     "text", #PSR
+                                     "text", #Tabela 949 - 2006
+                                     "text", #Tabela 822 - 2006
+                                     "text", #Tabela 6615 - 2017
+                                     "text", #Tabela 6616 - 2017
+                                     "text"  #Padronizado
+                                   ))
+
+
+
 
 
 #Base PSR 2016
-
 data_PSR <- read_xlsx("./Dados/Raw/PSR - 2016.xlsx",
                       col_types = c(
                         "text", #NM_RAZAO_SOCIAL
@@ -266,6 +279,31 @@ data_Proagro <- data_Proagro %>% mutate(MUNICIPIO_CORRIGIDO =
                                     TRUE ~ MUNICIPIO)
                                   )
 
+# Tabela 6615 - Número de estabelecimentos agropecuários, Quantidade produzida e Área colhida,
+# por produtos da lavoura temporária - resultados preliminares 2017
+data_Censo_6615 <- read.csv("./Dados/Auxiliares/Censo - 2017/tabela6615.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
+
+
+# Tabela 6616 - Número de estabelecimentos agropecuários e Número de pés existentes, por produtos da 
+# lavoura permanente - resultados preliminares 2017
+data_Censo_6616 <- read.csv("./Dados/Auxiliares/Censo - 2017/tabela6616.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
+
+
+# Tabela 6618 - Número de estabelecimentos agropecuários e Quantidade produzida, por produtos 
+# da agroindústria rural - resultados preliminares 2017
+data_Censo_6618 <- read.csv("./Dados/Auxiliares/Censo - 2017/tabela6618.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
+
+
+# Tabela 6619 - Número de estabelecimentos agropecuários e Quantidade produzida, por produtos 
+# da horticultura - resultados preliminares 2017
+data_Censo_6619 <- read.csv("./Dados/Auxiliares/Censo - 2017/tabela6619.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
+
+
+# Tabela 6620 - Número de estabelecimentos agropecuários e Quantidade produzida, por produtos 
+# da silvicultura - resultados preliminares 2017
+data_Censo_6620 <- read.csv("./Dados/Auxiliares/Censo - 2017/tabela6620.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
+
+
 
 
 # municipios_nao_encontrados_PSR <- anti_join(data_PSR, municipios, by = c("SG_UF_PROPRIEDADE" = "Sigla_UF", "NM_MUNICIPIO_PROPRIEDADE_CORRIGIDO" = "Nome_Município_Maiuscula"))  %>%
@@ -279,19 +317,8 @@ data_Proagro <- data_Proagro %>% mutate(MUNICIPIO_CORRIGIDO =
 # write.xlsx(municipios_nao_encontrados_Proagro, file = 'municipios_nao_encontrados.xlsx')
 
 
-produtos_padronizados <- read_xlsx("./Dados/Auxiliares/Padronização de Produtos.xlsx",
-                          col_types = c(
-                            "numeric", #idProduto
-                            "text", #Proagro
-                            "text", #PSR
-                            "text", #Tabela 949 - 2006
-                            "text", #Tabela 822 - 2006
-                            "text", #Tabela 6615 - 2017
-                            "text", #Tabela 6616 - 2017
-                            "text"  #Padronizado
-                          ))
 
 
-data_PSR <- data_PSR %>% left_join(produtos_padronizados, by =c("NM_CULTURA_GLOBAL" = "PSR"))
+data_PSR <- data_PSR %>% left_join(produtos_padronizados, by =c("NM_CULTURA_GLOBAL" = "PSR")) 
 data_Proagro <- data_Proagro %>% left_join(produtos_padronizados, by =c("PRODUTO" = "Proagro"))
 
