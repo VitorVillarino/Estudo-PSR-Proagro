@@ -281,27 +281,22 @@ data_Proagro <- data_Proagro %>% mutate(MUNICIPIO_CORRIGIDO =
 
 # Tabela 6615 - Número de estabelecimentos agropecuários, Quantidade produzida e Área colhida,
 # por produtos da lavoura temporária - resultados preliminares 2017
-data_Censo_6615 <- read.csv("./Dados/Auxiliares/Censo - 2017/tabela6615.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
+data_Censo_6615 <- read.csv("./Dados/Raw/Censo - 2017/tabela6615.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
 
 
 # Tabela 6616 - Número de estabelecimentos agropecuários e Número de pés existentes, por produtos da 
 # lavoura permanente - resultados preliminares 2017
-data_Censo_6616 <- read.csv("./Dados/Auxiliares/Censo - 2017/tabela6616.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
+data_Censo_6616 <- read.csv("./Dados/Raw/Censo - 2017/tabela6616.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
 
 
 # Tabela 6618 - Número de estabelecimentos agropecuários e Quantidade produzida, por produtos 
 # da agroindústria rural - resultados preliminares 2017
-data_Censo_6618 <- read.csv("./Dados/Auxiliares/Censo - 2017/tabela6618.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
+data_Censo_6618 <- read.csv("./Dados/Raw/Censo - 2017/tabela6618.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
 
 
 # Tabela 6619 - Número de estabelecimentos agropecuários e Quantidade produzida, por produtos 
 # da horticultura - resultados preliminares 2017
-data_Censo_6619 <- read.csv("./Dados/Auxiliares/Censo - 2017/tabela6619.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
-
-
-# Tabela 6620 - Número de estabelecimentos agropecuários e Quantidade produzida, por produtos 
-# da silvicultura - resultados preliminares 2017
-data_Censo_6620 <- read.csv("./Dados/Auxiliares/Censo - 2017/tabela6620.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
+data_Censo_6619 <- read.csv("./Dados/Raw/Censo - 2017/tabela6619.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
 
 
 
@@ -313,7 +308,6 @@ data_Censo_6620 <- read.csv("./Dados/Auxiliares/Censo - 2017/tabela6620.csv", he
 # municipios_nao_encontrados_Proagro <- anti_join(data_Proagro, municipios, by = c("UF" = "Sigla_UF", "MUNICIPIO_CORRIGIDO" = "Nome_Município_Maiuscula"))  %>%
 #   left_join(distritos, by =c("UF" = "Sigla_UF", "MUNICIPIO_CORRIGIDO" = "Nome_Distrito_Maiuscula")) %>%
 #   distinct(MUNICIPIO, UF, Município, Nome_Município, Nome_Distrito)
-
 # write.xlsx(municipios_nao_encontrados_Proagro, file = 'municipios_nao_encontrados.xlsx')
 
 
