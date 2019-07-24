@@ -1,6 +1,11 @@
 library(tidyverse)
 library(readxl)
-library(xlsx)
+library(cluster)
+library(factoextra)
+library(fpc)
+library(NbClust)
+library(vegan)
+
 
 #Base de Municípiops do IBGE. Pegaremos daqui o código do Município para fazer algo mais simples e eficiente do que 
 #comparar strings.
@@ -47,11 +52,10 @@ produtos_padronizados <- read_xlsx("./Dados/Auxiliares/Padronização de Produto
                                      "text", #Tabela 822 - 2006
                                      "text", #Tabela 6615 - 2017
                                      "text", #Tabela 6616 - 2017
+                                     "text", #Tabela 6618
+                                     "text", #Tabela 6619
                                      "text"  #Padronizado
                                    ))
-
-
-
 
 
 #Base PSR 2016
@@ -279,7 +283,7 @@ data_Proagro <- data_Proagro %>% mutate(MUNICIPIO_CORRIGIDO =
                                     TRUE ~ MUNICIPIO)
                                   )
 
-# Tabela 6615 - Número de estabelecimentos agropecuários, Quantidade produzida e Área colhida,
+# Tabela 6615 - Número de estab2
 # por produtos da lavoura temporária - resultados preliminares 2017
 data_Censo_6615 <- read.csv("./Dados/Raw/Censo - 2017/tabela6615.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
 
@@ -315,4 +319,67 @@ data_Censo_6619 <- read.csv("./Dados/Raw/Censo - 2017/tabela6619.csv", header = 
 
 data_PSR <- data_PSR %>% left_join(produtos_padronizados, by =c("NM_CULTURA_GLOBAL" = "PSR")) 
 data_Proagro <- data_Proagro %>% left_join(produtos_padronizados, by =c("PRODUTO" = "Proagro"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Test Cluster
+drivers_PSR <- data_PSR %>% select(
+    Padronizado,
+    NM_MUNICIPIO_PROPRIEDADE_CORRIGIDO,
+    NR_AREA_TOTAL,
+    VL_PREMIO_LIQUIDO)
+drivers_PSR$Padronizado <- as.factor(drivers_PSR$Padronizado)
+drivers_PSR$NM_MUNICIPIO_PROPRIEDADE_CORRIGIDO <- as.factor(drivers_PSR$NM_MUNICIPIO_PROPRIEDADE_CORRIGIDO)
+
+
+gower_dist <- daisy(drivers_PSR[1:40000,])
+
+
+
+sil_width <- c(NA)
+for(i in 2:8){  
+  pam_fit <- pam(gower_dist, diss = TRUE, k = i)  
+  sil_width[i] <- pam_fit$silinfo$avg.width  
+}
+plot(1:8, sil_width,
+     xlab = "Number of clusters",
+     ylab = "Silhouette Width")
+lines(1:8, sil_width)
+
+
+max_sil <- -99
+max_k <-  0
+for (k in 2:100){
+  clara2 <- clara(drivers_PSR, k, metric = "euclidean", stand = FALSE, samples = 1000,
+                  rngR = FALSE, pamLike = TRUE)
+  cat(k, " - ", clara2$ silinfo $ avg.width,"\n")
+  if(max_sil< clara2$ silinfo $ avg.width) {
+    max_sil <-  clara2$ silinfo $ avg.width
+    max_k <- k
+  }
+} 
+
+
+
+
+media_gowler <- daisy(drivers_PSR)
+hcluster <- hclust(media_gowler, method = "ward.D2")
+fviz_dend(hcluster, main = "cluster")
+
 
