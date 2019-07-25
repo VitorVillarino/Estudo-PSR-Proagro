@@ -4,7 +4,9 @@ library(cluster)
 library(factoextra)
 library(fpc)
 library(NbClust)
-library(vegan)
+library(esquisse)
+library(forcats)
+library(summarytools)
 
 
 #Base de Municípiops do IBGE. Pegaremos daqui o código do Município para fazer algo mais simples e eficiente do que 
@@ -322,15 +324,30 @@ data_Proagro <- data_Proagro %>% left_join(produtos_padronizados, by =c("PRODUTO
 
 
 
+#Cultura
+
+#PSR
+ggplot(data_PSR) +
+  aes(x = fct_rev(fct_infreq(Padronizado))) +
+  geom_bar(fill = "#0c4c8a") +
+  coord_flip() +
+  theme_minimal()
+
+#Proagro
+ggplot(data_Proagro) +
+  aes(x = fct_rev(fct_infreq(Padronizado))) +
+  geom_bar(fill = "#0c4c8a") +
+  coord_flip() +
+  theme_minimal()
 
 
 
 
+freq(data_PSR$Padronizado, headings = FALSE, plain.ascii = FALSE, style = "rmarkdown",  order = "freq")
 
 
-
-
-
+with(data_PSR, 
+     print(ctable(Padronizado, SG_UF_PROPRIEDADE, prop = 'n')))
 
 
 
