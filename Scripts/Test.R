@@ -287,22 +287,22 @@ data_Proagro <- data_Proagro %>% mutate(MUNICIPIO_CORRIGIDO =
 
 # Tabela 6615 - Número de estab2
 # por produtos da lavoura temporária - resultados preliminares 2017
-data_Censo_6615 <- read.csv("./Dados/Raw/Censo - 2017/tabela6615.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
+# data_Censo_6615 <- read.csv("./Dados/Raw/Censo - 2017/tabela6615.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
 
 
 # Tabela 6616 - Número de estabelecimentos agropecuários e Número de pés existentes, por produtos da 
 # lavoura permanente - resultados preliminares 2017
-data_Censo_6616 <- read.csv("./Dados/Raw/Censo - 2017/tabela6616.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
+# data_Censo_6616 <- read.csv("./Dados/Raw/Censo - 2017/tabela6616.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
 
 
 # Tabela 6618 - Número de estabelecimentos agropecuários e Quantidade produzida, por produtos 
 # da agroindústria rural - resultados preliminares 2017
-data_Censo_6618 <- read.csv("./Dados/Raw/Censo - 2017/tabela6618.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
+# data_Censo_6618 <- read.csv("./Dados/Raw/Censo - 2017/tabela6618.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
 
 
 # Tabela 6619 - Número de estabelecimentos agropecuários e Quantidade produzida, por produtos 
 # da horticultura - resultados preliminares 2017
-data_Censo_6619 <- read.csv("./Dados/Raw/Censo - 2017/tabela6619.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
+# data_Censo_6619 <- read.csv("./Dados/Raw/Censo - 2017/tabela6619.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
 
 
 
@@ -344,40 +344,147 @@ ggplot(data_Proagro) +
 
 
 freq(data_PSR$Padronizado, headings = FALSE, plain.ascii = FALSE, style = "rmarkdown",  order = "freq")
-
-
 with(data_PSR, 
      print(ctable(Padronizado, SG_UF_PROPRIEDADE, prop = 'n')))
 
 
-
-
-
-
-
-# Test Cluster
-drivers_PSR <- data_PSR %>% select(
+## PSR
+drivers_PSR <- 
+  data_PSR %>% 
+  select(
     Padronizado,
+    SG_UF_PROPRIEDADE,
     NM_MUNICIPIO_PROPRIEDADE_CORRIGIDO,
     NR_AREA_TOTAL,
-    VL_PREMIO_LIQUIDO)
+    VL_PREMIO_LIQUIDO) %>%
+  filter(VL_PREMIO_LIQUIDO <= 300000)
+
+driver_PSR_Soja <- drivers_PSR %>% filter(Padronizado == "SOJA")
+
+
+
+corr_M <- driver_PSR_Soja %>% 
+        group_by(SG_UF_PROPRIEDADE,NM_MUNICIPIO_PROPRIEDADE_CORRIGIDO) %>% 
+        summarise(cor = cor(NR_AREA_TOTAL,VL_PREMIO_LIQUIDO),n = n())
+corr_M <- corr_M %>% filter(n >= 10)
+dfSummary(corr_M$cor)
+
+ggplot(corr_M) +
+ aes(x = cor) +
+ geom_histogram(bins = 50L, fill = "#0c4c8a") +
+ theme_minimal()
+
+
+ggplot(driver_PSR_Soja) +
+aes(x = NR_AREA_TOTAL, y = VL_PREMIO_LIQUIDO) +
+geom_point(size = 1L, colour = "#0c4c8a") +
+theme_minimal()
+
+
+
+dados_soja_PSR <- driver_PSR_Soja %>% 
+  group_by(Padronizado, SG_UF_PROPRIEDADE,NM_MUNICIPIO_PROPRIEDADE_CORRIGIDO) %>% 
+  summarise(media = mean(VL_PREMIO_LIQUIDO), 
+            desv_pd = sd(VL_PREMIO_LIQUIDO) ,
+            n = n())
+names(dados_soja_PSR)[names(dados_soja_PSR) == "SG_UF_PROPRIEDADE"] <- "UF"
+names(dados_soja_PSR)[names(dados_soja_PSR) == "NM_MUNICIPIO_PROPRIEDADE_CORRIGIDO"] <- "MUNICIPIO"
+
+
+## Proagro
+
+drivers_proagro <- data_Proagro %>% 
+  select(
+    Padronizado,
+    UF,
+    MUNICIPIO_CORRIGIDO,
+    QUANTIDADE,
+    AREA,
+    VALOR_TOTAL)
+
+drivers_proagro_Soja <- drivers_proagro %>% 
+                filter(Padronizado == "SOJA") %>% 
+                group_by(Padronizado, UF, MUNICIPIO_CORRIGIDO) %>% 
+                summarise(QUANTIDADE = sum(QUANTIDADE), 
+                          AREA = sum(AREA) ,
+                          VALOR_TOTAL = sum(VALOR_TOTAL))
+                
+drivers_proagro_Soja$AREA_MEDIA <- drivers_proagro_Soja$AREA/drivers_proagro_Soja$QUANTIDADE
+drivers_proagro_Soja$VALOR_MEDIA <- drivers_proagro_Soja$VALOR_TOTAL/drivers_proagro_Soja$QUANTIDADE
+
+names(drivers_proagro_Soja)[names(drivers_proagro_Soja) == "MUNICIPIO_CORRIGIDO"] <- "MUNICIPIO"
+
+
+
+
+
+
+ggplot(drivers_proagro_Soja) +
+  aes(x = AREA_MEDIA, y = VALOR_MEDIA) +
+  geom_point(size = 1L, colour = "#0c4c8a") +
+  theme_minimal()
+
+
+
+
+
+## Juntado
+juntado <- dados_soja_PSR %>% left_join(drivers_proagro_Soja, by = c("Padronizado","UF","MUNICIPIO"))
+juntado$dif_media <- (juntado$media -juntado$VALOR_MEDIA)/juntado$media
+
+ggplot(juntado) +
+  aes(x = media, y = VALOR_MEDIA) +
+  geom_point(size = 1L, colour = "#0c4c8a") +
+  geom_smooth(span = 0.75) +
+  theme_minimal()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Test Cluster - Sem bons resultados - Gower pesa muito variável qualitativa (Municipio e UF)
+
+  
 drivers_PSR$Padronizado <- as.factor(drivers_PSR$Padronizado)
 drivers_PSR$NM_MUNICIPIO_PROPRIEDADE_CORRIGIDO <- as.factor(drivers_PSR$NM_MUNICIPIO_PROPRIEDADE_CORRIGIDO)
+drivers_PSR$SG_UF_PROPRIEDADE <- as.factor(drivers_PSR$SG_UF_PROPRIEDADE)
 
 
-gower_dist <- daisy(drivers_PSR[1:40000,])
+gower_dist <- daisy(driver_PSR_Soja)
+
+PSR_pam <- pamk(gower_dist, krange = 2:20, diss = T, critout = T )
 
 
 
-sil_width <- c(NA)
-for(i in 2:8){  
-  pam_fit <- pam(gower_dist, diss = TRUE, k = i)  
-  sil_width[i] <- pam_fit$silinfo$avg.width  
-}
-plot(1:8, sil_width,
-     xlab = "Number of clusters",
-     ylab = "Silhouette Width")
-lines(1:8, sil_width)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 max_sil <- -99
