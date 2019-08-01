@@ -231,6 +231,8 @@ data_PSR <- data_PSR %>% mutate(MUNICIPIO_CORRIGIDO =
                                     NM_MUNICIPIO_PROPRIEDADE == "SÃO LUIZ" & SG_UF_PROPRIEDADE == "PR" ~ "LONDRINA",
                                     NM_MUNICIPIO_PROPRIEDADE == "VILA OLIVA" & SG_UF_PROPRIEDADE == "RS" ~ "SÃO FRANCISCO DE PAULA",
                                     NM_MUNICIPIO_PROPRIEDADE == "BARRO VERMELHO" & SG_UF_PROPRIEDADE == "RS" ~ "CACHOEIRA DO SUL",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SÃO PEDRO" & SG_UF_PROPRIEDADE == "PR" ~ "SÃO PEDRO DO PARANÁ",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SÃO PEDRO" & SG_UF_PROPRIEDADE == "RS" ~ "SÃO PEDRO DO SUL",
                                     TRUE ~ NM_MUNICIPIO_PROPRIEDADE)
                                 )
 
