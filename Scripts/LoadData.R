@@ -124,7 +124,7 @@ data_PSR <- data_PSR %>% mutate(MUNICIPIO_CORRIGIDO =
                                     NM_MUNICIPIO_PROPRIEDADE == "SANTA RITA DOESTE" & SG_UF_PROPRIEDADE == "PR" ~ "TERRA ROXA",
                                     NM_MUNICIPIO_PROPRIEDADE == "SANTA RITA DO OESTE" & SG_UF_PROPRIEDADE == "PR" ~ "TERRA ROXA",
                                     NM_MUNICIPIO_PROPRIEDADE == "MALU" & SG_UF_PROPRIEDADE == "PR" ~ "TERRA BOA",
-                                    NM_MUNICIPIO_PROPRIEDADE == "SELVA" & SG_UF_PROPRIEDADE == "PR" ~ "OLÍMPIO LOPES",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SELVA" & SG_UF_PROPRIEDADE == "PR" ~ "LONDRINA",
                                     NM_MUNICIPIO_PROPRIEDADE == "BOA VISTA" & SG_UF_PROPRIEDADE == "PR" ~ "PRESIDENTE CASTELO BRANCO",
                                     NM_MUNICIPIO_PROPRIEDADE == "SÃO LUIZ DO PARAITINGA" & SG_UF_PROPRIEDADE == "SP" ~ "SÃO LUÍS DO PARAITINGA",
                                     NM_MUNICIPIO_PROPRIEDADE == "RESTINGA SECA" & SG_UF_PROPRIEDADE == "RS" ~ "SANTO ÂNGELO",
@@ -225,7 +225,6 @@ data_PSR <- data_PSR %>% mutate(MUNICIPIO_CORRIGIDO =
                                     NM_MUNICIPIO_PROPRIEDADE == "BOCAÍNA DO SUL" & SG_UF_PROPRIEDADE == "SC" ~ "BOCAINA DO SUL",
                                     NM_MUNICIPIO_PROPRIEDADE == "BIRITIBA-MIRIM" & SG_UF_PROPRIEDADE == "SP" ~ "BIRITIBA MIRIM",
                                     NM_MUNICIPIO_PROPRIEDADE == "ESPIGÃO DO OESTE" & SG_UF_PROPRIEDADE == "RO" ~ "ESPIGÃO D'OESTE",
-                                    NM_MUNICIPIO_PROPRIEDADE == "CARIPARE" & SG_UF_PROPRIEDADE == "BA" ~ "CARIPARÉ",
                                     NM_MUNICIPIO_PROPRIEDADE == "DUERÊ" & SG_UF_PROPRIEDADE == "TO" ~ "DUERÉ",
                                     NM_MUNICIPIO_PROPRIEDADE == "PARANAITÁ" & SG_UF_PROPRIEDADE == "MT" ~ "PARANAÍTA",
                                     NM_MUNICIPIO_PROPRIEDADE == "SÃO LUIZ" & SG_UF_PROPRIEDADE == "PR" ~ "LONDRINA",
@@ -233,8 +232,19 @@ data_PSR <- data_PSR %>% mutate(MUNICIPIO_CORRIGIDO =
                                     NM_MUNICIPIO_PROPRIEDADE == "BARRO VERMELHO" & SG_UF_PROPRIEDADE == "RS" ~ "CACHOEIRA DO SUL",
                                     NM_MUNICIPIO_PROPRIEDADE == "SÃO PEDRO" & SG_UF_PROPRIEDADE == "PR" ~ "SÃO PEDRO DO PARANÁ",
                                     NM_MUNICIPIO_PROPRIEDADE == "SÃO PEDRO" & SG_UF_PROPRIEDADE == "RS" ~ "SÃO PEDRO DO SUL",
+                                    NM_MUNICIPIO_PROPRIEDADE == "TUIUTI" & SG_UF_PROPRIEDADE == "RS" ~ "BENTO GONÇALVES",
+                                    NM_MUNICIPIO_PROPRIEDADE == "RETIRO GRANDE" & SG_UF_PROPRIEDADE == "PR" ~ "CAMPO LARGO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "VILA NOVA" & SG_UF_PROPRIEDADE == "PR" ~ "TOLEDO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "GLÓRIA" & SG_UF_PROPRIEDADE == "RS" ~ "PORTO ALEGRE",
+                                    NM_MUNICIPIO_PROPRIEDADE == "CARIPARE" & SG_UF_PROPRIEDADE == "BA" ~ "RIACHÃO DAS NEVES",
+                                    NM_MUNICIPIO_PROPRIEDADE == "BELA VISTA" & SG_UF_PROPRIEDADE == "RS" ~ "PORTO ALEGRE",
+                                    NM_MUNICIPIO_PROPRIEDADE == "MARAVILHA" & SG_UF_PROPRIEDADE == "PR" ~ "LONDRINA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "TAIM" & SG_UF_PROPRIEDADE == "RS" ~ "RIO GRANDE",
                                     TRUE ~ NM_MUNICIPIO_PROPRIEDADE)
                                 )
+
+data_PSR[data_PSR$NM_MUNICIPIO_PROPRIEDADE == "SELVA",]
+
 
 data_Proagro <- read_xlsx("./Dados/Raw/PLANILHA_CONTRATACAO_PROAGRO 2016-2017 final até JUNHO 17.xlsx",
                       col_types = c(
@@ -294,7 +304,6 @@ data_PSR <- data_PSR %>%
               municipios %>% select(Sigla_UF,Nome_Município_Maiuscula,Cod_Microrregiao,Cod_Municipio),
               by =c("SG_UF_PROPRIEDADE" = "Sigla_UF", "MUNICIPIO_CORRIGIDO" = "Nome_Município_Maiuscula")
             )
-Test_PSR<- data_PSR[is.na(data_PSR$Cod_Municipio),]
 
 
 data_Proagro <- data_Proagro %>% 

@@ -1,7 +1,7 @@
 ---
 title: "Estudo Proagro"
 output: html_document
-enconding: "UTF-8"
+encoding: "UTF-8"
 ---
 
 ```{r setup, include=FALSE, echo=FALSE, warning=FALSE}
@@ -39,7 +39,7 @@ freq_cultura_psr <- left_join(
     y = as.data.frame(freq(fct_infreq(data_PSR$Produto_Padronizado), weights = data_PSR$VL_LIMITE_GARANTIA ) %>% tb()),
     by = c("value" = "value")
 )
-
+pander(freq_cultura_psr)
 
 
 
