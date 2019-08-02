@@ -1,16 +1,17 @@
 ---
 title: "Estudo Proagro"
 output: html_document
+enconding: "UTF-8"
 ---
 
-```{r setup, include=FALSE, echo=FALSE}
+```{r setup, include=FALSE, echo=FALSE, warning=FALSE}
 knitr::opts_chunk$set(echo = F)
 source('./Scripts/LoadData.R', encoding = 'UTF-8')
+library(pander)
 library(ggplot2)
 library(dplyr)
 library(summarytools)
 library(forcats)
-library(pander)
 
 # library(cluster)
 # library(factoextra)
@@ -20,197 +21,103 @@ library(pander)
 # library(forcats)
 
 # library(lubridate)
+
+st_options(plain.ascii = FALSE,        
+            footnote = NA,           
+            lang = "pt",
+            subtitle.emphasis = FALSE   
+ )
+st_css()
+
 ```
 
 ## Top Culturas
 
-```{r pressure, echo=FALSE}
-freq_cultura_psr <- freq(fct_infreq(data_PSR$Produto_Padronizado)) %>% tb()
+```{r }
+freq_cultura_psr <- left_join(
+    x = as.data.frame(freq(fct_infreq(data_PSR$Produto_Padronizado)) %>% tb()),
+    y = as.data.frame(freq(fct_infreq(data_PSR$Produto_Padronizado), weights = data_PSR$VL_LIMITE_GARANTIA ) %>% tb()),
+    by = c("value" = "value")
+)
 
 
-freq_cultura_psr <- data_PSR %>% 
-          group_by(Produto_Padronizado) %>% 
-          summarise(,
-                    TOTAL_SEGURADO = sum(VL_LIMITE_GARANTIA))
-pander()
 
-data_PSR[is.na(data_PSR$VL_LIMITE_GARANTIA),]
 
-freq_cultura_ <- summarytools::freq(fct_infreq(data_PSR$Produto_Padronizado))
+freq_cultura_proagro <- left_join(
+    x = as.data.frame(freq(fct_infreq(data_Proagro$Produto_Padronizado)) %>% tb()),
+    y = as.data.frame(freq(fct_infreq(data_Proagro$Produto_Padronizado), weights = data_Proagro$VALOR_TOTAL) %>% tb()),
+    by = c("value" = "value")
+)
+pander(freq_cultura_proagro)
+     
 ```
 
 
 
+#  Teste - Por municipio para Soja
 
 
+```{r echo=FALSE}
+
+PSR_soja_mun <- data_PSR %>% 
+            filter(Produto_Padronizado == "SOJA") %>% 
+            group_by(Cod_Municipio, Produto_Padronizado) %>% 
+            summarise(
+                  num_seguros = n(),
+                  NR_AREA_TOTAL = sum(NR_AREA_TOTAL),
+                  VL_LIMITE_GARANTIA = sum(VL_LIMITE_GARANTIA),
+                  VL_PREMIO_LIQUIDO = sum(VL_PREMIO_LIQUIDO),
+                  VL_SUBVENCAO_FEDERAL = sum(VL_SUBVENCAO_FEDERAL),
+                  NR_PRODUTIVIDADE_ESTIMADA = sum(NR_PRODUTIVIDADE_ESTIMADA),
+                  NR_PRODUTIVIDADE_SEGURADA = sum(NR_PRODUTIVIDADE_SEGURADA),
+                  PE_NIVEL_COBERTURA = sum(PE_NIVEL_COBERTURA)
+            )
+PSR_soja_mun$Area_Media               = PSR_soja_mun$NR_AREA_TOTAL/PSR_soja_mun$num_seguros
+PSR_soja_mun$Limite_Medio             = PSR_soja_mun$VL_LIMITE_GARANTIA/PSR_soja_mun$num_seguros
+PSR_soja_mun$Premio_Liquido_Medio     = PSR_soja_mun$VL_PREMIO_LIQUIDO/PSR_soja_mun$num_seguros
+PSR_soja_mun$Subvencao_Media          = PSR_soja_mun$VL_SUBVENCAO_FEDERAL/PSR_soja_mun$num_seguros
+PSR_soja_mun$Produtividade_Media      = PSR_soja_mun$NR_PRODUTIVIDADE_ESTIMADA/PSR_soja_mun$num_seguros
+PSR_soja_mun$Produtividade_Seg_Media  = PSR_soja_mun$NR_PRODUTIVIDADE_SEGURADA/PSR_soja_mun$num_seguros
+PSR_soja_mun$Cobertura_Media          = PSR_soja_mun$PE_NIVEL_COBERTURA/PSR_soja_mun$num_seguros
 
 
-
-
-```{r pressure, echo=FALSE}
-freq(data_PSR$Padronizado, headings = FALSE, plain.ascii = FALSE, style = "rmarkdown",  order = "freq")
-with(data_PSR, 
-     print(ctable(Padronizado, SG_UF_PROPRIEDADE, prop = 'n')))
-
-
-## PSR
-drivers_PSR <- 
-  data_PSR %>% 
-  select(
-    Padronizado,
-    SG_UF_PROPRIEDADE,
-    NM_MUNICIPIO_PROPRIEDADE_CORRIGIDO,
-    NR_AREA_TOTAL,
-    VL_LIMITE_GARANTIA,
-    VL_PREMIO_LIQUIDO) %>%
-  filter(VL_LIMITE_GARANTIA <= 300000)
-
-driver_PSR_Soja <- drivers_PSR %>% filter(Padronizado == "SOJA")
-
-
-
-corr_M <- driver_PSR_Soja %>% 
-        group_by(SG_UF_PROPRIEDADE,NM_MUNICIPIO_PROPRIEDADE_CORRIGIDO) %>% 
-        summarise(cor = cor(NR_AREA_TOTAL,VL_PREMIO_LIQUIDO),n = n())
-corr_M <- corr_M %>% filter(n >= 10)
-dfSummary(corr_M$cor)
-
-ggplot(corr_M) +
- aes(x = cor) +
- geom_histogram(bins = 50L, fill = "#0c4c8a") +
+#Histograma
+ggplot(PSR_soja_mun) +
+ aes(x = num_seguros) +
+ geom_histogram(bins = 54L, fill = "#0c4c8a") +
  theme_minimal()
 
+esquisse::esquisser()
 
-ggplot(driver_PSR_Soja) +
-aes(x = NR_AREA_TOTAL, y = VL_PREMIO_LIQUIDO) +
-geom_point(size = 1L, colour = "#0c4c8a") +
-theme_minimal()
 
 
 
-dados_soja_PSR <- driver_PSR_Soja %>% 
-  group_by(Padronizado, SG_UF_PROPRIEDADE,NM_MUNICIPIO_PROPRIEDADE_CORRIGIDO) %>% 
-  summarise(media = mean(VL_PREMIO_LIQUIDO), 
-            desv_pd = sd(VL_PREMIO_LIQUIDO) ,
-            n = n())
+Proagro_soja_mun <- data_PSR %>% 
+            filter(Produto_Padronizado == "SOJA") %>% 
+            group_by(Cod_Municipio, Produto_Padronizado) %>% 
+            summarise(
+                  num_seguros = n(),
+                  NR_AREA_TOTAL = sum(NR_AREA_TOTAL),
+                  VL_LIMITE_GARANTIA = sum(VL_LIMITE_GARANTIA),
+                  VL_PREMIO_LIQUIDO = sum(VL_PREMIO_LIQUIDO),
+                  VL_SUBVENCAO_FEDERAL = sum(VL_SUBVENCAO_FEDERAL),
+                  NR_PRODUTIVIDADE_ESTIMADA = sum(NR_PRODUTIVIDADE_ESTIMADA),
+                  NR_PRODUTIVIDADE_SEGURADA = sum(NR_PRODUTIVIDADE_SEGURADA),
+                  PE_NIVEL_COBERTURA = sum(PE_NIVEL_COBERTURA)
+            )
+PSR_soja_mun$Area_Media               = PSR_soja_mun$NR_AREA_TOTAL/PSR_soja_mun$num_seguros
+PSR_soja_mun$Limite_Medio             = PSR_soja_mun$VL_LIMITE_GARANTIA/PSR_soja_mun$num_seguros
+PSR_soja_mun$Premio_Liquido_Medio     = PSR_soja_mun$VL_PREMIO_LIQUIDO/PSR_soja_mun$num_seguros
+PSR_soja_mun$Subvencao_Media          = PSR_soja_mun$VL_SUBVENCAO_FEDERAL/PSR_soja_mun$num_seguros
+PSR_soja_mun$Produtividade_Media      = PSR_soja_mun$NR_PRODUTIVIDADE_ESTIMADA/PSR_soja_mun$num_seguros
+PSR_soja_mun$Produtividade_Seg_Media  = PSR_soja_mun$NR_PRODUTIVIDADE_SEGURADA/PSR_soja_mun$num_seguros
+PSR_soja_mun$Cobertura_Media          = PSR_soja_mun$PE_NIVEL_COBERTURA/PSR_soja_mun$num_seguros
 
 
-## Proagro
 
-drivers_proagro <- data_Proagro %>% 
-  select(
-    Padronizado,
-    UF,
-    MUNICIPIO_CORRIGIDO,
-    QUANTIDADE,
-    AREA,
-    VALOR_TOTAL)
-
-drivers_proagro_Soja <- drivers_proagro %>% 
-                filter(Padronizado == "SOJA") %>% 
-                group_by(Padronizado, UF, MUNICIPIO_CORRIGIDO) %>% 
-                summarise(QUANTIDADE = sum(QUANTIDADE), 
-                          AREA = sum(AREA) ,
-                          VALOR_TOTAL = sum(VALOR_TOTAL))
-                
-drivers_proagro_Soja$AREA_MEDIA <- drivers_proagro_Soja$AREA/drivers_proagro_Soja$QUANTIDADE
-drivers_proagro_Soja$VALOR_MEDIA <- drivers_proagro_Soja$VALOR_TOTAL/drivers_proagro_Soja$QUANTIDADE
-
-names(drivers_proagro_Soja)[names(drivers_proagro_Soja) == "MUNICIPIO_CORRIGIDO"] <- "MUNICIPIO"
-
-
-
-
-
-
-ggplot(drivers_proagro_Soja) +
-  aes(x = AREA_MEDIA, y = VALOR_MEDIA) +
-  geom_point(size = 1L, colour = "#0c4c8a") +
-  theme_minimal()
-
-
-
-
-
-## Juntado
-juntado <- dados_soja_PSR %>% left_join(drivers_proagro_Soja, by = c("Padronizado","UF","MUNICIPIO"))
-juntado$dif_media <- (juntado$media -juntado$VALOR_MEDIA)/juntado$media
-
-ggplot(juntado) +
-  aes(x = media, y = VALOR_MEDIA) +
-  geom_point(size = 1L, colour = "#0c4c8a") +
-  geom_smooth(span = 0.75) +
-  theme_minimal()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Test Cluster - Sem bons resultados - Gower pesa muito variável qualitativa (Municipio e UF)
-
-  
-drivers_PSR$Padronizado <- as.factor(drivers_PSR$Padronizado)
-drivers_PSR$NM_MUNICIPIO_PROPRIEDADE_CORRIGIDO <- as.factor(drivers_PSR$NM_MUNICIPIO_PROPRIEDADE_CORRIGIDO)
-drivers_PSR$SG_UF_PROPRIEDADE <- as.factor(drivers_PSR$SG_UF_PROPRIEDADE)
-
-
-gower_dist <- daisy(driver_PSR_Soja)
-
-PSR_pam <- pamk(gower_dist, krange = 2:20, diss = T, critout = T )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-max_sil <- -99
-max_k <-  0
-for (k in 2:100){
-  clara2 <- clara(drivers_PSR, k, metric = "euclidean", stand = FALSE, samples = 1000,
-                  rngR = FALSE, pamLike = TRUE)
-  cat(k, " - ", clara2$ silinfo $ avg.width,"\n")
-  if(max_sil< clara2$ silinfo $ avg.width) {
-    max_sil <-  clara2$ silinfo $ avg.width
-    max_k <- k
-  }
-} 
-
-
-
-
-media_gowler <- daisy(drivers_PSR)
-hcluster <- hclust(media_gowler, method = "ward.D2")
-fviz_dend(hcluster, main = "cluster")
 
 
 
 ```
 
+#  Milho
