@@ -10,10 +10,10 @@ municipios <- read_xls("./Dados/Auxiliares/DTB_BRASIL_MUNICIPIO.xls",
                          "text", #Sigla_UF
                          "text", #Mesorregião Geográfica
                          "text", #Nome_Mesorregião
-                         "text", #Microrregião Geográfica
+                         "numeric", #Microrregião Geográfica
                          "text", #Nome_Microrregião
                          "text", #Município
-                         "text", #Código Município Completo
+                         "numeric", #Código Município Completo
                          "text", #Nome_Município
                          "text" #Nome_Município_Maiuscula 
                        )) 
