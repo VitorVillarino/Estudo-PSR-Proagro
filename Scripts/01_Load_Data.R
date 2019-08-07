@@ -315,6 +315,11 @@ data_Proagro <- data_Proagro %>%
 
 
 
+
+############### CENSO #################################
+
+
+
 # Tabela 6615 - Número de estab2
 # por produtos da lavoura temporária - resultados preliminares 2017
 data_Censo_6615 <- read.csv("./Dados/Raw/Censo - 2017/tabela6615.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
@@ -333,6 +338,29 @@ data_Censo_6618 <- read.csv("./Dados/Raw/Censo - 2017/tabela6618.csv", header = 
 # Tabela 6619 - Número de estabelecimentos agropecuários e Quantidade produzida, por produtos 
 # da horticultura - resultados preliminares 2017
 data_Censo_6619 <- read.csv("./Dados/Raw/Censo - 2017/tabela6619.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
+
+
+
+#Tabela 6639 - Número de estabelecimentos agropecuários e Número de unidades armazenadoras e capacidade, por tipo de unidade armazenadora - resultados preliminares 2017														
+
+
+#Tabela 6641 - Número de estabelecimentos agropecuários e Número de tratores, implementos e máquinas existentes nos estabelecimentos agropecuários - resultados preliminares 2017
+
+#Tabela 6640 - Número de estabelecimentos agropecuários, Sistema de preparo do solo e Área com plantio direto na palha - resultados preliminares 2017					
+
+
+#Tabela 6642 - Número de estabelecimentos agropecuários e Número de veículos existentes nos estabelecimentos agropecuários - resultados preliminares 2017												
+
+
+#Tabela 6643 - Número de estabelecimentos agropecuários por telefone, e-mail e internet - resultados preliminares 2017											
+
+
+#Tabela 6650 - Número de estabelecimentos agropecuários por forma de obtenção das terras - resultados preliminares 2017													
+
+
+#Tabela 6710 - Número de estabelecimentos agropecuários, Área dos estabelecimentos agropecuários, por condição legal das terras, condição legal do produtor, direção dos trabalhos do estabelecimento agropecuário e grupos de área total - resultados preliminares 2017																										
+#Tabela 6659 - Número de estabelecimentos agropecuários por agente financeiro responsável pelo financiamento - resultados preliminares 2017												
+
 
 
 
