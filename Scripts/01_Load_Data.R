@@ -359,7 +359,25 @@ data_Censo_6619 <- read.csv("./Dados/Raw/Censo - 2017/tabela6619.csv", header = 
 
 
 #Tabela 6710 - Número de estabelecimentos agropecuários, Área dos estabelecimentos agropecuários, por condição legal das terras, condição legal do produtor, direção dos trabalhos do estabelecimento agropecuário e grupos de área total - resultados preliminares 2017																										
+
+
 #Tabela 6659 - Número de estabelecimentos agropecuários por agente financeiro responsável pelo financiamento - resultados preliminares 2017												
+
+#Tabela 6635 - Número de estabelecimentos agropecuários, Área dos estabelecimentos agropecuários, Área territorial total e Condição legal das terras - resultados preliminares 2017																					
+
+#Tabela 6647 - Número de estabelecimentos agropecuários por sexo, alfabetização, idade e cor ou raça do produtor - resultados preliminares 2017														
+
+#Tabela 6649 - Número de estabelecimentos agropecuários por residência, finalidade da produção e DAP - resultados preliminares 2017																
+
+#Tabela 6652 - Número de estabelecimentos agropecuários por uso de agricultura orgânica - resultados preliminares 2017							
+
+#Tabela 6655 - Número de estabelecimentos agropecuários por nascentes, rios/riachos, poços e cisternas - resultados preliminares 2017													
+
+#Tabela 6709 - Número de estabelecimentos agropecuários, por existência de energia elétrica, sexo do produtor, escolaridade do produtor, condição legal do produtor, direção dos trabalhos do estabelecimento agropecuário e grupos de área total - resultados preliminares 2017				
+
+#Tabela 6713 - Número de estabelecimentos agropecuários por contratação de serviços, tipo de prestador de serviços e dias trabalhados, sexo do produtor, escolaridade do produtor, condição legal do produtor e origem da orientação técnica recebida - resultados preliminares 2017														
+
+#Tabela 6790 - Número de estabelecimentos agropecuários por classes de idade do produtor - resultados preliminares 2017																		
 
 
 

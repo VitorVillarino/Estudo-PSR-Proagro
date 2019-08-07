@@ -93,6 +93,9 @@ PSR_Proagro_lado_lado_mun <-  left_join(
 PSR_Proagro_lado_lado_mun <- PSR_Proagro_lado_lado_mun[!is.na(PSR_Proagro_lado_lado_mun$NR_AREA_TOTAL.y),]
 
 PSR_Proagro_lado_lado_mun$Diferenca_Premio <- PSR_Proagro_lado_lado_mun$Premio_Area.x - PSR_Proagro_lado_lado_mun$Premio_Area.y
+PSR_Proagro_lado_lado_mun$Diferenca_Premio_Perc <- PSR_Proagro_lado_lado_mun$Diferenca_Premio/PSR_Proagro_lado_lado_mun$Premio_Area.x 
+
+
 
 PSR_Proagro_lado_lado_mun <- left_join(
                                 x = PSR_Proagro_lado_lado_mun,
@@ -117,26 +120,14 @@ ggplot(PSR_Proagro_lado_lado_mun) +
  geom_histogram(bins = 30L, fill = "#0c4c8a") +
  theme_minimal()
 
+ggplot(PSR_Proagro_lado_lado_mun) +
+  aes(x = Diferenca_Premio_Perc) +
+  geom_histogram(bins = 30L, fill = "#0c4c8a") +
+  theme_minimal()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+openxlsx::write.xlsx(PSR_Proagro_lado_lado_mun, "df.xlsx")
+shell.exec("df.xlsx")
 
 
 
