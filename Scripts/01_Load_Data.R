@@ -379,6 +379,13 @@ data_Censo_6619 <- read.csv("./Dados/Raw/Censo - 2017/tabela6619.csv", header = 
 
 #Tabela 6790 - Número de estabelecimentos agropecuários por classes de idade do produtor - resultados preliminares 2017																		
 
+#Tabela 6764 - Número de estabelecimentos agropecuários com uso de irrigação e Área irrigada, por método utilizado para irrigação, direção dos trabalhos do estabelecimento agropecuário e origem da orientação técnica recebida - resultados preliminares 2017																									
+
+#Tabela 6722 - Número de estabelecimentos agropecuários e Área dos estabelecimentos, por utilização das terras, condição legal do produtor, direção dos trabalhos do estabelecimento agropecuário e grupos de área total - resultados preliminares 2017																										
+
+#Tabela 6654 - Número de estabelecimentos agropecuários por tipo de prática agrícola - resultados preliminares 2017												
+
+#Tabela 6658 - Número de estabelecimentos agropecuários por financiamentos/empréstimos - resultados preliminares 2017																
 
 
 
