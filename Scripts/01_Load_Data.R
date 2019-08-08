@@ -319,74 +319,139 @@ data_Proagro <- data_Proagro %>%
 ############### CENSO #################################
 
 
-
-# Tabela 6615 - Número de estab2
-# por produtos da lavoura temporária - resultados preliminares 2017
-data_Censo_6615 <- read.csv("./Dados/Raw/Censo - 2017/tabela6615.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
+library(anchors)
 
 
-# Tabela 6616 - Número de estabelecimentos agropecuários e Número de pés existentes, por produtos da 
-# lavoura permanente - resultados preliminares 2017
-data_Censo_6616 <- read.csv("./Dados/Raw/Censo - 2017/tabela6616.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
+# Tabela 6615 - Número de estabelecimentos por produtos da lavoura temporária - resultados preliminares 2017
+data_Censo_6615 <- read.csv("./Dados/Raw/Censo - 2017/tabela6615.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM', stringsAsFactors = FALSE)
+data_Censo_6615[data_Censo_6615=="-"]<-0
+data_Censo_6615[data_Censo_6615 == "X"] <- NA
 
 
-# Tabela 6618 - Número de estabelecimentos agropecuários e Quantidade produzida, por produtos 
-# da agroindústria rural - resultados preliminares 2017
-data_Censo_6618 <- read.csv("./Dados/Raw/Censo - 2017/tabela6618.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
+# Tabela 6616 - Número de estabelecimentos agropecuários e Número de pés existentes, por produtos da lavoura permanente - resultados preliminares 2017
+data_Censo_6616 <- read.csv("./Dados/Raw/Censo - 2017/tabela6616.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM', stringsAsFactors = FALSE)
+data_Censo_6616[data_Censo_6616=="-"]<-0
+data_Censo_6616[data_Censo_6616=="X"]<-NA
 
 
-# Tabela 6619 - Número de estabelecimentos agropecuários e Quantidade produzida, por produtos 
-# da horticultura - resultados preliminares 2017
-data_Censo_6619 <- read.csv("./Dados/Raw/Censo - 2017/tabela6619.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM')
+# Tabela 6618 - Número de estabelecimentos agropecuários e Quantidade produzida, por produtos da agroindústria rural - resultados preliminares 2017
+data_Censo_6618 <- read.csv("./Dados/Raw/Censo - 2017/tabela6618.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM', stringsAsFactors = FALSE)
+data_Censo_6618[data_Censo_6618=="-"]<-0
+data_Censo_6618[data_Censo_6618=="X"]<-NA
 
+
+# Tabela 6619 - Número de estabelecimentos agropecuários e Quantidade produzida, por produtos da horticultura - resultados preliminares 2017
+data_Censo_6619 <- read.csv("./Dados/Raw/Censo - 2017/tabela6619.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM', stringsAsFactors = FALSE)
+data_Censo_6619[data_Censo_6619=="-"]<-0
+data_Censo_6619[data_Censo_6619=="X"]<-NA
+
+
+
+######################### Ver ###################################
 
 
 #Tabela 6639 - Número de estabelecimentos agropecuários e Número de unidades armazenadoras e capacidade, por tipo de unidade armazenadora - resultados preliminares 2017														
+data_Censo_6639 <- read_excel("Dados/Raw/Censo - 2017/tabela6639.xlsx")
+data_Censo_6639[data_Censo_6639=="-"]<-0
+data_Censo_6639[data_Censo_6639=="X"]<-NA
 
 
 #Tabela 6641 - Número de estabelecimentos agropecuários e Número de tratores, implementos e máquinas existentes nos estabelecimentos agropecuários - resultados preliminares 2017
+data_Censo_6641 <- read_excel("Dados/Raw/Censo - 2017/tabela6641.xlsx")
+data_Censo_6641[data_Censo_6641=="-"]<-0
+data_Censo_6641[data_Censo_6641=="X"]<-NA
 
 #Tabela 6640 - Número de estabelecimentos agropecuários, Sistema de preparo do solo e Área com plantio direto na palha - resultados preliminares 2017					
-
+data_Censo_6640 <- read_excel("Dados/Raw/Censo - 2017/tabela6640.xlsx")
+data_Censo_6640[data_Censo_6640=="-"]<-0
+data_Censo_6640[data_Censo_6640=="X"]<-NA
 
 #Tabela 6642 - Número de estabelecimentos agropecuários e Número de veículos existentes nos estabelecimentos agropecuários - resultados preliminares 2017												
+data_Censo_6642 <- read_excel("Dados/Raw/Censo - 2017/tabela6642.xlsx")
+data_Censo_6642[data_Censo_6642=="-"]<-0
+data_Censo_6642[data_Censo_6642=="X"]<-NA
 
 
+##Ver warnings
 #Tabela 6643 - Número de estabelecimentos agropecuários por telefone, e-mail e internet - resultados preliminares 2017											
-
+data_Censo_6643 <- read_excel("Dados/Raw/Censo - 2017/tabela6643.xlsx")
+data_Censo_6643[data_Censo_6643=="-"]<-0
+data_Censo_6643[data_Censo_6643=="X"]<-NA
 
 #Tabela 6650 - Número de estabelecimentos agropecuários por forma de obtenção das terras - resultados preliminares 2017													
-
+data_Censo_6650 <- read_excel("Dados/Raw/Censo - 2017/tabela6650.xlsx")
+data_Censo_6650[data_Censo_6650=="-"]<-0
+data_Censo_6650[data_Censo_6650=="X"]<-NA
 
 #Tabela 6710 - Número de estabelecimentos agropecuários, Área dos estabelecimentos agropecuários, por condição legal das terras, condição legal do produtor, direção dos trabalhos do estabelecimento agropecuário e grupos de área total - resultados preliminares 2017																										
-
+data_Censo_6710 <- read_excel("Dados/Raw/Censo - 2017/tabela6710.xlsx")
+data_Censo_6710[data_Censo_6710=="-"]<-0
+data_Censo_6710[data_Censo_6710=="X"]<-NA
 
 #Tabela 6659 - Número de estabelecimentos agropecuários por agente financeiro responsável pelo financiamento - resultados preliminares 2017												
+data_Censo_6659 <- read_excel("Dados/Raw/Censo - 2017/tabela6659.xlsx")
+data_Censo_6659[data_Censo_6659=="-"]<-0
+data_Censo_6659[data_Censo_6659=="X"]<-NA
 
 #Tabela 6635 - Número de estabelecimentos agropecuários, Área dos estabelecimentos agropecuários, Área territorial total e Condição legal das terras - resultados preliminares 2017																					
+data_Censo_6635 <- read_excel("Dados/Raw/Censo - 2017/tabela6635.xlsx")
+data_Censo_6635[data_Censo_6635=="-"]<-0
+data_Censo_6635[data_Censo_6635=="X"]<-NA
 
 #Tabela 6647 - Número de estabelecimentos agropecuários por sexo, alfabetização, idade e cor ou raça do produtor - resultados preliminares 2017														
+data_Censo_6647 <- read_excel("Dados/Raw/Censo - 2017/tabela6647.xlsx")
+data_Censo_6647[data_Censo_6647=="-"]<-0
+data_Censo_6647[data_Censo_6647=="X"]<-NA
 
 #Tabela 6649 - Número de estabelecimentos agropecuários por residência, finalidade da produção e DAP - resultados preliminares 2017																
+data_Censo_6649 <- read_excel("Dados/Raw/Censo - 2017/tabela6649.xlsx")
+data_Censo_6649[data_Censo_6649=="-"]<-0
+data_Censo_6649[data_Censo_6649=="X"]<-NA
 
 #Tabela 6652 - Número de estabelecimentos agropecuários por uso de agricultura orgânica - resultados preliminares 2017							
+data_Censo_6652 <- read_excel("Dados/Raw/Censo - 2017/tabela6652.xlsx")
+data_Censo_6652[data_Censo_6652=="-"]<-0
+data_Censo_6652[data_Censo_6652=="X"]<-NA
 
 #Tabela 6655 - Número de estabelecimentos agropecuários por nascentes, rios/riachos, poços e cisternas - resultados preliminares 2017													
+data_Censo_6655 <- read_excel("Dados/Raw/Censo - 2017/tabela6655.xlsx")
+data_Censo_6655[data_Censo_6655=="-"]<-0
+data_Censo_6655[data_Censo_6655=="X"]<-NA
 
 #Tabela 6709 - Número de estabelecimentos agropecuários, por existência de energia elétrica, sexo do produtor, escolaridade do produtor, condição legal do produtor, direção dos trabalhos do estabelecimento agropecuário e grupos de área total - resultados preliminares 2017				
+data_Censo_6709 <- read_excel("Dados/Raw/Censo - 2017/tabela6709.xlsx")
+data_Censo_6709[data_Censo_6709=="-"]<-0
+data_Censo_6709[data_Censo_6709=="X"]<-NA
 
 #Tabela 6713 - Número de estabelecimentos agropecuários por contratação de serviços, tipo de prestador de serviços e dias trabalhados, sexo do produtor, escolaridade do produtor, condição legal do produtor e origem da orientação técnica recebida - resultados preliminares 2017														
+data_Censo_6713 <- read_excel("Dados/Raw/Censo - 2017/tabela6713.xlsx")
+data_Censo_6713[data_Censo_6713=="-"]<-0
+data_Censo_6713[data_Censo_6713=="X"]<-NA
 
 #Tabela 6790 - Número de estabelecimentos agropecuários por classes de idade do produtor - resultados preliminares 2017																		
+data_Censo_6790 <- read_excel("Dados/Raw/Censo - 2017/tabela6790.xlsx")
+data_Censo_6790[data_Censo_6790=="-"]<-0
+data_Censo_6790[data_Censo_6790=="X"]<-NA
 
 #Tabela 6764 - Número de estabelecimentos agropecuários com uso de irrigação e Área irrigada, por método utilizado para irrigação, direção dos trabalhos do estabelecimento agropecuário e origem da orientação técnica recebida - resultados preliminares 2017																									
+data_Censo_6764 <- read_excel("Dados/Raw/Censo - 2017/tabela6764.xlsx")
+data_Censo_6764[data_Censo_6764=="-"]<-0
+data_Censo_6764[data_Censo_6764=="X"]<-NA
 
 #Tabela 6722 - Número de estabelecimentos agropecuários e Área dos estabelecimentos, por utilização das terras, condição legal do produtor, direção dos trabalhos do estabelecimento agropecuário e grupos de área total - resultados preliminares 2017																										
+data_Censo_6722 <- read_excel("Dados/Raw/Censo - 2017/tabela6722.xlsx")
+data_Censo_6722[data_Censo_6722=="-"]<-0
+data_Censo_6722[data_Censo_6722=="X"]<-NA
 
 #Tabela 6654 - Número de estabelecimentos agropecuários por tipo de prática agrícola - resultados preliminares 2017												
+data_Censo_6654 <- read_excel("Dados/Raw/Censo - 2017/tabela6654.xlsx")
+data_Censo_6654[data_Censo_6654=="-"]<-0
+data_Censo_6654[data_Censo_6654=="X"]<-NA
 
 #Tabela 6658 - Número de estabelecimentos agropecuários por financiamentos/empréstimos - resultados preliminares 2017																
-
+data_Censo_6658 <- read_excel("Dados/Raw/Censo - 2017/tabela6658.xlsx")
+data_Censo_6658[data_Censo_6658=="-"]<-0
+data_Censo_6658[data_Censo_6658=="X"]<-NA
 
 
 
