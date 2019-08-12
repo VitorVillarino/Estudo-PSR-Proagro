@@ -139,3 +139,6 @@ ggplot(PSR_Proagro_lado_lado_regiao) +
   geom_histogram(bins = 30L, fill = "#0c4c8a") +
   theme_minimal()
 
+
+
+
