@@ -7,9 +7,6 @@ library(summarytools)
 
 
 
-summarytools::freq(data_PSR$AN_SAFRA)
-summarytools::freq(data_PSR$ANO)
-
 esquisse::esquisser()
 
 

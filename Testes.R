@@ -33,3 +33,52 @@ municipios_nao_encontrados_Proagro <- anti_join(data_Proagro, municipios, by = c
   left_join(distritos, by =c("UF" = "Sigla_UF", "MUNICIPIO_CORRIGIDO" = "Nome_Distrito_Maiuscula")) %>%
   distinct(MUNICIPIO, UF, Município, Nome_Município, Nome_Distrito)
 write.xlsx(municipios_nao_encontrados_Proagro, file = 'municipios_nao_encontrados.xlsx')
+
+
+
+
+
+
+
+
+
+data_PSR2 <- data_PSR
+data_PSR2$Premio_Area              = data_PSR2$VL_PREMIO_LIQUIDO/data_PSR2$NR_AREA_TOTAL
+
+
+esquisse::esquisser()
+p <- c(0.05, 0.95)
+p_names <- map_chr(p, ~paste0(.x*100, "%"))
+
+p_funs <- map(p, ~partial(quantile, probs = .x, na.rm = TRUE)) %>% 
+  set_names(nm = c("min","max"))
+
+p_funs
+
+test <- data_PSR2 %>% 
+  filter(Produto_Padronizado == "SOJA", VL_LIMITE_GARANTIA <= 300000) %>% 
+  group_by(Cod_Municipio, AN_SAFRA) %>% 
+  summarize_at(vars(Premio_Area), funs(!!!p_funs))
+
+test <- data_PSR2 %>% 
+  filter(Produto_Padronizado == "SOJA", VL_LIMITE_GARANTIA <= 300000) %>% 
+  group_by(Cod_Municipio, AN_SAFRA) %>% 
+  summarise(std_dev = sd(Premio_Area))
+
+
+
+test$range <- (test$max - test$min)/6
+test %>% 
+  group_by(AN_SAFRA) %>% 
+  summarise(max = max(std_dev, na.rm = T)/6,
+            min = min(std_dev, na.rm = T))
+
+
+
+
+%>% 
+  group_by(AN_SAFRA) %>% 
+  summarise(
+    max = max(range)
+  ) 
+

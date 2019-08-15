@@ -1,6 +1,9 @@
 library(readxl)
 library(dplyr)
 
+
+#################################################### BASES IBGE ####################################################
+
 #Base de Municípiops do IBGE. Pegaremos daqui o código do Município para fazer algo mais simples e eficiente do que 
 #comparar strings.
 municipios <- read_xls("./Dados/Auxiliares/DTB_BRASIL_MUNICIPIO.xls",
@@ -20,6 +23,11 @@ municipios <- read_xls("./Dados/Auxiliares/DTB_BRASIL_MUNICIPIO.xls",
 names(municipios)[names(municipios)=="Código Município Completo"] <- "Cod_Municipio"
 names(municipios)[names(municipios)=="Microrregião Geográfica"] <- "Cod_Microrregiao"
 
+
+
+#################################################### PRODUTOS ####################################################
+
+
 #Base de Produtos - Padronizados
 produtos_padronizados <- read_xlsx("./Dados/Auxiliares/Padronização de Produtos.xlsx",
                                    col_types = c(
@@ -36,7 +44,9 @@ produtos_padronizados <- read_xlsx("./Dados/Auxiliares/Padronização de Produto
                                    ))
 
 
-#Base PSR 
+
+#################################################### PSR ####################################################
+
 data_PSR <- read_excel("Dados/Raw/PSR_2013_2018_com_sinistros_Agrupado_pt1.xlsx", 
                              col_types = c("text", #ID_PROPOSTA
                                            "text", #DT_PROPOSTA
@@ -75,14 +85,25 @@ data_PSR <- union_all(data_PSR, read_excel("Dados/Raw/PSR_2013_2018_com_sinistro
                                                      "numeric"  #VL_SUBVENCAO_FEDERAL
                                        )))
 
-
+#Arrumando datas
 data_PSR$DT_PROPOSTA <- as.Date(data_PSR$DT_PROPOSTA , origin = "1899-12-30")
 data_PSR$DT_INICIO_VIGENCIA <- as.Date(data_PSR$DT_INICIO_VIGENCIA , origin = "1899-12-30")
 data_PSR$DT_FIM_VIGENCIA <- as.Date(data_PSR$DT_FIM_VIGENCIA , origin = "1899-12-30")
 
+#Premio Pag
+data_PSR$VL_PREMIO_PAGO <- data_PSR$VL_PREMIO_LIQUIDO - data_PSR$VL_SUBVENCAO_FEDERAL 
 
 #Base PSR Indenizações
 PSR_Indenizacoes <- read_excel("Dados/Raw/PSR_Indenizacoes.xlsx")
+data_PSR <- data_PSR %>% 
+            left_join(
+                PSR_Indenizacoes,
+                by =c("ID_PROPOSTA" = "ID_PROPOSTA")
+            )
+
+##VER ANTI_JOIN do PSR para ver pq não tem tanto
+
+
 
 #Nome do Município maiúscula - Normalizando para cruzar com a base do IBGE 
 data_PSR$NM_MUNICIPIO_PROPRIEDADE <- toupper(data_PSR$NM_MUNICIPIO_PROPRIEDADE)
@@ -445,6 +466,29 @@ data_PSR <- data_PSR %>% mutate(MUNICIPIO_CORRIGIDO =
                                 )
 
 
+#Adicionando código Município e Microrregião
+data_PSR <- data_PSR %>% 
+  left_join(
+    municipios %>% select(Sigla_UF,Nome_Município_Maiuscula,Cod_Microrregiao,Cod_Municipio),
+    by =c("SG_UF_PROPRIEDADE" = "Sigla_UF", "MUNICIPIO_CORRIGIDO" = "Nome_Município_Maiuscula")
+  )
+
+#Padronizando Produtos
+data_PSR <- data_PSR %>% 
+  left_join(
+    produtos_padronizados %>% select(PSR,Produto_Padronizado), 
+    by = c("NM_CULTURA_GLOBAL" = "PSR")
+  )
+
+#Dropando Colunas não utilizadas de MUNICIPIO
+data_PSR$NM_MUNICIPIO_PROPRIEDADE <- NULL
+data_PSR$NM_CULTURA_GLOBAL <- NULL
+data_PSR <- data_PSR %>% rename(SAFRA = AN_SAFRA)
+
+
+
+
+#################################################### Proagro ####################################################
 
 
 data_Proagro <- read_excel("Dados/Raw/CONTRATACAO PROAGRO 20190801.xlsx")
@@ -469,45 +513,29 @@ data_Proagro <- data_Proagro %>% mutate(MUNICIPIO_CORRIGIDO =
                                     TRUE ~ MUNICIPIO))
 
 
-
-#Padronizando Produtos
-data_PSR <- data_PSR %>% 
-            left_join(
-              produtos_padronizados %>% select(PSR,Produto_Padronizado), 
-              by = c("NM_CULTURA_GLOBAL" = "PSR")
-            ) 
-data_Proagro <- data_Proagro %>% 
-            left_join(
-              produtos_padronizados %>% select(Proagro,Produto_Padronizado), 
-              by =c("PRODUTO" = "Proagro")
-            )
-
-
-
-write_xlsx(data_PSR, "test.xlsx")
 #Adicionando código Município e Microrregião
-data_PSR <- data_PSR %>% 
-            left_join(
-              municipios %>% select(Sigla_UF,Nome_Município_Maiuscula,Cod_Microrregiao,Cod_Municipio),
-              by =c("SG_UF_PROPRIEDADE" = "Sigla_UF", "MUNICIPIO_CORRIGIDO" = "Nome_Município_Maiuscula")
-            )
-
-
 data_Proagro <- data_Proagro %>% 
   left_join(
     municipios %>% select(Sigla_UF,Nome_Município_Maiuscula,Cod_Microrregiao,Cod_Municipio),
     by =c("UF" = "Sigla_UF", "MUNICIPIO_CORRIGIDO" = "Nome_Município_Maiuscula")
   )
 
+#Padronizando Produtos
+data_Proagro <- data_Proagro %>% 
+  left_join(
+    produtos_padronizados %>% select(Proagro,Produto_Padronizado), 
+    by =c("PRODUTO" = "Proagro")
+  )
+
+
+#Dropando Colunas não utilizadas de MUNICIPIO
+data_Proagro$MUNICIPIO <- NULL
+data_Proagro$PRODUTO <- NULL
 
 
 
 
-############### CENSO #################################
-
-
-library(anchors)
-
+#################################################### CENSO RURAL ####################################################
 
 # Tabela 6615 - Número de estabelecimentos por produtos da lavoura temporária - resultados preliminares 2017
 data_Censo_6615 <- read.csv("./Dados/Raw/Censo - 2017/tabela6615.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM', stringsAsFactors = FALSE)
