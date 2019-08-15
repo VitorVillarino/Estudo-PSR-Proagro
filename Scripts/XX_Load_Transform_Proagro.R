@@ -1,3 +1,6 @@
+library(readxl)
+library(writexl)
+
 data_proagro <- read.csv("./Dados/Raw/CONTRATACAO PROAGRO 20190801.csv", header = TRUE, sep = ',', fileEncoding = 'UTF-8-BOM', stringsAsFactors = FALSE)
 
 write_xlsx(data_proagro, "test.xlsx")

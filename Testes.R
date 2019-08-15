@@ -29,7 +29,7 @@ municipios_nao_encontrados_PSR$testes <- paste('                                
 write_xlsx(municipios_nao_encontrados_PSR, "test.xlsx")
 
 
-# municipios_nao_encontrados_Proagro <- anti_join(data_Proagro, municipios, by = c("UF" = "Sigla_UF", "MUNICIPIO_CORRIGIDO" = "Nome_Município_Maiuscula"))  %>%
-#   left_join(distritos, by =c("UF" = "Sigla_UF", "MUNICIPIO_CORRIGIDO" = "Nome_Distrito_Maiuscula")) %>%
-#   distinct(MUNICIPIO, UF, Município, Nome_Município, Nome_Distrito)
-# write.xlsx(municipios_nao_encontrados_Proagro, file = 'municipios_nao_encontrados.xlsx')
+municipios_nao_encontrados_Proagro <- anti_join(data_Proagro, municipios, by = c("UF" = "Sigla_UF", "MUNICIPIO_CORRIGIDO" = "Nome_Município_Maiuscula"))  %>%
+  left_join(distritos, by =c("UF" = "Sigla_UF", "MUNICIPIO_CORRIGIDO" = "Nome_Distrito_Maiuscula")) %>%
+  distinct(MUNICIPIO, UF, Município, Nome_Município, Nome_Distrito)
+write.xlsx(municipios_nao_encontrados_Proagro, file = 'municipios_nao_encontrados.xlsx')

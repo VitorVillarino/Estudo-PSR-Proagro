@@ -57,26 +57,23 @@ data_PSR <- read_excel("Dados/Raw/PSR_2013_2018_com_sinistros_Agrupado_pt1.xlsx"
                                        ))
 
 data_PSR <- union_all(data_PSR, read_excel("Dados/Raw/PSR_2013_2018_com_sinistros_Agrupado_pt2.xlsx", 
-                                           col_types = c("text", #ID_PROPOSTA
-                                                         "text", #DT_PROPOSTA
-                                                         "text", #DT_INICIO_VIGENCIA
-                                                         "text", #DT_FIM_VIGENCIA
-                                                         "text", #NR_DOCUMENTO_SEGURADO
-                                                         "text", #NM_MUNICIPIO_PROPRIEDADE
-                                                         "text", #SG_UF_PROPRIEDADE
-                                                         "text", #NM_CULTURA_GLOBAL
-                                                         "numeric", #ANO
-                                                         "text", #AN_SAFRA
-                                                         "numeric", #NR_AREA_TOTAL
-                                                         "numeric", #NR_PRODUTIVIDADE_ESTIMADA
-                                                         "numeric", #NR_PRODUTIVIDADE_SEGURADA
-                                                         "numeric", #VL_LIMITE_GARANTIA
-                                                         "numeric", #VL_PREMIO_LIQUIDO
-                                                         "numeric"  #VL_SUBVENCAO_FEDERAL
-                                           ))
-                      
-                      
-)
+                                       col_types = c("text", #ID_PROPOSTA
+                                                     "text", #DT_PROPOSTA
+                                                     "text", #DT_INICIO_VIGENCIA
+                                                     "text", #DT_FIM_VIGENCIA
+                                                     "text", #NR_DOCUMENTO_SEGURADO
+                                                     "text", #NM_MUNICIPIO_PROPRIEDADE
+                                                     "text", #SG_UF_PROPRIEDADE
+                                                     "text", #NM_CULTURA_GLOBAL
+                                                     "numeric", #ANO
+                                                     "text", #AN_SAFRA
+                                                     "numeric", #NR_AREA_TOTAL
+                                                     "numeric", #NR_PRODUTIVIDADE_ESTIMADA
+                                                     "numeric", #NR_PRODUTIVIDADE_SEGURADA
+                                                     "numeric", #VL_LIMITE_GARANTIA
+                                                     "numeric", #VL_PREMIO_LIQUIDO
+                                                     "numeric"  #VL_SUBVENCAO_FEDERAL
+                                       )))
 
 
 data_PSR$DT_PROPOSTA <- as.Date(data_PSR$DT_PROPOSTA , origin = "1899-12-30")
@@ -277,198 +274,181 @@ data_PSR <- data_PSR %>% mutate(MUNICIPIO_CORRIGIDO =
                                     NM_MUNICIPIO_PROPRIEDADE == "VILA FORMOSA" & SG_UF_PROPRIEDADE == "MS" ~ "DOURADOS",
                                     NM_MUNICIPIO_PROPRIEDADE == "VILA VARGAS" & SG_UF_PROPRIEDADE == "MS" ~ "DOURADOS",
                                     NM_MUNICIPIO_PROPRIEDADE == "BARREIRAS" & SG_UF_PROPRIEDADE == "PA" ~ "SANTA MARIA DAS BARREIRAS",
-                                    NM_MUNICIPIO_PROPRIEDADE =="ÁGUA BOA"& SG_UF_PROPRIEDADE =="PR"~"PAIÇANDU",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SÃO CAMILO"& SG_UF_PROPRIEDADE =="PR"~"PALOTINA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SÃO JOAQUIM"& SG_UF_PROPRIEDADE =="PR"~"ARAPONGAS",
-                                    NM_MUNICIPIO_PROPRIEDADE =="CONSELHEIRO ZACARIAS"& SG_UF_PROPRIEDADE =="PR"~"SANTO ANTÔNIO DA PLATINA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="TORRINHAS"& SG_UF_PROPRIEDADE =="RS"~"PINHEIRO MACHADO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="PAINS"& SG_UF_PROPRIEDADE =="RS"~"SANTA MARIA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="TAQUARA VERDE"& SG_UF_PROPRIEDADE =="SC"~"CAÇADOR",
-                                    NM_MUNICIPIO_PROPRIEDADE =="COLÔNIA JORDÃOZINHO"& SG_UF_PROPRIEDADE =="PR"~"GUARAPUAVA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="ENCANTADO D'OESTE"& SG_UF_PROPRIEDADE =="PR"~"ASSIS CHATEAUBRIAND",
-                                    NM_MUNICIPIO_PROPRIEDADE =="VISTA ALEGRE"& SG_UF_PROPRIEDADE =="PR"~"CORONEL VIVIDA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="VISTA ALEGRE"& SG_UF_PROPRIEDADE =="PR"~"ENÉAS MARQUES",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SANTO ANTÔNIO DO PALMITAL"& SG_UF_PROPRIEDADE =="PR"~"RIO BOM",
-                                    NM_MUNICIPIO_PROPRIEDADE =="UBAUNA"& SG_UF_PROPRIEDADE =="PR"~"SÃO JOÃO DO IVAÍ",
-                                    NM_MUNICIPIO_PROPRIEDADE =="BOA VISTA DE SANTA MARIA"& SG_UF_PROPRIEDADE =="MG"~"UNAÍ",
-                                    NM_MUNICIPIO_PROPRIEDADE =="APARECIDA DO OESTE"& SG_UF_PROPRIEDADE =="PR"~"TUNEIRAS D'OESTE",
-                                    NM_MUNICIPIO_PROPRIEDADE =="MARIZA"& SG_UF_PROPRIEDADE =="PR"~"SÃO PEDRO DO IVAÍ",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SÃO FRANCISCO"& SG_UF_PROPRIEDADE =="PR"~"CHOPINZINHO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="GUAPORÉ"& SG_UF_PROPRIEDADE =="PR"~"GUARANIAÇU",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SANTA FÉ DO PIRAPÓ"& SG_UF_PROPRIEDADE =="PR"~"MARIALVA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="JARDIM"& SG_UF_PROPRIEDADE =="PR"~"NA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SÃO LUIZ DO OESTE"& SG_UF_PROPRIEDADE =="PR"~"TOLEDO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="CONCÓRDIA DO OESTE"& SG_UF_PROPRIEDADE =="PR"~"TOLEDO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="JUCIARA"& SG_UF_PROPRIEDADE =="PR"~"NA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="CAMPO SECO"& SG_UF_PROPRIEDADE =="RS"~"ROSÁRIO DO SUL",
-                                    NM_MUNICIPIO_PROPRIEDADE =="RIO TOLDO"& SG_UF_PROPRIEDADE =="RS"~"GETÚLIO VARGAS",
-                                    NM_MUNICIPIO_PROPRIEDADE =="CASCATA"& SG_UF_PROPRIEDADE =="RS"~"HORIZONTINA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="CASCATA"& SG_UF_PROPRIEDADE =="RS"~"PELOTAS",
-                                    NM_MUNICIPIO_PROPRIEDADE =="BOM PROGRESSO"& SG_UF_PROPRIEDADE =="PR"~"SABÁUDIA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="ITORORÓ DO PARANAPANEMA"& SG_UF_PROPRIEDADE =="SP"~"PIRAPOZINHO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="PIQUIRIVAÍ"& SG_UF_PROPRIEDADE =="PR"~"CAMPO MOURÃO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="CONGONHAS"& SG_UF_PROPRIEDADE =="PR"~"CORNÉLIO PROCÓPIO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="CALÓGERAS"& SG_UF_PROPRIEDADE =="PR"~"ARAPOTI",
-                                    NM_MUNICIPIO_PROPRIEDADE =="BONFIM PAULISTA"& SG_UF_PROPRIEDADE =="SP"~"RIBEIRÃO PRETO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="TRIÂNGULO"& SG_UF_PROPRIEDADE =="PR"~"ENGENHEIRO BELTRÃO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="VILA GANDHI"& SG_UF_PROPRIEDADE =="PR"~"PRIMEIRO DE MAIO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="GEREMIA LUNARDELLI"& SG_UF_PROPRIEDADE =="PR"~"NOVA CANTU",
-                                    NM_MUNICIPIO_PROPRIEDADE =="MONTESE"& SG_UF_PROPRIEDADE =="MS"~"ITAPORÃ",
-                                    NM_MUNICIPIO_PROPRIEDADE =="PORTEIRA PRETA"& SG_UF_PROPRIEDADE =="PR"~"FÊNIX",
-                                    NM_MUNICIPIO_PROPRIEDADE =="NOSSA SENHORA APARECIDA"& SG_UF_PROPRIEDADE =="PR"~"ANDIRÁ",
-                                    NM_MUNICIPIO_PROPRIEDADE =="CLARINIA"& SG_UF_PROPRIEDADE =="SP"~"SANTA CRUZ DO RIO PARDO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="GAMADINHO"& SG_UF_PROPRIEDADE =="PR"~"NA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="BOCAJÁ"& SG_UF_PROPRIEDADE =="MS"~"DOURADINA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="ESPERANÇA DO NORTE"& SG_UF_PROPRIEDADE =="PR"~"ALVORADA DO SUL",
-                                    NM_MUNICIPIO_PROPRIEDADE =="CAPÃO GRANDE"& SG_UF_PROPRIEDADE =="RS"~"MUITOS CAPÕES",
-                                    NM_MUNICIPIO_PROPRIEDADE =="PINHEIRO MARCADO"& SG_UF_PROPRIEDADE =="RS"~"CARAZINHO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="CRUZALTINA"& SG_UF_PROPRIEDADE =="MS"~"DOURADINA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="ROMEÓPOLIS"& SG_UF_PROPRIEDADE =="PR"~"NA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="MOSTARDAS"& SG_UF_PROPRIEDADE =="SP"~"MONTE ALEGRE DO SUL",
-                                    NM_MUNICIPIO_PROPRIEDADE =="BACURITI"& SG_UF_PROPRIEDADE =="SP"~"CAFELÂNDIA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="BELA VISTA DO PIQUIRI"& SG_UF_PROPRIEDADE =="PR"~"CAMPINA DA LAGOA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="VIDA NOVA"& SG_UF_PROPRIEDADE =="PR"~"SAPOPEMA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="VIDIGAL"& SG_UF_PROPRIEDADE =="PR"~"CIANORTE",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SANTO ANTÔNIO DO PARANAPANEMA"& SG_UF_PROPRIEDADE =="SP"~"CÂNDIDO MOTA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SÃO BENTO"& SG_UF_PROPRIEDADE =="RS"~"CARAZINHO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SÃO BENTO"& SG_UF_PROPRIEDADE =="RS"~"PALMEIRA DAS MISSÕES",
-                                    NM_MUNICIPIO_PROPRIEDADE =="PULINÓPOLIS"& SG_UF_PROPRIEDADE =="PR"~"NA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SERRINHA"& SG_UF_PROPRIEDADE =="PR"~"CONTENDA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="CRISTO REI"& SG_UF_PROPRIEDADE =="PR"~"CAPANEMA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="CRISTO REI"& SG_UF_PROPRIEDADE =="PR"~"PARANAVAÍ",
-                                    NM_MUNICIPIO_PROPRIEDADE =="ESPIGÃO"& SG_UF_PROPRIEDADE =="SP"~"REGENTE FEIJÓ",
-                                    NM_MUNICIPIO_PROPRIEDADE =="PAU D'ALHO DO SUL"& SG_UF_PROPRIEDADE =="PR"~"ASSAÍ",
-                                    NM_MUNICIPIO_PROPRIEDADE =="FREI TIMÓTEO"& SG_UF_PROPRIEDADE =="PR"~"JATAIZINHO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="VALÉRIO"& SG_UF_PROPRIEDADE =="PR"~"PLANALTO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="PORTO MENDES"& SG_UF_PROPRIEDADE =="PR"~"MARECHAL CÂNDIDO RONDON",
-                                    NM_MUNICIPIO_PROPRIEDADE =="TEREZA BREDA"& SG_UF_PROPRIEDADE =="PR"~"BARBOSA FERRAZ",
-                                    NM_MUNICIPIO_PROPRIEDADE =="LAGOA BRANCA"& SG_UF_PROPRIEDADE =="SP"~"CASA BRANCA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="FAXINAL"& SG_UF_PROPRIEDADE =="RS"~"BOA VISTA DO CADEADO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="FAXINAL"& SG_UF_PROPRIEDADE =="RS"~"SÃO LOURENÇO DO SUL",
-                                    NM_MUNICIPIO_PROPRIEDADE =="FAXINAL"& SG_UF_PROPRIEDADE =="RS"~"VICTOR GRAEFF",
-                                    NM_MUNICIPIO_PROPRIEDADE =="JURUPEMA"& SG_UF_PROPRIEDADE =="SP"~"TAQUARITINGA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="COLÔNIA CASTROLÂNDA"& SG_UF_PROPRIEDADE =="PR"~"CASTRO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="JACIPORÃ"& SG_UF_PROPRIEDADE =="SP"~"DRACENA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="NOVA PÁTRIA"& SG_UF_PROPRIEDADE =="SP"~"PRESIDENTE BERNARDES",
-                                    NM_MUNICIPIO_PROPRIEDADE =="ABAPÃ"& SG_UF_PROPRIEDADE =="PR"~"CASTRO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="APARECIDA DE MINAS"& SG_UF_PROPRIEDADE =="MG"~"FRUTAL",
-                                    NM_MUNICIPIO_PROPRIEDADE =="DOIS IRMÃOS"& SG_UF_PROPRIEDADE =="PR"~"SÃO JOÃO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="DOIS IRMÃOS"& SG_UF_PROPRIEDADE =="PR"~"TOLEDO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="BRAGANTINA"& SG_UF_PROPRIEDADE =="PR"~"ASSIS CHATEAUBRIAND",
-                                    NM_MUNICIPIO_PROPRIEDADE =="ITAPUCÁ"& SG_UF_PROPRIEDADE =="RS"~"ITAPUCA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="CAPÃO DA PORTEIRA"& SG_UF_PROPRIEDADE =="RS"~"VIAMÃO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="VEREDAS"& SG_UF_PROPRIEDADE =="MG"~"JOÃO PINHEIRO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="BASÍLIO"& SG_UF_PROPRIEDADE =="RS"~"HERVAL",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SARANDIRA"& SG_UF_PROPRIEDADE =="MG"~"JUIZ DE FORA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="PARANÁ D'OESTE"& SG_UF_PROPRIEDADE =="PR"~"MOREIRA SALES",
-                                    NM_MUNICIPIO_PROPRIEDADE =="XAXIM"& SG_UF_PROPRIEDADE =="PR"~"TOLEDO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="VILA VARGAS"& SG_UF_PROPRIEDADE =="MS"~"DOURADOS",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SÃO MIGUEL"& SG_UF_PROPRIEDADE =="PR"~"TOLEDO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="PAULISTÂNIA"& SG_UF_PROPRIEDADE =="PR"~"ALTO PIQUIRI",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SANTA RITA DA FLORESTA"& SG_UF_PROPRIEDADE =="RJ"~"CANTAGALO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="IPIABAS"& SG_UF_PROPRIEDADE =="RJ"~"BARRA DO PIRAÍ",
-                                    NM_MUNICIPIO_PROPRIEDADE =="PIRIQUITOS"& SG_UF_PROPRIEDADE =="PR"~"PONTA GROSSA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="MAUÁ"& SG_UF_PROPRIEDADE =="RS"~"ARROIO GRANDE",
-                                    NM_MUNICIPIO_PROPRIEDADE =="MAUÁ"& SG_UF_PROPRIEDADE =="RS"~"IJUÍ",
-                                    NM_MUNICIPIO_PROPRIEDADE =="CARAJÁ"& SG_UF_PROPRIEDADE =="PR"~"JESUÍTAS",
-                                    NM_MUNICIPIO_PROPRIEDADE =="TURIBA DO SUL"& SG_UF_PROPRIEDADE =="SP"~"ITABERÁ",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SANTA CRUZ DO TIMBÓ"& SG_UF_PROPRIEDADE =="SC"~"PORTO UNIÃO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="HERVEIRA"& SG_UF_PROPRIEDADE =="PR"~"CAMPINA DA LAGOA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="FORMIGUEIRO"& SG_UF_PROPRIEDADE =="PR"~"NA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SÃO LUIZ DO PURUNÃ"& SG_UF_PROPRIEDADE =="PR"~"BALSA NOVA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="PEDREIRAS"& SG_UF_PROPRIEDADE =="RS"~"ARROIO GRANDE",
-                                    NM_MUNICIPIO_PROPRIEDADE =="BEXIGA"& SG_UF_PROPRIEDADE =="RS"~"RIO PARDO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="PASSO DAS PEDRAS"& SG_UF_PROPRIEDADE =="RS"~"CAPÃO DO LEÃO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="TOLEDO"& SG_UF_PROPRIEDADE =="SP"~"PEDRO DE TOLEDO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="BIRITIBA-USSU"& SG_UF_PROPRIEDADE =="SP"~"MOGI DAS CRUZES",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SANTA ESMERALDA"& SG_UF_PROPRIEDADE =="PR"~"SANTA CRUZ DE MONTE CASTELO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="PANEMA"& SG_UF_PROPRIEDADE =="PR"~"NA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="AQUIDABAN"& SG_UF_PROPRIEDADE =="PR"~"MARIALVA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="NOVO TRÊS PASSOS"& SG_UF_PROPRIEDADE =="PR"~"MARECHAL CÂNDIDO RONDON",
-                                    NM_MUNICIPIO_PROPRIEDADE =="RIO DO SALTO"& SG_UF_PROPRIEDADE =="PR"~"CASCAVEL",
-                                    NM_MUNICIPIO_PROPRIEDADE =="OURO VERDE DO PIQUIRI"& SG_UF_PROPRIEDADE =="PR"~"CORBÉLIA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="CAPINZAL"& SG_UF_PROPRIEDADE =="PR"~"ARAUCÁRIA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SÃO GABRIEL"& SG_UF_PROPRIEDADE =="PR"~"NA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="RIO DAS ANTAS"& SG_UF_PROPRIEDADE =="PR"~"NA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="DOUTOR OLIVEIRA CASTRO"& SG_UF_PROPRIEDADE =="PR"~"GUAÍRA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="ARAPUAN"& SG_UF_PROPRIEDADE =="PR"~"JANIÓPOLIS",
-                                    NM_MUNICIPIO_PROPRIEDADE =="BARREIRAS"& SG_UF_PROPRIEDADE =="PA"~"NA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="NOVA CARDOSO"& SG_UF_PROPRIEDADE =="SP"~"ITAJOBI",
-                                    NM_MUNICIPIO_PROPRIEDADE =="JUVINÓPOLIS"& SG_UF_PROPRIEDADE =="PR"~"CASCAVEL",
-                                    NM_MUNICIPIO_PROPRIEDADE =="IBIACI"& SG_UF_PROPRIEDADE =="PR"~"PRIMEIRO DE MAIO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="COLÔNIA MELISSA"& SG_UF_PROPRIEDADE =="PR"~"NA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="COLÔNIA ESPERANÇA"& SG_UF_PROPRIEDADE =="PR"~"ARAPONGAS",
-                                    NM_MUNICIPIO_PROPRIEDADE =="ESPÍRITO SANTO"& SG_UF_PROPRIEDADE =="PR"~"NA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="COROADOS"& SG_UF_PROPRIEDADE =="RS"~"SÃO VALÉRIO DO SUL",
-                                    NM_MUNICIPIO_PROPRIEDADE =="RINCÃO DOS MENDES"& SG_UF_PROPRIEDADE =="RS"~"SANTO ÂNGELO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="BURITI"& SG_UF_PROPRIEDADE =="RS"~"SANTO ÂNGELO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="GUAIPAVA"& SG_UF_PROPRIEDADE =="MG"~"PARAGUAÇU",
-                                    NM_MUNICIPIO_PROPRIEDADE =="ALTO SANTA FÉ"& SG_UF_PROPRIEDADE =="PR"~"NOVA SANTA ROSA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SAPIRANGA"& SG_UF_PROPRIEDADE =="SC"~"MELEIRO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="PULADOR"& SG_UF_PROPRIEDADE =="RS"~"PASSO FUNDO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="PULADOR"& SG_UF_PROPRIEDADE =="RS"~"UNIÃO DA SERRA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="NOSSA SENHORA DE CARAVAGGIO"& SG_UF_PROPRIEDADE =="SC"~"NOVA VENEZA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="BELA VISTA DO SUL"& SG_UF_PROPRIEDADE =="SC"~"MAFRA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="CORDILHEIRA"& SG_UF_PROPRIEDADE =="RS"~"CACHOEIRA DO SUL",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SÃO SEBASTIÃO"& SG_UF_PROPRIEDADE =="RS"~"ESMERALDA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SÃO SEBASTIÃO"& SG_UF_PROPRIEDADE =="RS"~"IBIRAIARAS",
-                                    NM_MUNICIPIO_PROPRIEDADE =="GUARIZINHO"& SG_UF_PROPRIEDADE =="SP"~"ITAPEVA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="JANGADA DO SUL"& SG_UF_PROPRIEDADE =="PR"~"GENERAL CARNEIRO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="ALTANEIRA"& SG_UF_PROPRIEDADE =="PR"~"MANDAGUAÇU",
-                                    NM_MUNICIPIO_PROPRIEDADE =="IVAILÂNDIA"& SG_UF_PROPRIEDADE =="PR"~"ENGENHEIRO BELTRÃO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="GUAÇU"& SG_UF_PROPRIEDADE =="MS"~"DOURADOS",
-                                    NM_MUNICIPIO_PROPRIEDADE =="PITANGUI"& SG_UF_PROPRIEDADE =="PR"~"NA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="CORREIA DE FREITAS"& SG_UF_PROPRIEDADE =="PR"~"APUCARANA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="IRERÊ"& SG_UF_PROPRIEDADE =="PR"~"LONDRINA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="WARTA"& SG_UF_PROPRIEDADE =="PR"~"LONDRINA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="COLÔNIA CENTENÁRIO"& SG_UF_PROPRIEDADE =="PR"~"CASCAVEL",
-                                    NM_MUNICIPIO_PROPRIEDADE =="BARRO PRETO"& SG_UF_PROPRIEDADE =="PR"~"VENTANIA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="COLÔNIA CACHOEIRA"& SG_UF_PROPRIEDADE =="PR"~"GUARAPUAVA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SANTA CRUZ DA ESTRELA"& SG_UF_PROPRIEDADE =="SP"~"SANTA RITA DO PASSA QUATRO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="COLÔNIA Z-3"& SG_UF_PROPRIEDADE =="RS"~"PELOTAS",
-                                    NM_MUNICIPIO_PROPRIEDADE =="PIQUIRI"& SG_UF_PROPRIEDADE =="RS"~"CACHOEIRA DO SUL",
-                                    NM_MUNICIPIO_PROPRIEDADE =="PASSINHOS"& SG_UF_PROPRIEDADE =="RS"~"OSÓRIO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="PEDRA BRANCA DE ITARARÉ"& SG_UF_PROPRIEDADE =="SP"~"ITARARÉ",
-                                    NM_MUNICIPIO_PROPRIEDADE =="CEDRO"& SG_UF_PROPRIEDADE =="PR"~"PEROBAL",
-                                    NM_MUNICIPIO_PROPRIEDADE =="VILA FORMOSA"& SG_UF_PROPRIEDADE =="MS"~"DOURADOS",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SÃO JOSÉ"& SG_UF_PROPRIEDADE =="RS"~"ALTO ALEGRE",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SÃO JOSÉ"& SG_UF_PROPRIEDADE =="RS"~"MONTE ALEGRE DOS CAMPOS",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SÃO JOSÉ"& SG_UF_PROPRIEDADE =="RS"~"PLANALTO",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SÃO JOSÉ"& SG_UF_PROPRIEDADE =="RS"~"SANTO ANTÔNIO DAS MISSÕES",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SÃO JOSÉ"& SG_UF_PROPRIEDADE =="RS"~"SANTO ANTÔNIO DO PALMA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="SÃO JOSÉ"& SG_UF_PROPRIEDADE =="RS"~"SÃO MIGUEL DAS MISSÕES",
-                                    NM_MUNICIPIO_PROPRIEDADE =="VÁRZEA"& SG_UF_PROPRIEDADE =="RS"~"PANTANO GRANDE",
-                                    NM_MUNICIPIO_PROPRIEDADE =="VÁRZEA"& SG_UF_PROPRIEDADE =="RS"~"SÃO JOSÉ DOS AUSENTES",
-                                    NM_MUNICIPIO_PROPRIEDADE =="ROLÂNDIA"& SG_UF_PROPRIEDADE =="ES"~"NA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="BATATUBA"& SG_UF_PROPRIEDADE =="SP"~"PIRACAIA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="PRATA"& SG_UF_PROPRIEDADE =="PR"~"CAMBÉ",
-                                    NM_MUNICIPIO_PROPRIEDADE =="MARAJÓ"& SG_UF_PROPRIEDADE =="PR"~"NOVA AURORA",
-                                    NM_MUNICIPIO_PROPRIEDADE =="PARANAGI"& SG_UF_PROPRIEDADE =="PR"~"SERTANEJA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "ÁGUA BOA"& SG_UF_PROPRIEDADE == "PR"~"PAIÇANDU",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SÃO CAMILO"& SG_UF_PROPRIEDADE =="PR"~"PALOTINA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SÃO JOAQUIM"& SG_UF_PROPRIEDADE =="PR"~"ARAPONGAS",
+                                    NM_MUNICIPIO_PROPRIEDADE == "CONSELHEIRO ZACARIAS"& SG_UF_PROPRIEDADE =="PR"~"SANTO ANTÔNIO DA PLATINA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "TORRINHAS"& SG_UF_PROPRIEDADE =="RS"~"PINHEIRO MACHADO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "PAINS"& SG_UF_PROPRIEDADE =="RS"~"SANTA MARIA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "TAQUARA VERDE"& SG_UF_PROPRIEDADE =="SC"~"CAÇADOR",
+                                    NM_MUNICIPIO_PROPRIEDADE == "COLÔNIA JORDÃOZINHO"& SG_UF_PROPRIEDADE == "PR"~"GUARAPUAVA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "ENCANTADO D'OESTE"& SG_UF_PROPRIEDADE == "PR"~"ASSIS CHATEAUBRIAND",
+                                    NM_MUNICIPIO_PROPRIEDADE == "VISTA ALEGRE"& SG_UF_PROPRIEDADE == "PR"~"CORONEL VIVIDA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "VISTA ALEGRE"& SG_UF_PROPRIEDADE == "PR"~"ENÉAS MARQUES",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SANTO ANTÔNIO DO PALMITAL"& SG_UF_PROPRIEDADE == "PR"~"RIO BOM",
+                                    NM_MUNICIPIO_PROPRIEDADE == "UBAUNA"& SG_UF_PROPRIEDADE == "PR"~"SÃO JOÃO DO IVAÍ",
+                                    NM_MUNICIPIO_PROPRIEDADE == "BOA VISTA DE SANTA MARIA"& SG_UF_PROPRIEDADE == "MG"~"UNAÍ",
+                                    NM_MUNICIPIO_PROPRIEDADE == "APARECIDA DO OESTE"& SG_UF_PROPRIEDADE == "PR"~"TUNEIRAS D'OESTE",
+                                    NM_MUNICIPIO_PROPRIEDADE == "MARIZA"& SG_UF_PROPRIEDADE == "PR"~"SÃO PEDRO DO IVAÍ",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SÃO FRANCISCO"& SG_UF_PROPRIEDADE == "PR"~"CHOPINZINHO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "GUAPORÉ"& SG_UF_PROPRIEDADE == "PR"~"GUARANIAÇU",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SANTA FÉ DO PIRAPÓ"& SG_UF_PROPRIEDADE == "PR"~"MARIALVA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "JARDIM"& SG_UF_PROPRIEDADE == "PR"~"NA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SÃO LUIZ DO OESTE"& SG_UF_PROPRIEDADE == "PR"~"TOLEDO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "CONCÓRDIA DO OESTE"& SG_UF_PROPRIEDADE == "PR"~"TOLEDO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "JUCIARA"& SG_UF_PROPRIEDADE == "PR"~"NA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "CAMPO SECO"& SG_UF_PROPRIEDADE == "RS"~"ROSÁRIO DO SUL",
+                                    NM_MUNICIPIO_PROPRIEDADE == "RIO TOLDO"& SG_UF_PROPRIEDADE == "RS"~"GETÚLIO VARGAS",
+                                    NM_MUNICIPIO_PROPRIEDADE == "CASCATA"& SG_UF_PROPRIEDADE == "RS"~"HORIZONTINA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "CASCATA"& SG_UF_PROPRIEDADE == "RS"~"PELOTAS",
+                                    NM_MUNICIPIO_PROPRIEDADE == "BOM PROGRESSO"& SG_UF_PROPRIEDADE == "PR"~"SABÁUDIA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "ITORORÓ DO PARANAPANEMA"& SG_UF_PROPRIEDADE == "SP"~"PIRAPOZINHO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "PIQUIRIVAÍ"& SG_UF_PROPRIEDADE == "PR"~"CAMPO MOURÃO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "CONGONHAS"& SG_UF_PROPRIEDADE == "PR"~"CORNÉLIO PROCÓPIO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "CALÓGERAS"& SG_UF_PROPRIEDADE == "PR"~"ARAPOTI",
+                                    NM_MUNICIPIO_PROPRIEDADE == "BONFIM PAULISTA"& SG_UF_PROPRIEDADE == "SP"~"RIBEIRÃO PRETO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "TRIÂNGULO"& SG_UF_PROPRIEDADE == "PR"~"ENGENHEIRO BELTRÃO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "VILA GANDHI"& SG_UF_PROPRIEDADE == "PR"~"PRIMEIRO DE MAIO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "GEREMIA LUNARDELLI"& SG_UF_PROPRIEDADE == "PR"~"NOVA CANTU",
+                                    NM_MUNICIPIO_PROPRIEDADE == "MONTESE"& SG_UF_PROPRIEDADE == "MS"~"ITAPORÃ",
+                                    NM_MUNICIPIO_PROPRIEDADE == "PORTEIRA PRETA"& SG_UF_PROPRIEDADE == "PR"~"FÊNIX",
+                                    NM_MUNICIPIO_PROPRIEDADE == "NOSSA SENHORA APARECIDA"& SG_UF_PROPRIEDADE == "PR"~"ANDIRÁ",
+                                    NM_MUNICIPIO_PROPRIEDADE == "CLARINIA"& SG_UF_PROPRIEDADE == "SP"~"SANTA CRUZ DO RIO PARDO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "GAMADINHO"& SG_UF_PROPRIEDADE == "PR"~"NA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "BOCAJÁ"& SG_UF_PROPRIEDADE == "MS"~"DOURADINA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "ESPERANÇA DO NORTE"& SG_UF_PROPRIEDADE == "PR"~"ALVORADA DO SUL",
+                                    NM_MUNICIPIO_PROPRIEDADE == "CAPÃO GRANDE"& SG_UF_PROPRIEDADE == "RS"~"MUITOS CAPÕES",
+                                    NM_MUNICIPIO_PROPRIEDADE == "PINHEIRO MARCADO"& SG_UF_PROPRIEDADE == "RS"~"CARAZINHO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "CRUZALTINA"& SG_UF_PROPRIEDADE == "MS"~"DOURADINA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "ROMEÓPOLIS"& SG_UF_PROPRIEDADE == "PR"~"NA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "MOSTARDAS"& SG_UF_PROPRIEDADE == "SP"~"MONTE ALEGRE DO SUL",
+                                    NM_MUNICIPIO_PROPRIEDADE == "BACURITI"& SG_UF_PROPRIEDADE == "SP"~"CAFELÂNDIA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "BELA VISTA DO PIQUIRI"& SG_UF_PROPRIEDADE == "PR"~"CAMPINA DA LAGOA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "VIDA NOVA"& SG_UF_PROPRIEDADE == "PR"~"SAPOPEMA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "VIDIGAL"& SG_UF_PROPRIEDADE == "PR"~"CIANORTE",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SANTO ANTÔNIO DO PARANAPANEMA"& SG_UF_PROPRIEDADE == "SP"~"CÂNDIDO MOTA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SÃO BENTO"& SG_UF_PROPRIEDADE == "RS"~"CARAZINHO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SÃO BENTO"& SG_UF_PROPRIEDADE == "RS"~"PALMEIRA DAS MISSÕES",
+                                    NM_MUNICIPIO_PROPRIEDADE == "PULINÓPOLIS"& SG_UF_PROPRIEDADE == "PR"~"NA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SERRINHA"& SG_UF_PROPRIEDADE == "PR"~"CONTENDA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "CRISTO REI"& SG_UF_PROPRIEDADE == "PR"~"CAPANEMA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "CRISTO REI"& SG_UF_PROPRIEDADE == "PR"~"PARANAVAÍ",
+                                    NM_MUNICIPIO_PROPRIEDADE == "ESPIGÃO"& SG_UF_PROPRIEDADE == "SP"~"REGENTE FEIJÓ",
+                                    NM_MUNICIPIO_PROPRIEDADE == "PAU D'ALHO DO SUL"& SG_UF_PROPRIEDADE == "PR"~"ASSAÍ",
+                                    NM_MUNICIPIO_PROPRIEDADE == "FREI TIMÓTEO"& SG_UF_PROPRIEDADE == "PR"~"JATAIZINHO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "VALÉRIO"& SG_UF_PROPRIEDADE == "PR"~"PLANALTO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "PORTO MENDES"& SG_UF_PROPRIEDADE == "PR"~"MARECHAL CÂNDIDO RONDON",
+                                    NM_MUNICIPIO_PROPRIEDADE == "TEREZA BREDA"& SG_UF_PROPRIEDADE == "PR"~"BARBOSA FERRAZ",
+                                    NM_MUNICIPIO_PROPRIEDADE == "LAGOA BRANCA"& SG_UF_PROPRIEDADE == "SP"~"CASA BRANCA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "FAXINAL"& SG_UF_PROPRIEDADE == "RS"~"BOA VISTA DO CADEADO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "FAXINAL"& SG_UF_PROPRIEDADE == "RS"~"SÃO LOURENÇO DO SUL",
+                                    NM_MUNICIPIO_PROPRIEDADE == "FAXINAL"& SG_UF_PROPRIEDADE == "RS"~"VICTOR GRAEFF",
+                                    NM_MUNICIPIO_PROPRIEDADE == "JURUPEMA"& SG_UF_PROPRIEDADE == "SP"~"TAQUARITINGA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "COLÔNIA CASTROLÂNDA"& SG_UF_PROPRIEDADE == "PR"~"CASTRO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "JACIPORÃ"& SG_UF_PROPRIEDADE == "SP"~"DRACENA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "NOVA PÁTRIA"& SG_UF_PROPRIEDADE == "SP"~"PRESIDENTE BERNARDES",
+                                    NM_MUNICIPIO_PROPRIEDADE == "ABAPÃ"& SG_UF_PROPRIEDADE == "PR"~"CASTRO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "APARECIDA DE MINAS"& SG_UF_PROPRIEDADE == "MG"~"FRUTAL",
+                                    NM_MUNICIPIO_PROPRIEDADE == "DOIS IRMÃOS"& SG_UF_PROPRIEDADE == "PR"~"SÃO JOÃO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "DOIS IRMÃOS"& SG_UF_PROPRIEDADE == "PR"~"TOLEDO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "BRAGANTINA"& SG_UF_PROPRIEDADE == "PR"~"ASSIS CHATEAUBRIAND",
+                                    NM_MUNICIPIO_PROPRIEDADE == "ITAPUCÁ"& SG_UF_PROPRIEDADE == "RS"~"ITAPUCA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "CAPÃO DA PORTEIRA"& SG_UF_PROPRIEDADE == "RS"~"VIAMÃO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "VEREDAS"& SG_UF_PROPRIEDADE == "MG"~"JOÃO PINHEIRO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "BASÍLIO"& SG_UF_PROPRIEDADE == "RS"~"HERVAL",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SARANDIRA"& SG_UF_PROPRIEDADE == "MG"~"JUIZ DE FORA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "PARANÁ D'OESTE"& SG_UF_PROPRIEDADE == "PR"~"MOREIRA SALES",
+                                    NM_MUNICIPIO_PROPRIEDADE == "XAXIM"& SG_UF_PROPRIEDADE == "PR"~"TOLEDO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "VILA VARGAS"& SG_UF_PROPRIEDADE == "MS"~"DOURADOS",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SÃO MIGUEL"& SG_UF_PROPRIEDADE == "PR"~"TOLEDO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "PAULISTÂNIA"& SG_UF_PROPRIEDADE == "PR"~"ALTO PIQUIRI",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SANTA RITA DA FLORESTA"& SG_UF_PROPRIEDADE == "RJ"~"CANTAGALO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "IPIABAS"& SG_UF_PROPRIEDADE == "RJ"~"BARRA DO PIRAÍ",
+                                    NM_MUNICIPIO_PROPRIEDADE == "PIRIQUITOS"& SG_UF_PROPRIEDADE == "PR"~"PONTA GROSSA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "MAUÁ"& SG_UF_PROPRIEDADE == "RS"~"ARROIO GRANDE",
+                                    NM_MUNICIPIO_PROPRIEDADE == "MAUÁ"& SG_UF_PROPRIEDADE == "RS"~"IJUÍ",
+                                    NM_MUNICIPIO_PROPRIEDADE == "CARAJÁ"& SG_UF_PROPRIEDADE == "PR"~"JESUÍTAS",
+                                    NM_MUNICIPIO_PROPRIEDADE == "TURIBA DO SUL"& SG_UF_PROPRIEDADE == "SP"~"ITABERÁ",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SANTA CRUZ DO TIMBÓ"& SG_UF_PROPRIEDADE == "SC"~"PORTO UNIÃO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "HERVEIRA"& SG_UF_PROPRIEDADE == "PR"~"CAMPINA DA LAGOA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "FORMIGUEIRO"& SG_UF_PROPRIEDADE == "PR"~"NA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SÃO LUIZ DO PURUNÃ"& SG_UF_PROPRIEDADE == "PR"~"BALSA NOVA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "PEDREIRAS"& SG_UF_PROPRIEDADE == "RS"~"ARROIO GRANDE",
+                                    NM_MUNICIPIO_PROPRIEDADE == "BEXIGA"& SG_UF_PROPRIEDADE == "RS"~"RIO PARDO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "PASSO DAS PEDRAS"& SG_UF_PROPRIEDADE == "RS"~"CAPÃO DO LEÃO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "TOLEDO"& SG_UF_PROPRIEDADE == "SP"~"PEDRO DE TOLEDO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "BIRITIBA-USSU"& SG_UF_PROPRIEDADE == "SP"~"MOGI DAS CRUZES",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SANTA ESMERALDA"& SG_UF_PROPRIEDADE == "PR"~"SANTA CRUZ DE MONTE CASTELO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "PANEMA"& SG_UF_PROPRIEDADE == "PR"~"NA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "AQUIDABAN"& SG_UF_PROPRIEDADE == "PR"~"MARIALVA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "NOVO TRÊS PASSOS"& SG_UF_PROPRIEDADE == "PR"~"MARECHAL CÂNDIDO RONDON",
+                                    NM_MUNICIPIO_PROPRIEDADE == "RIO DO SALTO"& SG_UF_PROPRIEDADE == "PR"~"CASCAVEL",
+                                    NM_MUNICIPIO_PROPRIEDADE == "OURO VERDE DO PIQUIRI"& SG_UF_PROPRIEDADE == "PR"~"CORBÉLIA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "CAPINZAL"& SG_UF_PROPRIEDADE == "PR"~"ARAUCÁRIA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SÃO GABRIEL"& SG_UF_PROPRIEDADE == "PR"~"NA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "RIO DAS ANTAS"& SG_UF_PROPRIEDADE == "PR"~"NA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "DOUTOR OLIVEIRA CASTRO"& SG_UF_PROPRIEDADE == "PR"~"GUAÍRA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "ARAPUAN"& SG_UF_PROPRIEDADE == "PR"~"JANIÓPOLIS",
+                                    NM_MUNICIPIO_PROPRIEDADE == "BARREIRAS"& SG_UF_PROPRIEDADE == "PA"~"NA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "NOVA CARDOSO"& SG_UF_PROPRIEDADE == "SP"~"ITAJOBI",
+                                    NM_MUNICIPIO_PROPRIEDADE == "JUVINÓPOLIS"& SG_UF_PROPRIEDADE == "PR"~"CASCAVEL",
+                                    NM_MUNICIPIO_PROPRIEDADE == "IBIACI"& SG_UF_PROPRIEDADE == "PR"~"PRIMEIRO DE MAIO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "COLÔNIA MELISSA"& SG_UF_PROPRIEDADE == "PR"~"NA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "COLÔNIA ESPERANÇA"& SG_UF_PROPRIEDADE == "PR"~"ARAPONGAS",
+                                    NM_MUNICIPIO_PROPRIEDADE == "ESPÍRITO SANTO"& SG_UF_PROPRIEDADE == "PR"~"NA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "COROADOS"& SG_UF_PROPRIEDADE == "RS"~"SÃO VALÉRIO DO SUL",
+                                    NM_MUNICIPIO_PROPRIEDADE == "RINCÃO DOS MENDES"& SG_UF_PROPRIEDADE == "RS"~"SANTO ÂNGELO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "BURITI"& SG_UF_PROPRIEDADE == "RS"~"SANTO ÂNGELO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "GUAIPAVA"& SG_UF_PROPRIEDADE == "MG"~"PARAGUAÇU",
+                                    NM_MUNICIPIO_PROPRIEDADE == "ALTO SANTA FÉ"& SG_UF_PROPRIEDADE == "PR"~"NOVA SANTA ROSA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SAPIRANGA"& SG_UF_PROPRIEDADE == "SC"~"MELEIRO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "PULADOR"& SG_UF_PROPRIEDADE == "RS"~"PASSO FUNDO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "PULADOR"& SG_UF_PROPRIEDADE == "RS"~"UNIÃO DA SERRA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "NOSSA SENHORA DE CARAVAGGIO"& SG_UF_PROPRIEDADE == "SC"~"NOVA VENEZA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "BELA VISTA DO SUL"& SG_UF_PROPRIEDADE == "SC"~"MAFRA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "CORDILHEIRA"& SG_UF_PROPRIEDADE == "RS"~"CACHOEIRA DO SUL",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SÃO SEBASTIÃO"& SG_UF_PROPRIEDADE == "RS"~"ESMERALDA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SÃO SEBASTIÃO"& SG_UF_PROPRIEDADE == "RS"~"IBIRAIARAS",
+                                    NM_MUNICIPIO_PROPRIEDADE == "GUARIZINHO"& SG_UF_PROPRIEDADE == "SP"~"ITAPEVA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "JANGADA DO SUL"& SG_UF_PROPRIEDADE == "PR"~"GENERAL CARNEIRO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "ALTANEIRA"& SG_UF_PROPRIEDADE == "PR"~"MANDAGUAÇU",
+                                    NM_MUNICIPIO_PROPRIEDADE == "IVAILÂNDIA"& SG_UF_PROPRIEDADE == "PR"~"ENGENHEIRO BELTRÃO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "GUAÇU"& SG_UF_PROPRIEDADE == "MS"~"DOURADOS",
+                                    NM_MUNICIPIO_PROPRIEDADE == "PITANGUI"& SG_UF_PROPRIEDADE == "PR"~"NA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "CORREIA DE FREITAS"& SG_UF_PROPRIEDADE == "PR"~"APUCARANA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "IRERÊ"& SG_UF_PROPRIEDADE == "PR"~"LONDRINA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "WARTA"& SG_UF_PROPRIEDADE == "PR"~"LONDRINA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "COLÔNIA CENTENÁRIO"& SG_UF_PROPRIEDADE == "PR"~"CASCAVEL",
+                                    NM_MUNICIPIO_PROPRIEDADE == "BARRO PRETO"& SG_UF_PROPRIEDADE == "PR"~"VENTANIA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "COLÔNIA CACHOEIRA"& SG_UF_PROPRIEDADE == "PR"~"GUARAPUAVA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SANTA CRUZ DA ESTRELA"& SG_UF_PROPRIEDADE == "SP"~"SANTA RITA DO PASSA QUATRO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "COLÔNIA Z-3"& SG_UF_PROPRIEDADE == "RS"~"PELOTAS",
+                                    NM_MUNICIPIO_PROPRIEDADE == "PIQUIRI"& SG_UF_PROPRIEDADE == "RS"~"CACHOEIRA DO SUL",
+                                    NM_MUNICIPIO_PROPRIEDADE == "PASSINHOS"& SG_UF_PROPRIEDADE == "RS"~"OSÓRIO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "PEDRA BRANCA DE ITARARÉ"& SG_UF_PROPRIEDADE == "SP"~"ITARARÉ",
+                                    NM_MUNICIPIO_PROPRIEDADE == "CEDRO"& SG_UF_PROPRIEDADE == "PR"~"PEROBAL",
+                                    NM_MUNICIPIO_PROPRIEDADE == "VILA FORMOSA"& SG_UF_PROPRIEDADE == "MS"~"DOURADOS",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SÃO JOSÉ"& SG_UF_PROPRIEDADE == "RS"~"ALTO ALEGRE",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SÃO JOSÉ"& SG_UF_PROPRIEDADE == "RS"~"MONTE ALEGRE DOS CAMPOS",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SÃO JOSÉ"& SG_UF_PROPRIEDADE == "RS"~"PLANALTO",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SÃO JOSÉ"& SG_UF_PROPRIEDADE == "RS"~"SANTO ANTÔNIO DAS MISSÕES",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SÃO JOSÉ"& SG_UF_PROPRIEDADE == "RS"~"SANTO ANTÔNIO DO PALMA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "SÃO JOSÉ"& SG_UF_PROPRIEDADE == "RS"~"SÃO MIGUEL DAS MISSÕES",
+                                    NM_MUNICIPIO_PROPRIEDADE == "VÁRZEA"& SG_UF_PROPRIEDADE == "RS"~"PANTANO GRANDE",
+                                    NM_MUNICIPIO_PROPRIEDADE == "VÁRZEA"& SG_UF_PROPRIEDADE == "RS"~"SÃO JOSÉ DOS AUSENTES",
+                                    NM_MUNICIPIO_PROPRIEDADE == "ROLÂNDIA"& SG_UF_PROPRIEDADE == "ES"~"NA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "BATATUBA"& SG_UF_PROPRIEDADE == "SP"~"PIRACAIA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "PRATA"& SG_UF_PROPRIEDADE == "PR"~"CAMBÉ",
+                                    NM_MUNICIPIO_PROPRIEDADE == "MARAJÓ"& SG_UF_PROPRIEDADE == "PR"~"NOVA AURORA",
+                                    NM_MUNICIPIO_PROPRIEDADE == "PARANAGI"& SG_UF_PROPRIEDADE == "PR"~"SERTANEJA",
                                     TRUE ~ NM_MUNICIPIO_PROPRIEDADE)
                                 )
 
-data_Proagro <- read_xlsx("./Dados/Raw/PLANILHA_CONTRATACAO_PROAGRO 2016-2017 final até JUNHO 17.xlsx",
-                      col_types = c(
-                        "text", #MÊS EMISSAO
-                        "skip", #SAFRA 
-                        "skip", #FINALIDADE
-                        "text", #PROGRAMA
-                        "text", #SEGURO
-                        "text", #UF
-                        "text", #MUNICIPIO
-                        "text", #PRODUTO
-                        "skip", #FAIXA VALOR
-                        "numeric", #QUANTIDADE
-                        "numeric", #AREA
-                        "numeric", # VALOR_FINANCIADO 
-                        "numeric", # VALOR_INVESTIMENTO 
-                        "numeric", # RECURSOS_PROPRIOS 
-                        "numeric", # RENDA_MINIMA 
-                        "numeric", # VALOR_TOTAL 
-                        "numeric", # VALOR_ADICIONAL 
-                        "numeric" # RBE 
-                      ))
 
+
+
+data_Proagro <- read_excel("Dados/Raw/CONTRATACAO PROAGRO 20190801.xlsx")
+data_Proagro <- data_Proagro[!data_Proagro$MUNICIPIO=="Não informado",]
 data_Proagro <- data_Proagro %>% mutate(MUNICIPIO_CORRIGIDO = 
                                   case_when( 
                                     MUNICIPIO == "BIRITIBA-MIRIM" & UF == "SP" ~ "BIRITIBA MIRIM",
@@ -483,10 +463,12 @@ data_Proagro <- data_Proagro %>% mutate(MUNICIPIO_CORRIGIDO =
                                     MUNICIPIO == "WESTFALIA" & UF == "RS" ~ "WESTFÁLIA",
                                     MUNICIPIO == "SÃO LUÍZ DO NORTE" & UF == "GO" ~ "SÃO LUIZ DO NORTE",
                                     MUNICIPIO == "POXORÉO" & UF == "MT" ~ "POXORÉU",
+                                    MUNICIPIO == "BRASILIA (BRAZLANDIA)" & UF == "DF" ~ "BRASÍLIA",
+                                    MUNICIPIO == "BRASILIA (PLANALTINA)" & UF == "DF" ~ "BRASÍLIA",
+                                    MUNICIPIO == "BRASILIA (PARANOA)" & UF == "DF" ~ "BRASÍLIA",
                                     TRUE ~ MUNICIPIO))
 
-data_PSR2 <- data_PSR
-data_PSR <- data_PSR2
+
 
 #Padronizando Produtos
 data_PSR <- data_PSR %>% 
@@ -502,6 +484,7 @@ data_Proagro <- data_Proagro %>%
 
 
 
+write_xlsx(data_PSR, "test.xlsx")
 #Adicionando código Município e Microrregião
 data_PSR <- data_PSR %>% 
             left_join(
@@ -521,6 +504,10 @@ data_Proagro <- data_Proagro %>%
 
 
 ############### CENSO #################################
+
+
+library(anchors)
+
 
 # Tabela 6615 - Número de estabelecimentos por produtos da lavoura temporária - resultados preliminares 2017
 data_Censo_6615 <- read.csv("./Dados/Raw/Censo - 2017/tabela6615.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM', stringsAsFactors = FALSE)
@@ -561,7 +548,6 @@ data_Censo_6639[, c(3:14)] <- sapply(data_Censo_6639[, c(3:14)], as.numeric)
 data_Censo_6641 <- read_excel("Dados/Raw/Censo - 2017/tabela6641.xlsx")
 data_Censo_6641[data_Censo_6641=="-"]<-0
 data_Censo_6641[data_Censo_6641=="X"]<-NA
-View(data_Censo_6641)
 data_Censo_6641[, c(3:10)] <- sapply(data_Censo_6641[, c(3:10)], as.numeric)
 
 
