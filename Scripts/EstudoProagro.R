@@ -4,14 +4,19 @@ library(ggplot2)
 library(dplyr)
 library(summarytools)
 
-# library(cluster)
-# library(factoextra)
-# library(fpc)
-# library(NbClust)
-# library(esquisse)
-# library(forcats)
 
-# library(lubridate)
+
+
+summarytools::freq(data_PSR$AN_SAFRA)
+summarytools::freq(data_PSR$ANO)
+
+esquisse::esquisser()
+
+
+
+
+
+
 
 
 

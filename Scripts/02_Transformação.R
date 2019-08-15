@@ -1,10 +1,10 @@
-
 #################### Municipios #################################
 
 #PSR
+
 PSR_soja_mun <- data_PSR %>% 
   filter(Produto_Padronizado == "SOJA", VL_LIMITE_GARANTIA <= 300000) %>% 
-  group_by(Cod_Municipio, Produto_Padronizado) %>% 
+  group_by(Cod_Municipio, Produto_Padronizado, AN_SAFRA) %>% 
   summarise(
     num_seguros = n(),
     NR_AREA_TOTAL = sum(NR_AREA_TOTAL),
@@ -13,20 +13,44 @@ PSR_soja_mun <- data_PSR %>%
     VL_SUBVENCAO_FEDERAL = sum(VL_SUBVENCAO_FEDERAL),
     NR_PRODUTIVIDADE_ESTIMADA = sum(NR_PRODUTIVIDADE_ESTIMADA),
     NR_PRODUTIVIDADE_SEGURADA = sum(NR_PRODUTIVIDADE_SEGURADA),
-    PE_NIVEL_COBERTURA = sum(PE_NIVEL_COBERTURA)
   )
+
+PSR_soja_mun$VL_PREMIO_PAGO           = PSR_soja_mun$VL_PREMIO_LIQUIDO - PSR_soja_mun$VL_SUBVENCAO_FEDERAL
+PSR_soja_mun$VL_PREMIO_PAGO_Medio     = PSR_soja_mun$VL_PREMIO_PAGO/PSR_soja_mun$num_seguros
 PSR_soja_mun$Area_Media               = PSR_soja_mun$NR_AREA_TOTAL/PSR_soja_mun$num_seguros
 PSR_soja_mun$Limite_Medio             = PSR_soja_mun$VL_LIMITE_GARANTIA/PSR_soja_mun$num_seguros
 PSR_soja_mun$Premio_Liquido_Medio     = PSR_soja_mun$VL_PREMIO_LIQUIDO/PSR_soja_mun$num_seguros
 PSR_soja_mun$Subvencao_Media          = PSR_soja_mun$VL_SUBVENCAO_FEDERAL/PSR_soja_mun$num_seguros
 PSR_soja_mun$Produtividade_Media      = PSR_soja_mun$NR_PRODUTIVIDADE_ESTIMADA/PSR_soja_mun$num_seguros
 PSR_soja_mun$Produtividade_Seg_Media  = PSR_soja_mun$NR_PRODUTIVIDADE_SEGURADA/PSR_soja_mun$num_seguros
-PSR_soja_mun$Cobertura_Media          = PSR_soja_mun$PE_NIVEL_COBERTURA/PSR_soja_mun$num_seguros
 PSR_soja_mun$Premio_Area              = PSR_soja_mun$VL_PREMIO_LIQUIDO/PSR_soja_mun$NR_AREA_TOTAL
 PSR_soja_mun$Tipo                     = "PSR"
 
 PSR_soja_mun_programa <- PSR_soja_mun
 PSR_soja_mun_programa$PROGRAMA = 'PSR'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #Proagro

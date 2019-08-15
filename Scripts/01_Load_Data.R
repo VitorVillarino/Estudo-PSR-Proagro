@@ -37,7 +37,7 @@ produtos_padronizados <- read_xlsx("./Dados/Auxiliares/Padronização de Produto
 
 
 #Base PSR 
-data_PSR <- read_excel("Dados/Raw/PSR_2013_2018_com_sinistros_Agrupado.xlsx", 
+data_PSR <- read_excel("Dados/Raw/PSR_2013_2018_com_sinistros_Agrupado_pt1.xlsx", 
                              col_types = c("text", #ID_PROPOSTA
                                            "text", #DT_PROPOSTA
                                            "text", #DT_INICIO_VIGENCIA
@@ -53,9 +53,31 @@ data_PSR <- read_excel("Dados/Raw/PSR_2013_2018_com_sinistros_Agrupado.xlsx",
                                            "numeric", #NR_PRODUTIVIDADE_SEGURADA
                                            "numeric", #VL_LIMITE_GARANTIA
                                            "numeric", #VL_PREMIO_LIQUIDO
-                                           "numeric", #VL_SUBVENCAO_FEDERAL
-                                           "numeric" #PE_TAXA
+                                           "numeric"  #VL_SUBVENCAO_FEDERAL
                                        ))
+
+data_PSR <- union_all(data_PSR, read_excel("Dados/Raw/PSR_2013_2018_com_sinistros_Agrupado_pt2.xlsx", 
+                                           col_types = c("text", #ID_PROPOSTA
+                                                         "text", #DT_PROPOSTA
+                                                         "text", #DT_INICIO_VIGENCIA
+                                                         "text", #DT_FIM_VIGENCIA
+                                                         "text", #NR_DOCUMENTO_SEGURADO
+                                                         "text", #NM_MUNICIPIO_PROPRIEDADE
+                                                         "text", #SG_UF_PROPRIEDADE
+                                                         "text", #NM_CULTURA_GLOBAL
+                                                         "numeric", #ANO
+                                                         "text", #AN_SAFRA
+                                                         "numeric", #NR_AREA_TOTAL
+                                                         "numeric", #NR_PRODUTIVIDADE_ESTIMADA
+                                                         "numeric", #NR_PRODUTIVIDADE_SEGURADA
+                                                         "numeric", #VL_LIMITE_GARANTIA
+                                                         "numeric", #VL_PREMIO_LIQUIDO
+                                                         "numeric"  #VL_SUBVENCAO_FEDERAL
+                                           ))
+                      
+                      
+)
+
 
 data_PSR$DT_PROPOSTA <- as.Date(data_PSR$DT_PROPOSTA , origin = "1899-12-30")
 data_PSR$DT_INICIO_VIGENCIA <- as.Date(data_PSR$DT_INICIO_VIGENCIA , origin = "1899-12-30")
@@ -425,9 +447,6 @@ data_PSR <- data_PSR %>% mutate(MUNICIPIO_CORRIGIDO =
                                     TRUE ~ NM_MUNICIPIO_PROPRIEDADE)
                                 )
 
-
-
-
 data_Proagro <- read_xlsx("./Dados/Raw/PLANILHA_CONTRATACAO_PROAGRO 2016-2017 final até JUNHO 17.xlsx",
                       col_types = c(
                         "text", #MÊS EMISSAO
@@ -466,7 +485,8 @@ data_Proagro <- data_Proagro %>% mutate(MUNICIPIO_CORRIGIDO =
                                     MUNICIPIO == "POXORÉO" & UF == "MT" ~ "POXORÉU",
                                     TRUE ~ MUNICIPIO))
 
-
+data_PSR2 <- data_PSR
+data_PSR <- data_PSR2
 
 #Padronizando Produtos
 data_PSR <- data_PSR %>% 
@@ -482,7 +502,6 @@ data_Proagro <- data_Proagro %>%
 
 
 
-write_xlsx(data_PSR, "test.xlsx")
 #Adicionando código Município e Microrregião
 data_PSR <- data_PSR %>% 
             left_join(
@@ -502,10 +521,6 @@ data_Proagro <- data_Proagro %>%
 
 
 ############### CENSO #################################
-
-
-library(anchors)
-
 
 # Tabela 6615 - Número de estabelecimentos por produtos da lavoura temporária - resultados preliminares 2017
 data_Censo_6615 <- read.csv("./Dados/Raw/Censo - 2017/tabela6615.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM', stringsAsFactors = FALSE)
@@ -546,6 +561,7 @@ data_Censo_6639[, c(3:14)] <- sapply(data_Censo_6639[, c(3:14)], as.numeric)
 data_Censo_6641 <- read_excel("Dados/Raw/Censo - 2017/tabela6641.xlsx")
 data_Censo_6641[data_Censo_6641=="-"]<-0
 data_Censo_6641[data_Censo_6641=="X"]<-NA
+View(data_Censo_6641)
 data_Censo_6641[, c(3:10)] <- sapply(data_Censo_6641[, c(3:10)], as.numeric)
 
 
