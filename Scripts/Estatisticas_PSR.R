@@ -13,6 +13,6 @@ estat_PSR <- remove_outliers(estat_PSR)
 
 
 #Ver package outliers
-
+https://cran.r-project.org/web/packages/outliers/outliers.pdf
 
 estat_PSR[estat_PSR$Premio_Area == max(estat_PSR$Premio_Area),]
