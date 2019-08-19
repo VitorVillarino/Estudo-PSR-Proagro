@@ -486,6 +486,9 @@ data_PSR$NM_CULTURA_GLOBAL <- NULL
 data_PSR <- data_PSR %>% rename(SAFRA = AN_SAFRA)
 
 
+#Adicionando  Prêmio por área
+data_PSR$Premio_Area <- data_PSR$VL_PREMIO_LIQUIDO/data_PSR$NR_AREA_TOTAL
+
 
 
 #################################################### Proagro ####################################################
@@ -531,6 +534,7 @@ data_Proagro <- data_Proagro %>%
 #Dropando Colunas não utilizadas de MUNICIPIO
 data_Proagro$MUNICIPIO <- NULL
 data_Proagro$PRODUTO <- NULL
+
 
 
 
