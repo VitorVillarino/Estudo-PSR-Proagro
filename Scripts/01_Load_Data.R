@@ -101,9 +101,6 @@ data_PSR <- data_PSR %>%
                 by =c("ID_PROPOSTA" = "ID_PROPOSTA")
             )
 
-##VER ANTI_JOIN do PSR para ver pq não tem tanto
-
-
 
 #Nome do Município maiúscula - Normalizando para cruzar com a base do IBGE 
 data_PSR$NM_MUNICIPIO_PROPRIEDADE <- toupper(data_PSR$NM_MUNICIPIO_PROPRIEDADE)
