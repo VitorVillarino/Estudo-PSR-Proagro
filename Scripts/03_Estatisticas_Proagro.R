@@ -21,16 +21,6 @@ stby(data = Valores_Deflacionados$VL_TOTAL_Medio_Defl,
      FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
 
 
-#Verificando quais os municípios com menos de 30 seguros em alguma safra
-Cont_Seg_Safra <- data_Proagro %>% 
-  filter(Produto_Padronizado == "SOJA", SAFRA != "2019/2020") %>% 
-  group_by(Cod_Municipio, Produto_Padronizado, SAFRA) %>%
-  summarise(
-    num_seguros = sum(QT_ENQ))
-menos_30_em_alguma_safra <- Cont_Seg_Safra[Cont_Seg_Safra$num_seguros<30,]
-length(unique(Cont_Seg_Safra$Cod_Municipio))
-Cont_Seg_Safra <- Cont_Seg_Safra[!(Cont_Seg_Safra$Cod_Municipio %in% menos_30_em_alguma_safra$Cod_Municipio),]
-length(unique(Cont_Seg_Safra$Cod_Municipio))
 
 
 

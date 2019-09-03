@@ -1,3 +1,5 @@
+################################# Inflação #################################
+
 data_Proagro <- data_Proagro %>% 
   mutate(VL_TOTAL_deflacionado = 
            case_when(
@@ -98,4 +100,25 @@ data_PSR <- data_PSR %>%
              TRUE ~ VL_SUBVENCAO_FEDERAL
            )
   )
+
+
+
+
+
+
+
+
+
+
+#Verificando quais os municípios com menos de 30 seguros em alguma safra
+Cont_Seg_Safra <- data_Proagro %>% 
+  filter(Produto_Padronizado == "SOJA", SAFRA != "2019/2020") %>% 
+  group_by(Cod_Municipio, Produto_Padronizado, SAFRA) %>%
+  summarise(
+    num_seguros = sum(QT_ENQ))
+menos_30_em_alguma_safra <- Cont_Seg_Safra[Cont_Seg_Safra$num_seguros<30,]
+length(unique(Cont_Seg_Safra$Cod_Municipio))
+Cont_Seg_Safra <- Cont_Seg_Safra[!(Cont_Seg_Safra$Cod_Municipio %in% menos_30_em_alguma_safra$Cod_Municipio),]
+length(unique(Cont_Seg_Safra$Cod_Municipio))
+
 
