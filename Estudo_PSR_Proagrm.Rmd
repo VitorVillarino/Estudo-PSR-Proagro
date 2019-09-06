@@ -2,11 +2,14 @@
 title: "Estudo Proagro"
 author: "Vitor Villarino"
 date: "03/09/2019"
-output:
-  html_document: default
-  pdf_document: default
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
-
+ 
+ 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
     echo = FALSE, 
@@ -16,7 +19,8 @@ knitr::opts_chunk$set(
     prompt = FALSE, 
     cache = FALSE, 
     warning = FALSE,
-    error = FALSE
+    error = FALSE,
+    fig.pos='H'
 )
 
 library(summarytools)
@@ -44,19 +48,19 @@ load('myEnvironment.RData')
 ```
 
 
-# Considerações
+## Considerações
 
-## Produto
+### Produto
 
 Por enquanto apenas **SOJA**. No futuro teremos Milho.
 
-## SAFRA
+### SAFRA
 
 
 Ainda há poucos seguros para a safra 2019/2020. Com a nossa regra de 30 seguros por safra (mínimo), vários municípios estavam ficando de fora. Retirei das análises essa safra para não atrapalhar
 
 ```{r, results="hide"}
-table <- ctable(Proagro_soja_mun_safra$PROGRAMA, Proagro_soja_mun_safra$SAFRA, prop = "r", weights = Proagro_soja_mun_safra$num_seguros, headings = FALSE)[[1]] %>%  kable() %>% kable_styling()
+table <- ctable(Proagro_soja_mun_safra$PROGRAMA, Proagro_soja_mun_safra$SAFRA, prop = "r", weights = Proagro_soja_mun_safra$num_seguros, headings = FALSE)[[1]] %>%  kable(caption = "Distribuição dos Municipios por Estado") %>% kable_styling()
 ```
 ```{r Estatisticas_Municipios_Safra, caption = "Distribuição dos Municipios por Estado"}
 table
@@ -65,22 +69,12 @@ Proagro_soja_mun_safra <-  Proagro_soja_mun_safra[Proagro_soja_mun_safra$SAFRA !
 ```
 
 
-## Programas
+### Programas
 
 A distribuição do número de Seguros por Programa mostra que há poucos seguros dos programas PRONAMP e SEM PROGRAMA no Proagro Mais e poucos seguros do PRONAF no PROAGRO TRADICIONAL. Retiraremos estes seguros "outliers".
 
 ```{r Estatisticas_Seguros, caption = "Distribuição - Seguros por Programa"}
-ctable(Proagro_soja_mun$PROGRAMA, Proagro_soja_mun$TP_SEGURO, prop = "r", weights = Proagro_soja_mun$num_seguros, headings = FALSE)
-
-kable(
-  ctable(Proagro_soja_mun$PROGRAMA, Proagro_soja_mun$TP_SEGURO, prop = "r", weights = Proagro_soja_mun$num_seguros, headings = FALSE)
-
-)
-
-pander(
-  ctable(Proagro_soja_mun$PROGRAMA, Proagro_soja_mun$TP_SEGURO, prop = "r", weights = Proagro_soja_mun$num_seguros, headings = FALSE)
-
-)
+print(ctable(Proagro_soja_mun$PROGRAMA, Proagro_soja_mun$TP_SEGURO, prop = "r", weights = Proagro_soja_mun$num_seguros, headings = FALSE), method = "render")
 
 #Removendo coisas que não queremos
 Proagro_soja_mun <- Proagro_soja_mun[
@@ -95,7 +89,7 @@ Proagro_soja_mun_safra <- Proagro_soja_mun_safra[
 ```
 
 
-## Inflação
+### Inflação
 
 Usei os valores do IPCA acumulado de 12 meses (julho a julho). Peguei do site do IBGE  <https://ww2.ibge.gov.br/home/estatistica/indicadores/precos/inpc_ipca/defaultseriesHist.shtm> e no final obtive os seguintes valores:
 
@@ -132,9 +126,9 @@ stby(data = Valores_Deflacionados$VL_TOTAL_Medio_Defl,
 
 
 
-# Alterações 
+## Alterações 
 
-## SAFRA
+### SAFRA
 
 
 Dos 1836 municípios que fizeram alguma operação em alguma safra, sobraram 557 que fizeram pelo menos 30 seguros em todas as safras. A distribuição por estados é
@@ -146,12 +140,12 @@ stat_Maior_30 <- Proagro_soja_mun %>% filter(Pelo_Menos_30 == T)
 
 
 municipios_mais_30 <- municipios[municipios$Cod_Municipio %in% unique(stat_Maior_30$Cod_Municipio),]
-municipios_mais_30$Quant = 1
-view(
-  municipios_mais_30 %>% 
-    group_by("Sigla_UF") %>% 
-    freq(municipios_mais_30$Sigla_UF,weights = municipios_mais_30$Quant), 
-  method = "pander", headings = FALSE)
+#municipios_mais_30$Quant = 1
+#view(
+# municipios_mais_30 %>% 
+#    group_by("Sigla_UF") %>% 
+#    freq(municipios_mais_30$Sigla_UF,weights = municipios_mais_30$Quant), 
+#  method = "pander", headings = FALSE)
 ```
 
 
@@ -163,16 +157,3 @@ rm(stat_Maior_30)
 rm(stat_Menor_30)
 rm(municipios_mais_30)
 ```
-
-
-
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

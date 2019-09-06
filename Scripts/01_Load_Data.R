@@ -622,20 +622,32 @@ data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6642[, -c(3,5,7,9,
 rm(data_Censo_6642)
 
 
-
-######################### Ver ##################################
-
-
-
-##Ver warnings
 #Tabela 6643 - Número de estabelecimentos agropecuários por telefone, e-mail e internet - resultados preliminares 2017											
 data_Censo_6643 <- read_excel("Dados/Raw/Censo - 2017/tabela6643.xlsx", col_types = "text")
 data_Censo_6643[data_Censo_6643=="-"]<-0
 data_Censo_6643[data_Censo_6643=="X"]<-NA
-data_Censo_6643[, c(3:11)] <- sapply(data_Censo_6643[, c(3:11)], as.numeric)
+data_Censo_6643[, c(3:14)] <- sapply(data_Censo_6643[, c(3:14)], as.numeric)
 
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6643, by = "Cód.")
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6643[, -c(3,5,7,9,11,13)], by = "Cód.")
 rm(data_Censo_6643)
+
+
+#Tabela 6647 - Número de estabelecimentos agropecuários por sexo, alfabetização, idade e cor ou raça do produtor - resultados preliminares 2017														
+data_Censo_6647 <- read_excel("Dados/Raw/Censo - 2017/tabela6647.xlsx", col_types = "text")
+data_Censo_6647[data_Censo_6647=="-"]<-0
+data_Censo_6647[data_Censo_6647=="X"]<-NA
+data_Censo_6647[data_Censo_6647==".."]<-NA
+data_Censo_6647[data_Censo_6647=="..."]<-NA
+data_Censo_6647[, c(3:27)] <- sapply(data_Censo_6647[, c(3:27)], as.numeric)
+
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6647[, -c(3,4,6,8,10,12,14,16,18,20,22,24,26)], by = "Cód.")
+rm(data_Censo_6647)
+
+
+
+######################### Ver ##################################
+
+
 
 
 #Tabela 6650 - Número de estabelecimentos agropecuários por forma de obtenção das terras - resultados preliminares 2017													
@@ -670,18 +682,6 @@ data_Censo_6659[, c(3:12)] <- sapply(data_Censo_6659[, c(3:12)], as.numeric)
 data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6659, by = "Cód.")
 rm(data_Censo_6659)
 
-
-
-#Tabela 6647 - Número de estabelecimentos agropecuários por sexo, alfabetização, idade e cor ou raça do produtor - resultados preliminares 2017														
-data_Censo_6647 <- read_excel("Dados/Raw/Censo - 2017/tabela6647.xlsx", col_types = "text")
-data_Censo_6647[data_Censo_6647=="-"]<-0
-data_Censo_6647[data_Censo_6647=="X"]<-NA
-data_Censo_6647[data_Censo_6647==".."]<-NA
-data_Censo_6647[data_Censo_6647=="..."]<-NA
-data_Censo_6647[, c(3:14)] <- sapply(data_Censo_6647[, c(3:14)], as.numeric)
-
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6647, by = "Cód.")
-rm(data_Censo_6647)
 
 
 #Tabela 6649 - Número de estabelecimentos agropecuários por residência, finalidade da produção e DAP - resultados preliminares 2017																
