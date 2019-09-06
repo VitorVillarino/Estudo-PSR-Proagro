@@ -2,54 +2,167 @@
 title: "Estudo Proagro"
 author: "Vitor Villarino"
 date: "03/09/2019"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
-```{r setup_summarytools, include=FALSE}
-library(knitr)
-opts_chunk$set(results = 'asis',      # This is essential (can also be set at the chunk-level)
-              comment = NA,
-              prompt = FALSE,
-              cache = FALSE,
-              include=FALSE)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+    echo = FALSE, 
+    message = FALSE, 
+    results = 'asis', 
+    comment = NA, 
+    prompt = FALSE, 
+    cache = FALSE, 
+    warning = FALSE,
+    error = FALSE
+)
 
 library(summarytools)
-st_options(plain.ascii = FALSE,       # This is very handy in all Rmd documents
-          style = "rmarkdown",        # This too
-          footnote = NA,              # Avoids footnotes which would clutter the results
-          subtitle.emphasis = FALSE   # This is a setting to experiment with - according to
-)                                     # the theme used, it might improve the headings'
-                                      # layout
+st_options(plain.ascii = FALSE,     
+           style = "rmarkdown",      
+           footnote = NA,            
+           subtitle.emphasis = FALSE,
+           lang = "pt"
+)                                     
+st_css()                              
 
-st_css()                              # This is a must; without it, expect odd layout
-```
 
-```{r setup, include=FALSE}
-library("plotly")
-library("tidyverse")
-library("htmlwidgets")
-
-#https://plot.ly/r/ - ver
+library(tidyverse)
+library(pander)
+library(knitr)
+library(kableExtra)
 ```
 
 
 ```{r load_data, include=FALSE}
-source("./Scripts/01_Load_Data.R", encoding = "UTF-8")
-source("./Scripts/02_Transformacoes_Necessarias.R", encoding = "UTF-8")
+#source("./Scripts/01_Load_Data.R", encoding = "UTF-8")
+#source("./Scripts/02_Transformacoes_Necessarias.R", encoding = "UTF-8")
+#save.image(file='myEnvironment.RData')
+load('myEnvironment.RData')
+```
+
+
+# Considerações
+
+## Produto
+
+Por enquanto apenas **SOJA**. No futuro teremos Milho.
+
+## SAFRA
+
+
+Ainda há poucos seguros para a safra 2019/2020. Com a nossa regra de 30 seguros por safra (mínimo), vários municípios estavam ficando de fora. Retirei das análises essa safra para não atrapalhar
+
+```{r, results="hide"}
+table <- ctable(Proagro_soja_mun_safra$PROGRAMA, Proagro_soja_mun_safra$SAFRA, prop = "r", weights = Proagro_soja_mun_safra$num_seguros, headings = FALSE)[[1]] %>%  kable() %>% kable_styling()
+```
+```{r Estatisticas_Municipios_Safra, caption = "Distribuição dos Municipios por Estado"}
+table
+rm(table)
+Proagro_soja_mun_safra <-  Proagro_soja_mun_safra[Proagro_soja_mun_safra$SAFRA != "2019/2020",]
+```
+
+
+## Programas
+
+A distribuição do número de Seguros por Programa mostra que há poucos seguros dos programas PRONAMP e SEM PROGRAMA no Proagro Mais e poucos seguros do PRONAF no PROAGRO TRADICIONAL. Retiraremos estes seguros "outliers".
+
+```{r Estatisticas_Seguros, caption = "Distribuição - Seguros por Programa"}
+ctable(Proagro_soja_mun$PROGRAMA, Proagro_soja_mun$TP_SEGURO, prop = "r", weights = Proagro_soja_mun$num_seguros, headings = FALSE)
+
+kable(
+  ctable(Proagro_soja_mun$PROGRAMA, Proagro_soja_mun$TP_SEGURO, prop = "r", weights = Proagro_soja_mun$num_seguros, headings = FALSE)
+
+)
+
+pander(
+  ctable(Proagro_soja_mun$PROGRAMA, Proagro_soja_mun$TP_SEGURO, prop = "r", weights = Proagro_soja_mun$num_seguros, headings = FALSE)
+
+)
+
+#Removendo coisas que não queremos
+Proagro_soja_mun <- Proagro_soja_mun[
+  (Proagro_soja_mun$TP_SEGURO == "PROAGRO MAIS"  & Proagro_soja_mun$PROGRAMA == "PRONAF") |
+    (Proagro_soja_mun$TP_SEGURO == "PROAGRO TRADICIONAL"  & Proagro_soja_mun$PROGRAMA == "PRONAMP") |
+    (Proagro_soja_mun$TP_SEGURO == "PROAGRO TRADICIONAL"  & Proagro_soja_mun$PROGRAMA == "SEM PROGRAMA"),]
+
+Proagro_soja_mun_safra <- Proagro_soja_mun_safra[
+  (Proagro_soja_mun_safra$TP_SEGURO == "PROAGRO MAIS"  & Proagro_soja_mun_safra$PROGRAMA == "PRONAF") |
+    (Proagro_soja_mun_safra$TP_SEGURO == "PROAGRO TRADICIONAL"  & Proagro_soja_mun_safra$PROGRAMA == "PRONAMP") |
+    (Proagro_soja_mun_safra$TP_SEGURO == "PROAGRO TRADICIONAL"  & Proagro_soja_mun_safra$PROGRAMA == "SEM PROGRAMA"),]
 ```
 
 
 ## Inflação
 
-Usei os valores do IPCA acumulado de 12 meses (julho a julho). Peguei do site do IBGE  <https://ww2.ibge.gov.br/home/estatistica/indicadores/precos/inpc_ipca/defaultseriesHist.shtm> e no final obtive os seguintes valores
+Usei os valores do IPCA acumulado de 12 meses (julho a julho). Peguei do site do IBGE  <https://ww2.ibge.gov.br/home/estatistica/indicadores/precos/inpc_ipca/defaultseriesHist.shtm> e no final obtive os seguintes valores:
 
 ```{r inflacao_tabela}
 kable(inflacao)
 ```
 
 
+Se compararmos os valores deflacionados antes e depois temos uma boa melhora.
+
+```{r comparacao_deflacionado, caption = "Distribuição - Valores Deflacionados"}
+#Teste Valor Deflacionado
+Valores_Deflacionados <- data_Proagro %>% 
+  filter(Produto_Padronizado == "SOJA", SAFRA != "2019/2020") %>% 
+  group_by(Cod_Municipio, Produto_Padronizado, SAFRA) %>%
+  summarise(
+    num_seguros = sum(QT_ENQ),
+    VL_TOTAL = sum(VL_TOT),
+    VL_TOTAL_deflacionado = sum(VL_TOTAL_deflacionado))
+Valores_Deflacionados$VL_TOTAL_Medio             = Valores_Deflacionados$VL_TOTAL/Valores_Deflacionados$num_seguros
+Valores_Deflacionados$VL_TOTAL_Medio_Defl        = Valores_Deflacionados$VL_TOTAL_deflacionado/Valores_Deflacionados$num_seguros
 
 
+stby(data = Valores_Deflacionados$VL_TOTAL_Medio_Defl, 
+     INDICES = Valores_Deflacionados$SAFRA, 
+     FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
+
+```
+
+
+
+
+
+
+
+
+# Alterações 
+
+## SAFRA
+
+
+Dos 1836 municípios que fizeram alguma operação em alguma safra, sobraram 557 que fizeram pelo menos 30 seguros em todas as safras. A distribuição por estados é
+
+
+```{r Estatisticas_Municipios_Dist_Estados, caption = "Distribuição dos Municipios por Estado"}
+stat_Menor_30 <- Proagro_soja_mun %>% filter(Pelo_Menos_30 == F)
+stat_Maior_30 <- Proagro_soja_mun %>% filter(Pelo_Menos_30 == T)
+
+
+municipios_mais_30 <- municipios[municipios$Cod_Municipio %in% unique(stat_Maior_30$Cod_Municipio),]
+municipios_mais_30$Quant = 1
+view(
+  municipios_mais_30 %>% 
+    group_by("Sigla_UF") %>% 
+    freq(municipios_mais_30$Sigla_UF,weights = municipios_mais_30$Quant), 
+  method = "pander", headings = FALSE)
+```
+
+
+
+
+
+```{r limpando_stat_municipios}
+rm(stat_Maior_30)
+rm(stat_Menor_30)
+rm(municipios_mais_30)
+```
 
 
 

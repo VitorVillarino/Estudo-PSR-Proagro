@@ -24,68 +24,6 @@ stby(data = Valores_Deflacionados$VL_TOTAL_Medio_Defl,
 
 
 
-#Proagro - Agrupando Municipio Produto
-Proagro_soja_mun <- data_Proagro %>% 
-  filter(Produto_Padronizado == "SOJA") %>% 
-  group_by(Cod_Municipio, Produto_Padronizado, PROGRAMA, TP_SEGURO) %>% 
-  summarise(
-    num_seguros = sum(QT_ENQ),
-    NR_AREA_TOTAL = sum(AREA),
-    VL_FIN = sum(VL_FIN),                                          #valor financiado
-    VL_RECP = sum(VL_RECP),                                        #recursos próprios
-    VL_INV = sum(VL_INV),                                          #parcela do investimento
-    VL_GRM = sum(VL_GRM),                                          #reda mínima
-    VL_TOTAL = sum(VL_TOT),                                        #Valor total
-    VL_TOTAL_deflacionado = sum(VL_TOTAL_deflacionado),            #Valor total deflacionado 
-    VL_Premio_Deflacionado = sum(VL_Premio_Deflacionado),          #Valor do adicional deflacionado  
-    VL_Premio = sum(VL_ADIC),
-    VL_SUBVENCAO_FEDERAL = 0,
-    RECEITA_ESTIMADA = sum(RBE),
-    QT_SINISTROS = sum(QT_COB_DEF),
-    VL_SINISTROS = sum(VL_COB_DEF),
-    VL_SINISTROS_Deflacionado = sum(VL_COB_DEF_Deflacionado)
-  )
-Proagro_soja_mun$Area_Media                 = Proagro_soja_mun$NR_AREA_TOTAL/Proagro_soja_mun$num_seguros
-Proagro_soja_mun$VL_TOTAL_Medio             = Proagro_soja_mun$VL_TOTAL/Proagro_soja_mun$num_seguros
-Proagro_soja_mun$VL_TOTAL_Medio_Defl        = Proagro_soja_mun$VL_TOTAL_deflacionado/Proagro_soja_mun$num_seguros
-Proagro_soja_mun$Subvencao_Media            = Proagro_soja_mun$VL_SUBVENCAO_FEDERAL/Proagro_soja_mun$num_seguros
-Proagro_soja_mun$Receita_Media              = Proagro_soja_mun$RECEITA_ESTIMADA/Proagro_soja_mun$num_seguros
-Proagro_soja_mun$VL_TOTAL_Medio_Area        = Proagro_soja_mun$VL_TOTAL/Proagro_soja_mun$NR_AREA_TOTAL
-Proagro_soja_mun$VL_TOTAL_Medio_Area_Defl   = Proagro_soja_mun$VL_TOTAL_deflacionado/Proagro_soja_mun$NR_AREA_TOTAL
-
-Proagro_soja_mun$Premio_Liquido_Medio       = Proagro_soja_mun$VL_Premio/Proagro_soja_mun$num_seguros
-Proagro_soja_mun$Premio_Area                = Proagro_soja_mun$VL_Premio/Proagro_soja_mun$NR_AREA_TOTAL
-Proagro_soja_mun$Premio_Liquido_Medio_Defl  = Proagro_soja_mun$VL_Premio_Deflacionado/Proagro_soja_mun$num_seguros
-Proagro_soja_mun$Premio_Area_Defl           = Proagro_soja_mun$VL_Premio_Deflacionado/Proagro_soja_mun$NR_AREA_TOTAL
-
-Proagro_soja_mun$INDICE_SINISTRO_QTD        = Proagro_soja_mun$QT_SINISTROS/Proagro_soja_mun$num_seguros
-Proagro_soja_mun$VL_SINISTRO_MEDIO          = Proagro_soja_mun$VL_SINISTROS/Proagro_soja_mun$QT_SINISTROS
-Proagro_soja_mun$VL_SINISTRO_MEDIO_Defl     = Proagro_soja_mun$VL_SINISTROS_Deflacionado/Proagro_soja_mun$QT_SINISTROS
-
-Proagro_soja_mun$SINISTRALIDADE_Defl        = Proagro_soja_mun$VL_SINISTROS_Deflacionado/Proagro_soja_mun$num_seguros
-
-Proagro_soja_mun$INDICE_SINISTRO_VALOR      = Proagro_soja_mun$VL_SINISTROS/Proagro_soja_mun$VL_TOTAL
-Proagro_soja_mun$INDICE_SINISTRO_VALOR_Defl = Proagro_soja_mun$VL_SINISTROS_Deflacionado/Proagro_soja_mun$VL_TOTAL_deflacionado
-
-
-
-
-
-Proagro_soja_mun$Tipo                     = "Proagro"
-Proagro_soja_mun$Pelo_Menos_30 <- Proagro_soja_mun$Cod_Municipio %in% menos_30_em_alguma_safra$Cod_Municipio
-
-
-#Estatísticas para saber
-stat_Maior_30 <- Proagro_soja_mun %>% filter(Pelo_Menos_30 == T)
-ctable(stat_Maior_30$PROGRAMA, stat_Maior_30$TP_SEGURO, prop = "r")
-stat_Menor_30 <- Proagro_soja_mun %>% filter(Pelo_Menos_30 == F)
-ctable(stat_Menor_30$PROGRAMA, stat_Menor_30$TP_SEGURO, prop = "r")
-
-
-Proagro_soja_mun <- Proagro_soja_mun[
-  (Proagro_soja_mun$TP_SEGURO == "PROAGRO MAIS"  & Proagro_soja_mun$PROGRAMA == "PRONAF") |
-    (Proagro_soja_mun$TP_SEGURO == "PROAGRO TRADICIONAL"  & Proagro_soja_mun$PROGRAMA == "PRONAMP") |
-    (Proagro_soja_mun$TP_SEGURO == "PROAGRO TRADICIONAL"  & Proagro_soja_mun$PROGRAMA == "SEM PROGRAMA"),]
 
 Proagro_soja_mun <- Proagro_soja_mun[Proagro_soja_mun$Pelo_Menos_30,]
 
