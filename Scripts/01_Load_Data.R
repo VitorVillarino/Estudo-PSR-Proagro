@@ -644,20 +644,28 @@ data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6647[, -c(3,4,6,8,
 rm(data_Censo_6647)
 
 
+#Tabela 6649 - Número de estabelecimentos agropecuários por residência, finalidade da produção e DAP - resultados preliminares 2017																
+data_Censo_6649 <- read_excel("Dados/Raw/Censo - 2017/tabela6649.xlsx", col_types = "text")
+data_Censo_6649[data_Censo_6649=="-"]<-0
+data_Censo_6649[data_Censo_6649=="X"]<-NA
+data_Censo_6649[, c(3:28)] <- sapply(data_Censo_6649[, c(3:28)], as.numeric)
 
-######################### Ver ##################################
-
-
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6649[, -c(3,5,7,9,11,13,15,17,19,21,23,25,27)], by = "Cód.")
+rm(data_Censo_6649)
 
 
 #Tabela 6650 - Número de estabelecimentos agropecuários por forma de obtenção das terras - resultados preliminares 2017													
 data_Censo_6650 <- read_excel("Dados/Raw/Censo - 2017/tabela6650.xlsx")
 data_Censo_6650[data_Censo_6650=="-"]<-0
 data_Censo_6650[data_Censo_6650=="X"]<-NA
-data_Censo_6650[, c(3:13)] <- sapply(data_Censo_6650[, c(3:13)], as.numeric)
+data_Censo_6650[, c(3:24)] <- sapply(data_Censo_6650[, c(3:24)], as.numeric)
 
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6650, by = "Cód.")
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6650[, -c(3,5,7,9,11,13,15,17,19,21,23)], by = "Cód.")
 rm(data_Censo_6650)
+
+
+######################### Ver ##################################
+
 
 
 #Tabela 6710 - Número de estabelecimentos agropecuários, Área dos estabelecimentos agropecuários, por condição legal das terras, condição legal do produtor, direção dos trabalhos do estabelecimento agropecuário e grupos de área total - resultados preliminares 2017																										
@@ -682,16 +690,6 @@ data_Censo_6659[, c(3:12)] <- sapply(data_Censo_6659[, c(3:12)], as.numeric)
 data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6659, by = "Cód.")
 rm(data_Censo_6659)
 
-
-
-#Tabela 6649 - Número de estabelecimentos agropecuários por residência, finalidade da produção e DAP - resultados preliminares 2017																
-data_Censo_6649 <- read_excel("Dados/Raw/Censo - 2017/tabela6649.xlsx", col_types = "text")
-data_Censo_6649[data_Censo_6649=="-"]<-0
-data_Censo_6649[data_Censo_6649=="X"]<-NA
-data_Censo_6649[, c(3:16)] <- sapply(data_Censo_6649[, c(3:16)], as.numeric)
-
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6649, by = "Cód.")
-rm(data_Censo_6649)
 
 
 #Tabela 6652 - Número de estabelecimentos agropecuários por uso de agricultura orgânica - resultados preliminares 2017							
