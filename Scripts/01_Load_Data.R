@@ -664,6 +664,26 @@ data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6650[, -c(3,5,7,9,
 rm(data_Censo_6650)
 
 
+#Tabela 6651 - Número de estabelecimentos agropecuários por associação, uso de energia elétrica, orientação técnica e obtenção de informação - resultados preliminares 2017																												
+data_Censo_6651 <- read_excel("Dados/Raw/Censo - 2017/tabela6651.xlsx", col_types = "text")
+data_Censo_6651[data_Censo_6651=="-"]<-0
+data_Censo_6651[data_Censo_6651=="X"]<-NA
+data_Censo_6651[, c(3:48)] <- sapply(data_Censo_6651[, c(3:48)], as.numeric)
+
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6651[, -c(seq(3,48,2))], by = "Cód.")
+rm(data_Censo_6651)
+
+
+#Tabela 6652 - Número de estabelecimentos agropecuários por uso de agricultura orgânica - resultados preliminares 2017							
+data_Censo_6652 <- read_excel("Dados/Raw/Censo - 2017/tabela6652.xlsx")
+data_Censo_6652[data_Censo_6652=="-"]<-0
+data_Censo_6652[data_Censo_6652=="X"]<-NA
+data_Censo_6652[, c(3:12)] <- sapply(data_Censo_6652[, c(3:12)], as.numeric)
+
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6652[, -c(seq(3,12,2))], by = "Cód.")
+rm(data_Censo_6652)
+
+
 ######################### Ver ##################################
 
 
@@ -692,14 +712,6 @@ rm(data_Censo_6659)
 
 
 
-#Tabela 6652 - Número de estabelecimentos agropecuários por uso de agricultura orgânica - resultados preliminares 2017							
-data_Censo_6652 <- read_excel("Dados/Raw/Censo - 2017/tabela6652.xlsx")
-data_Censo_6652[data_Censo_6652=="-"]<-0
-data_Censo_6652[data_Censo_6652=="X"]<-NA
-data_Censo_6652[, c(3:7)] <- sapply(data_Censo_6652[, c(3:7)], as.numeric)
-
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6652, by = "Cód.")
-rm(data_Censo_6652)
 
 
 #Tabela 6655 - Número de estabelecimentos agropecuários por nascentes, rios/riachos, poços e cisternas - resultados preliminares 2017													
@@ -827,18 +839,6 @@ data_Censo_6792[, c(3:15)] <- sapply(data_Censo_6792[, c(3:15)], as.numeric)
 
 data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6792, by = "Cód.")
 rm(data_Censo_6792)
-
-
-
-#Tabela 6651 - Número de estabelecimentos agropecuários por associação, uso de energia elétrica, orientação técnica e obtenção de informação - resultados preliminares 2017																												
-data_Censo_6651 <- read_excel("Dados/Raw/Censo - 2017/tabela6651.xlsx", col_types = "text")
-data_Censo_6651[data_Censo_6651=="-"]<-0
-data_Censo_6651[data_Censo_6651=="X"]<-NA
-data_Censo_6651[, c(3:28)] <- sapply(data_Censo_6651[, c(3:28)], as.numeric)
-
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6651, by = "Cód.")
-rm(data_Censo_6651)
-
 
 
 
