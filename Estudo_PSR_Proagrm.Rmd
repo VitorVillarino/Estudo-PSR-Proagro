@@ -2,25 +2,21 @@
 title: "Estudo Proagro"
 author: "Vitor Villarino"
 date: "03/09/2019"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Vignette Title}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+output: html_document
 ---
- 
- 
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-    echo = FALSE, 
-    message = FALSE, 
-    results = 'asis', 
-    comment = NA, 
-    prompt = FALSE, 
-    cache = FALSE, 
-    warning = FALSE,
-    error = FALSE,
-    fig.pos='H'
+  echo = FALSE, 
+  message = FALSE, 
+  results = 'asis', 
+  comment = NA, 
+  prompt = FALSE, 
+  cache = FALSE, 
+  warning = FALSE,
+  error = FALSE,
+  fig.pos='H'
 )
 
 library(summarytools)
@@ -32,18 +28,23 @@ st_options(plain.ascii = FALSE,
 )                                     
 st_css()                              
 
+library(plotly)
+Sys.setenv("plotly_username"="vitor.villarino")
+Sys.setenv("plotly_api_key"="y0rnl3Lz27XieNizsxmZ")
+
 
 library(tidyverse)
 library(pander)
 library(knitr)
 library(kableExtra)
+
 ```
 
 
 ```{r load_data, include=FALSE}
-#source("./Scripts/01_Load_Data.R", encoding = "UTF-8")
-#source("./Scripts/02_Transformacoes_Necessarias.R", encoding = "UTF-8")
-#save.image(file='myEnvironment.RData')
+# source("./Scripts/01_Load_Data.R", encoding = "UTF-8")
+# source("./Scripts/02_Transformacoes_Necessarias.R", encoding = "UTF-8")
+# save.image(file='myEnvironment.RData')
 load('myEnvironment.RData')
 ```
 
@@ -60,7 +61,7 @@ Por enquanto apenas **SOJA**. No futuro teremos Milho.
 Ainda há poucos seguros para a safra 2019/2020. Com a nossa regra de 30 seguros por safra (mínimo), vários municípios estavam ficando de fora. Retirei das análises essa safra para não atrapalhar
 
 ```{r, results="hide"}
-table <- ctable(Proagro_soja_mun_safra$PROGRAMA, Proagro_soja_mun_safra$SAFRA, prop = "r", weights = Proagro_soja_mun_safra$num_seguros, headings = FALSE)[[1]] %>%  kable(caption = "Distribuição dos Municipios por Estado") %>% kable_styling()
+table <- ctable(Proagro_soja_mun_safra$PROGRAMA, Proagro_soja_mun_safra$SAFRA, prop = "r", weights = Proagro_soja_mun_safra$num_seguros, headings = FALSE)[[1]] %>%  kable(caption = "Distribuição dos Municipios por Safra") %>% kable_styling(full_width = F)
 ```
 ```{r Estatisticas_Municipios_Safra, caption = "Distribuição dos Municipios por Estado"}
 table
@@ -93,14 +94,14 @@ Proagro_soja_mun_safra <- Proagro_soja_mun_safra[
 
 Usei os valores do IPCA acumulado de 12 meses (julho a julho). Peguei do site do IBGE  <https://ww2.ibge.gov.br/home/estatistica/indicadores/precos/inpc_ipca/defaultseriesHist.shtm> e no final obtive os seguintes valores:
 
-```{r inflacao_tabela}
-kable(inflacao)
+```{r inflacao_tabela, fig.align="center"}
+kable(inflacao) %>% kable_styling(full_width = F)
 ```
 
 
-Se compararmos os valores deflacionados antes e depois temos uma boa melhora.
+Se compararmos os valores deflacionados antes e depois temos uma boa melhora, porém, como o valor máximo do Proagro não foi atualizado, perdemos aquele máximo de R$ 300.000.
 
-```{r comparacao_deflacionado, caption = "Distribuição - Valores Deflacionados"}
+```{r, results="hide"}
 #Teste Valor Deflacionado
 Valores_Deflacionados <- data_Proagro %>% 
   filter(Produto_Padronizado == "SOJA", SAFRA != "2019/2020") %>% 
@@ -111,49 +112,119 @@ Valores_Deflacionados <- data_Proagro %>%
     VL_TOTAL_deflacionado = sum(VL_TOTAL_deflacionado))
 Valores_Deflacionados$VL_TOTAL_Medio             = Valores_Deflacionados$VL_TOTAL/Valores_Deflacionados$num_seguros
 Valores_Deflacionados$VL_TOTAL_Medio_Defl        = Valores_Deflacionados$VL_TOTAL_deflacionado/Valores_Deflacionados$num_seguros
+```
 
+Valores antes de deflacionar:
 
-stby(data = Valores_Deflacionados$VL_TOTAL_Medio_Defl, 
-     INDICES = Valores_Deflacionados$SAFRA, 
-     FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
-
+```{r comparacao_inflacao_medio, caption = "Distribuição - Valores Médios Originais", fig.align="center"}
+ggplot(Valores_Deflacionados) +
+  aes(x = "", y = VL_TOTAL_Medio, fill = SAFRA) +
+  geom_boxplot() +
+  scale_fill_hue() +
+  theme_minimal()
 ```
 
 
+```{r comparacao_inflacao_medio_tabela, caption = "Distribuição - Valores Médios Originais"}
+print(stby(data = Valores_Deflacionados$VL_TOTAL_Medio, 
+           INDICES = Valores_Deflacionados$SAFRA, 
+           FUN = descr, stats = c("mean", "sd", "min", "med", "max"), headings = FALSE), method = "render", headings = FALSE)
+```
 
 
+Valores depois de deflacionar:
+
+```{r comparacao_inflacao_deflacionado, caption = "Distribuição - Valores Médios Deflacionados", fig.align="center"}
+print(ggplot(Valores_Deflacionados) +
+        aes(x = "", y = VL_TOTAL_Medio_Defl, fill = SAFRA) +
+        geom_boxplot() +
+        scale_fill_hue() +
+        theme_minimal(), method = "render")
+```
 
 
+```{r comparacao_inflacao_deflacionado_tabela, caption = "Distribuição - Valores Médios Deflacionados"}
+print(stby(data = Valores_Deflacionados$VL_TOTAL_Medio_Defl, 
+           INDICES = Valores_Deflacionados$SAFRA, 
+           FUN = descr, stats = c("mean", "sd", "min", "med", "max"), headings = FALSE), method = "render", headings = FALSE)
+rm(Valores_Deflacionados)
+```
 
 
-## Alterações 
-
-### SAFRA
+### Municípios
 
 
-Dos 1836 municípios que fizeram alguma operação em alguma safra, sobraram 557 que fizeram pelo menos 30 seguros em todas as safras. A distribuição por estados é
+Dos 1836 municípios que fizeram alguma operação em alguma safra, sobraram 557 que fizeram pelo menos 30 seguros em todas as safras. Na distribuição por estados, está bem concentrado nos estados do sul do país.
 
+
+```{r}
+Proagro_soja_mun <- Proagro_soja_mun %>% left_join(municipios, by = "Cod_Municipio")
+Proagro_soja_mun_safra <- Proagro_soja_mun_safra %>% left_join(municipios, by = "Cod_Municipio")
+
+stat_Maior_30 <- Proagro_soja_mun %>% filter(Pelo_Menos_30 == T) %>% group_by(Cod_Municipio, Sigla_UF) %>% summarise(Qt_Seguros = sum(num_seguros))
+
+stat_Maior_30_SAFRA <- Proagro_soja_mun_safra %>% filter(Pelo_Menos_30 == T) %>% group_by(Sigla_UF, SAFRA) %>% summarise(Qt_Seguros = sum(num_seguros))
+```
+
+Distribuição por Estado
 
 ```{r Estatisticas_Municipios_Dist_Estados, caption = "Distribuição dos Municipios por Estado"}
-stat_Menor_30 <- Proagro_soja_mun %>% filter(Pelo_Menos_30 == F)
-stat_Maior_30 <- Proagro_soja_mun %>% filter(Pelo_Menos_30 == T)
-
-
-municipios_mais_30 <- municipios[municipios$Cod_Municipio %in% unique(stat_Maior_30$Cod_Municipio),]
-#municipios_mais_30$Quant = 1
-#view(
-# municipios_mais_30 %>% 
-#    group_by("Sigla_UF") %>% 
-#    freq(municipios_mais_30$Sigla_UF,weights = municipios_mais_30$Quant), 
-#  method = "pander", headings = FALSE)
+print(
+  stat_Maior_30 %>%
+    group_by("Sigla_UF") %>% 
+    freq(stat_Maior_30$Sigla_UF, report.nas = F),
+  method = "render", headings = FALSE,  caption = "Distribuição dos Municipios por Estado")
 ```
 
-
-
-
-
+Distribuição do número de seguros nesses estados
+```{r, results="hide"}
+table <- ctable(stat_Maior_30_SAFRA$Sigla_UF, stat_Maior_30_SAFRA$SAFRA, report.nas = F, weights = stat_Maior_30_SAFRA$Qt_Seguros, headings = FALSE)[[1]] %>%  kable(caption = "Distribuição dos Seguros por Estado") %>% kable_styling(full_width = F)
+```
+```{r Estatisticas_Seguros_Dist_Estados, caption = "Distribuição dos Municipios por Estado"}
+table
+rm(table)
+```
 ```{r limpando_stat_municipios}
 rm(stat_Maior_30)
 rm(stat_Menor_30)
-rm(municipios_mais_30)
 ```
+
+
+
+
+
+## Análise 
+
+```{r municipios_mais_30 }
+Proagro_soja_mun <- Proagro_soja_mun[Proagro_soja_mun$Pelo_Menos_30,]
+Proagro_soja_mun_safra <- Proagro_soja_mun[Proagro_soja_mun_safra$Pelo_Menos_30,]
+```
+
+
+### Valor Total Médio
+
+```{r valor_total_medio}
+ggplot(Proagro_soja_mun) +
+ aes(x = VL_TOTAL_Medio_Defl) +
+ geom_histogram(bins = 30L, fill = "#0c4c8a") +
+ theme_minimal()
+
+print(descr(Proagro_soja_mun$VL_TOTAL_Medio_Defl, headings = FALSE), method = "render", headings = FALSE)
+```
+
+
+
+### Prêmio Médio
+
+```{r premio_medio}
+ggplot(Proagro_soja_mun) +
+ aes(x = Premio_Liquido_Medio_Defl ) +
+ geom_histogram(bins = 30L, fill = "#0c4c8a") +
+ theme_minimal()
+
+print(descr(Proagro_soja_mun$Premio_Liquido_Medio_Defl, headings = FALSE), method = "render", headings = FALSE)
+```
+
+
+
+
