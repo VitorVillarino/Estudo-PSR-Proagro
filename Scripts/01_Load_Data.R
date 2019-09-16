@@ -684,6 +684,17 @@ data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6652[, -c(seq(3,12
 rm(data_Censo_6652)
 
 
+#Tabela 6655 - Número de estabelecimentos agropecuários por nascentes, rios/riachos, poços e cisternas - resultados preliminares 2017													
+data_Censo_6655 <- read_excel("Dados/Raw/Censo - 2017/tabela6655.xlsx", col_types = "text")
+data_Censo_6655[data_Censo_6655=="-"]<-0
+data_Censo_6655[data_Censo_6655=="X"]<-NA
+data_Censo_6655[, c(3:24)] <- sapply(data_Censo_6655[, c(3:24)], as.numeric)
+
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6655[, -c(seq(3,24,2))], by = "Cód.")
+rm(data_Censo_6655)
+
+
+
 ######################### Ver ##################################
 
 
@@ -714,14 +725,6 @@ rm(data_Censo_6659)
 
 
 
-#Tabela 6655 - Número de estabelecimentos agropecuários por nascentes, rios/riachos, poços e cisternas - resultados preliminares 2017													
-data_Censo_6655 <- read_excel("Dados/Raw/Censo - 2017/tabela6655.xlsx", col_types = "text")
-data_Censo_6655[data_Censo_6655=="-"]<-0
-data_Censo_6655[data_Censo_6655=="X"]<-NA
-data_Censo_6655[, c(3:13)] <- sapply(data_Censo_6655[, c(3:13)], as.numeric)
-
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6655, by = "Cód.")
-rm(data_Censo_6655)
 
 
 #Tabela 6709 - Número de estabelecimentos agropecuários, por existência de energia elétrica, sexo do produtor, escolaridade do produtor, condição legal do produtor, direção dos trabalhos do estabelecimento agropecuário e grupos de área total - resultados preliminares 2017				
@@ -776,15 +779,6 @@ data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6722, by = "Cód."
 rm(data_Censo_6722)
 
 
-#Tabela 6654 - Número de estabelecimentos agropecuários por tipo de prática agrícola - resultados preliminares 2017												
-data_Censo_6654 <- read_excel("Dados/Raw/Censo - 2017/tabela6654.xlsx")
-data_Censo_6654[data_Censo_6654=="-"]<-0
-data_Censo_6654[data_Censo_6654=="X"]<-NA
-data_Censo_6654[, c(3:12)] <- sapply(data_Censo_6654[, c(3:12)], as.numeric)
-
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6654, by = "Cód.")
-rm(data_Censo_6654)
-
 
 #Tabela 6658 - Número de estabelecimentos agropecuários por financiamentos/empréstimos - resultados preliminares 2017																
 data_Censo_6658 <- read_excel("Dados/Raw/Censo - 2017/tabela6658.xlsx", col_types = "text")
@@ -818,17 +812,6 @@ data_Censo_6707_2[, c(3:16)] <- sapply(data_Censo_6707_2[, c(3:16)], as.numeric)
 
 data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6707_2, by = "Cód.")
 rm(data_Censo_6707_2)
-
-
-#Tabela 6653 - Número de estabelecimentos agropecuários por adubação, calagem e agrotóxicos - resultados preliminares 2017													
-data_Censo_6653 <- read_excel("Dados/Raw/Censo - 2017/tabela6653.xlsx", col_types = "text")
-data_Censo_6653[data_Censo_6653=="-"]<-0
-data_Censo_6653[data_Censo_6653=="X"]<-NA
-data_Censo_6653[, c(3:13)] <- sapply(data_Censo_6653[, c(3:13)], as.numeric)
-
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6653, by = "Cód.")
-rm(data_Censo_6653)
-
 
 
 #Tabela 6792 - Número de estabelecimentos agropecuários por outras receitas do estabelecimento e do produtor - resultados preliminares 2017															
