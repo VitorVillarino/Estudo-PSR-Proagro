@@ -735,73 +735,28 @@ data_Censo_6709[, c(3:6)] <- sapply(data_Censo_6709[, c(3:6)], as.numeric)
 data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6709[, -c(seq(3,6,2))], by = "Cód.")
 rm(data_Censo_6709)
 
-
-
-######################### Ver ##################################
-
-
 #Tabela 6710 - Número de estabelecimentos agropecuários, Área dos estabelecimentos agropecuários, por condição legal das terras, condição legal do produtor, direção dos trabalhos do estabelecimento agropecuário e grupos de área total - resultados preliminares 2017																										
 data_Censo_6710 <- read_excel("Dados/Raw/Censo - 2017/tabela6710.xlsx", col_types = "text")
 data_Censo_6710[data_Censo_6710=="-"]<-0
 data_Censo_6710[data_Censo_6710=="X"]<-NA
 data_Censo_6710[data_Censo_6710==".."]<-NA
 data_Censo_6710[data_Censo_6710=="..."]<-NA
-data_Censo_6710[, c(3:26)] <- sapply(data_Censo_6710[, c(3:26)], as.numeric)
+data_Censo_6710[, c(3:14)] <- sapply(data_Censo_6710[, c(3:14)], as.numeric)
 
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6710, by = "Cód.")
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6710[, -c(seq(3,14,2))], by = "Cód.")
 rm(data_Censo_6710)
-
-
-#Tabela 6713 - Número de estabelecimentos agropecuários por contratação de serviços, tipo de prestador de serviços e dias trabalhados, sexo do produtor, escolaridade do produtor, condição legal do produtor e origem da orientação técnica recebida - resultados preliminares 2017
-data_Censo_6713 <- read_excel("Dados/Raw/Censo - 2017/tabela6713.xlsx", col_types = "text")
-data_Censo_6713[data_Censo_6713=="-"]<-0
-data_Censo_6713[data_Censo_6713=="X"]<-NA
-data_Censo_6713[data_Censo_6713==".."]<-NA
-data_Censo_6713[data_Censo_6713=="..."]<-NA
-data_Censo_6713[, c(3:12)] <- sapply(data_Censo_6713[, c(3:12)], as.numeric)
-
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6713, by = "Cód.")
-rm(data_Censo_6713)
 
 
 #Tabela 6790 - Número de estabelecimentos agropecuários por classes de idade do produtor - resultados preliminares 2017																		
 data_Censo_6790 <- read_excel("Dados/Raw/Censo - 2017/tabela6790.xlsx", col_types = "text")
 data_Censo_6790[data_Censo_6790=="-"]<-0
 data_Censo_6790[data_Censo_6790=="X"]<-NA
-data_Censo_6790[, c(3:16)] <- sapply(data_Censo_6790[, c(3:16)], as.numeric)
+data_Censo_6790[, c(3:8)] <- sapply(data_Censo_6790[, c(3:8)], as.numeric)
 
 data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6790, by = "Cód.")
 rm(data_Censo_6790)
 
 
-#Tabela 6764 - Número de estabelecimentos agropecuários com uso de irrigação e Área irrigada, por método utilizado para irrigação, direção dos trabalhos do estabelecimento agropecuário e origem da orientação técnica recebida - resultados preliminares 2017																									
-data_Censo_6764 <- read_excel("Dados/Raw/Censo - 2017/tabela6764.xlsx")
-data_Censo_6764[data_Censo_6764=="-"]<-0
-data_Censo_6764[data_Censo_6764=="X"]<-NA
-data_Censo_6764[, c(3:24)] <- sapply(data_Censo_6764[, c(3:24)], as.numeric)
-
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6764, by = "Cód.")
-rm(data_Censo_6764)
-
-
-#Tabela 6722 - Número de estabelecimentos agropecuários e Área dos estabelecimentos, por utilização das terras, condição legal do produtor, direção dos trabalhos do estabelecimento agropecuário e grupos de área total - resultados preliminares 2017																										
-data_Censo_6722 <- read_excel("Dados/Raw/Censo - 2017/tabela6722.xlsx", col_types = "text")
-data_Censo_6722[data_Censo_6722=="-"]<-0
-data_Censo_6722[data_Censo_6722=="X"]<-NA
-data_Censo_6722[, c(3:24)] <- sapply(data_Censo_6722[, c(3:24)], as.numeric)
-
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6722, by = "Cód.")
-rm(data_Censo_6722)
-
-
-#Tabela 6792 - Número de estabelecimentos agropecuários por outras receitas do estabelecimento e do produtor - resultados preliminares 2017															
-data_Censo_6792 <- read_excel("Dados/Raw/Censo - 2017/tabela6792.xlsx", col_types = "text")
-data_Censo_6792[data_Censo_6792=="-"]<-0
-data_Censo_6792[data_Censo_6792=="X"]<-NA
-data_Censo_6792[, c(3:15)] <- sapply(data_Censo_6792[, c(3:15)], as.numeric)
-
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6792, by = "Cód.")
-rm(data_Censo_6792)
 
 
 
