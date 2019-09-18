@@ -159,6 +159,7 @@ Dos 1836 municípios que fizeram alguma operação em alguma safra, sobraram 557
 
 ```{r}
 Proagro_soja_mun <- Proagro_soja_mun %>% left_join(municipios, by = "Cod_Municipio")
+Proagro_soja_mun_geral <- Proagro_soja_mun_geral %>% left_join(municipios, by = "Cod_Municipio")
 Proagro_soja_mun_safra <- Proagro_soja_mun_safra %>% left_join(municipios, by = "Cod_Municipio")
 
 stat_Maior_30 <- Proagro_soja_mun %>% filter(Pelo_Menos_30 == T) %>% group_by(Cod_Municipio, Sigla_UF) %>% summarise(Qt_Seguros = sum(num_seguros))
@@ -187,6 +188,7 @@ rm(table)
 ```{r limpando_stat_municipios}
 rm(stat_Maior_30)
 rm(stat_Menor_30)
+rm(stat_Maior_30_SAFRA)
 ```
 
 
@@ -197,6 +199,7 @@ rm(stat_Menor_30)
 
 ```{r municipios_mais_30 }
 Proagro_soja_mun <- Proagro_soja_mun[Proagro_soja_mun$Pelo_Menos_30,]
+Proagro_soja_mun_geral <- Proagro_soja_mun_geral[Proagro_soja_mun_geral$Pelo_Menos_30,]
 Proagro_soja_mun_safra <- Proagro_soja_mun[Proagro_soja_mun_safra$Pelo_Menos_30,]
 ```
 
@@ -204,12 +207,12 @@ Proagro_soja_mun_safra <- Proagro_soja_mun[Proagro_soja_mun_safra$Pelo_Menos_30,
 ### Valor Total Médio
 
 ```{r valor_total_medio}
-ggplot(Proagro_soja_mun) +
+ggplot(Proagro_soja_mun_geral) +
  aes(x = VL_TOTAL_Medio_Defl) +
  geom_histogram(bins = 30L, fill = "#0c4c8a") +
  theme_minimal()
 
-print(descr(Proagro_soja_mun$VL_TOTAL_Medio_Defl, headings = FALSE), method = "render", headings = FALSE)
+print(descr(Proagro_soja_mun_geral$VL_TOTAL_Medio_Defl, headings = FALSE), method = "render", headings = FALSE)
 ```
 
 
@@ -217,14 +220,60 @@ print(descr(Proagro_soja_mun$VL_TOTAL_Medio_Defl, headings = FALSE), method = "r
 ### Prêmio Médio
 
 ```{r premio_medio}
-ggplot(Proagro_soja_mun) +
+ggplot(Proagro_soja_mun_geral) +
  aes(x = Premio_Liquido_Medio_Defl ) +
  geom_histogram(bins = 30L, fill = "#0c4c8a") +
  theme_minimal()
 
-print(descr(Proagro_soja_mun$Premio_Liquido_Medio_Defl, headings = FALSE), method = "render", headings = FALSE)
+print(descr(Proagro_soja_mun_geral$Premio_Liquido_Medio_Defl, headings = FALSE), method = "render", headings = FALSE)
+```
+
+
+
+### Valor Total Médio Deflacionado por Área
+
+```{r valor_medio_defl_area}
+ggplot(Proagro_soja_mun_geral) +
+ aes(x = VL_TOTAL_Medio_Area_Defl ) +
+ geom_histogram(bins = 30L, fill = "#0c4c8a") +
+ theme_minimal()
+
+print(descr(Proagro_soja_mun_geral$VL_TOTAL_Medio_Area_Defl, headings = FALSE), method = "render", headings = FALSE)
+```
+
+
+
+### Prêmio Médio Deflacionado por Área
+
+```{r premio_medio_defl_area}
+ggplot(Proagro_soja_mun_geral) +
+ aes(x = Premio_Area_Defl ) +
+ geom_histogram(bins = 30L, fill = "#0c4c8a") +
+ theme_minimal()
+
+print(descr(Proagro_soja_mun_geral$Premio_Area_Defl, headings = FALSE), method = "render", headings = FALSE)
 ```
 
 
 
 
+### Qtd Sinistros Deferidos/Qtd Total
+
+```{r qtd_sinistros_qt_total}
+ggplot(Proagro_soja_mun_geral) +
+ aes(x = INDICE_SINISTRO_QTD ) +
+ geom_histogram(bins = 30L, fill = "#0c4c8a") +
+ theme_minimal()
+
+print(descr(Proagro_soja_mun_geral$INDICE_SINISTRO_QTD, headings = FALSE), method = "render", headings = FALSE)
+
+```
+
+
+```{r qtd_sinistros_pie_chart}
+Proagro_soja_mun_geral
+
+
+
+
+```

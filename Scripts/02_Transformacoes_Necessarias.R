@@ -122,6 +122,51 @@ Cont_Seg_Safra <- Cont_Seg_Safra[!(Cont_Seg_Safra$Cod_Municipio %in% menos_30_em
 
 
 
+
+#Proagro - Agrupando Municipio Produto - Geral
+Proagro_soja_mun_geral <- data_Proagro %>% 
+  filter(Produto_Padronizado == "SOJA", SAFRA != '2019/2020') %>% 
+  group_by(Cod_Municipio, Produto_Padronizado) %>% 
+  summarise(
+    num_seguros = sum(QT_ENQ),
+    NR_AREA_TOTAL = sum(AREA),
+    VL_FIN = sum(VL_FIN),                                          #valor financiado
+    VL_RECP = sum(VL_RECP),                                        #recursos próprios
+    VL_INV = sum(VL_INV),                                          #parcela do investimento
+    VL_GRM = sum(VL_GRM),                                          #reda mínima
+    VL_TOTAL = sum(VL_TOT),                                        #Valor total
+    VL_TOTAL_deflacionado = sum(VL_TOTAL_deflacionado),            #Valor total deflacionado 
+    VL_Premio_Deflacionado = sum(VL_Premio_Deflacionado),          #Valor do adicional deflacionado  
+    VL_Premio = sum(VL_ADIC),
+    VL_SUBVENCAO_FEDERAL = 0,
+    RECEITA_ESTIMADA = sum(RBE),
+    QT_SINISTROS = sum(QT_COB_DEF),
+    VL_SINISTROS = sum(VL_COB_DEF),
+    VL_SINISTROS_Deflacionado = sum(VL_COB_DEF_Deflacionado)
+  )
+Proagro_soja_mun_geral$Area_Media                 = Proagro_soja_mun_geral$NR_AREA_TOTAL/Proagro_soja_mun_geral$num_seguros
+Proagro_soja_mun_geral$VL_TOTAL_Medio             = Proagro_soja_mun_geral$VL_TOTAL/Proagro_soja_mun_geral$num_seguros
+Proagro_soja_mun_geral$VL_TOTAL_Medio_Defl        = Proagro_soja_mun_geral$VL_TOTAL_deflacionado/Proagro_soja_mun_geral$num_seguros
+Proagro_soja_mun_geral$Subvencao_Media            = Proagro_soja_mun_geral$VL_SUBVENCAO_FEDERAL/Proagro_soja_mun_geral$num_seguros
+Proagro_soja_mun_geral$Receita_Media              = Proagro_soja_mun_geral$RECEITA_ESTIMADA/Proagro_soja_mun_geral$num_seguros
+Proagro_soja_mun_geral$VL_TOTAL_Medio_Area        = Proagro_soja_mun_geral$VL_TOTAL/Proagro_soja_mun_geral$NR_AREA_TOTAL
+Proagro_soja_mun_geral$VL_TOTAL_Medio_Area_Defl   = Proagro_soja_mun_geral$VL_TOTAL_deflacionado/Proagro_soja_mun_geral$NR_AREA_TOTAL
+Proagro_soja_mun_geral$Premio_Liquido_Medio       = Proagro_soja_mun_geral$VL_Premio/Proagro_soja_mun_geral$num_seguros
+Proagro_soja_mun_geral$Premio_Area                = Proagro_soja_mun_geral$VL_Premio/Proagro_soja_mun_geral$NR_AREA_TOTAL
+Proagro_soja_mun_geral$Premio_Liquido_Medio_Defl  = Proagro_soja_mun_geral$VL_Premio_Deflacionado/Proagro_soja_mun_geral$num_seguros
+Proagro_soja_mun_geral$Premio_Area_Defl           = Proagro_soja_mun_geral$VL_Premio_Deflacionado/Proagro_soja_mun_geral$NR_AREA_TOTAL
+Proagro_soja_mun_geral$INDICE_SINISTRO_QTD        = Proagro_soja_mun_geral$QT_SINISTROS/Proagro_soja_mun_geral$num_seguros
+Proagro_soja_mun_geral$VL_SINISTRO_MEDIO          = Proagro_soja_mun_geral$VL_SINISTROS/Proagro_soja_mun_geral$QT_SINISTROS
+Proagro_soja_mun_geral$VL_SINISTRO_MEDIO_Defl     = Proagro_soja_mun_geral$VL_SINISTROS_Deflacionado/Proagro_soja_mun_geral$QT_SINISTROS
+Proagro_soja_mun_geral$SINISTRALIDADE_Defl        = Proagro_soja_mun_geral$VL_SINISTROS_Deflacionado/Proagro_soja_mun_geral$num_seguros
+Proagro_soja_mun_geral$INDICE_SINISTRO_VALOR      = Proagro_soja_mun_geral$VL_SINISTROS/Proagro_soja_mun_geral$VL_TOTAL
+Proagro_soja_mun_geral$INDICE_SINISTRO_VALOR_Defl = Proagro_soja_mun_geral$VL_SINISTROS_Deflacionado/Proagro_soja_mun_geral$VL_TOTAL_deflacionado
+Proagro_soja_mun_geral$Tipo                     = "Proagro"
+Proagro_soja_mun_geral$Pelo_Menos_30 <- Proagro_soja_mun_geral$Cod_Municipio %in% Cont_Seg_Safra$Cod_Municipio
+
+
+
+
 #Proagro - Agrupando Municipio Produto
 Proagro_soja_mun <- data_Proagro %>% 
   filter(Produto_Padronizado == "SOJA", SAFRA != '2019/2020') %>% 
