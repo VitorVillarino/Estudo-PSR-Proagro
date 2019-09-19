@@ -271,7 +271,64 @@ print(descr(Proagro_soja_mun_geral$INDICE_SINISTRO_QTD, headings = FALSE), metho
 
 
 ```{r qtd_sinistros_pie_chart}
-Proagro_soja_mun_geral
+qtd_sinistros <-  Proagro_soja_mun_geral %>% 
+  group_by() %>% 
+  summarise(
+    num_mun = n(),
+    num_mun_com_sinistro = sum(QT_SINISTROS != 0),
+    num_mun_sem_sinistro = sum(QT_SINISTROS == 0),
+    num_seguros = sum(num_seguros),
+    num_sinistros = sum(QT_SINISTROS)
+  )
+
+
+df <- data.frame(
+    qtd = c(qtd_sinistros$num_mun_com_sinistro,qtd_sinistros$num_mun_sem_sinistro),
+    prop = c(100*qtd_sinistros$num_mun_com_sinistro/qtd_sinistros$num_mun,100*qtd_sinistros$num_mun_sem_sinistro/qtd_sinistros$num_mun)
+    )
+
+ggplot(df, aes(x="", y = qtd, fill = c("Municipios com Sinistro", "Municipios sem Sinistro"))) +  
+    geom_bar(stat="identity", width = 1, color = "white") +
+    coord_polar("y", start=0) + 
+    geom_text(aes(label = paste0(round(prop,2), "%")), position = position_stack(vjust = 0.5), color = "white") +
+    labs(x = NULL, y = NULL, fill = NULL, title = "Distribuição de Empréstimos por Status") + 
+    theme_void()
+
+
+
+
+
+
+```
+
+
+
+```{r qtd_sinistros_qt_total_sem_zero}
+Proagro_soja_mun_geral[Proagro_soja_mun_geral$INDICE_SINISTRO_QTD > 0,] %>% 
+ggplot() +
+ aes(x = INDICE_SINISTRO_QTD ) +
+ geom_histogram(bins = 30L, fill = "#0c4c8a") +
+ theme_minimal()
+
+
+print(descr(Proagro_soja_mun_geral[Proagro_soja_mun_geral$INDICE_SINISTRO_QTD > 0,"INDICE_SINISTRO_QTD"], headings = FALSE), method = "render", headings = FALSE)
+
+```
+
+
+
+```{r qtd_sinistros_pie_chart}
+qtd_sinistros <- 
+  
+  Proagro_soja_mun_geral %>% 
+  group_by() %>% 
+  summarise(
+    num_mun = n(),
+    num_mun_com_sinistro = sum(QT_SINISTROS != 0),
+    num_mun_sem_sinistro = sum(QT_SINISTROS == 0),
+    num_seguros = sum(num_seguros),
+    num_sinistros = sum(QT_SINISTROS)
+  )
 
 
 
