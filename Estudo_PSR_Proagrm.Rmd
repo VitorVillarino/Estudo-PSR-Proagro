@@ -282,21 +282,33 @@ qtd_sinistros <-  Proagro_soja_mun_geral %>%
   )
 
 
-df <- data.frame(
+data.frame(
     qtd = c(qtd_sinistros$num_mun_com_sinistro,qtd_sinistros$num_mun_sem_sinistro),
     prop = c(100*qtd_sinistros$num_mun_com_sinistro/qtd_sinistros$num_mun,100*qtd_sinistros$num_mun_sem_sinistro/qtd_sinistros$num_mun)
-    )
-
-ggplot(df, aes(x="", y = qtd, fill = c("Municipios com Sinistro", "Municipios sem Sinistro"))) +  
+    ) %>% 
+ggplot(aes(x="", y = qtd, fill = c("Municipios com Sinistro", "Municipios sem Sinistro"))) +  
     geom_bar(stat="identity", width = 1, color = "white") +
     coord_polar("y", start=0) + 
     geom_text(aes(label = paste0(round(prop,2), "%")), position = position_stack(vjust = 0.5), color = "white") +
-    labs(x = NULL, y = NULL, fill = NULL, title = "Distribuição de Empréstimos por Status") + 
+    labs(x = NULL, y = NULL, fill = NULL, title = "Distribuição de Municípios com e sem Sinistro") + 
     theme_void()
 
 
 
 
+data.frame(
+    qtd = c(qtd_sinistros$num_sinistros,qtd_sinistros$num_seguros),
+    prop = c(100*qtd_sinistros$num_sinistros/qtd_sinistros$num_seguros,100*(qtd_sinistros$num_seguros - qtd_sinistros$num_sinistros)/qtd_sinistros$num_seguros)
+    ) %>% 
+ggplot(aes(x="", y = qtd, fill = c("Seguros com Sinistro", "Seguros sem Sinistro"))) +  
+    geom_bar(stat="identity", width = 1, color = "white") +
+    coord_polar("y", start=0) + 
+    geom_text(aes(label = paste0(round(prop,2), "%")), position = position_stack(vjust = 0.5), color = "white") +
+    labs(x = NULL, y = NULL, fill = NULL, title = "Distribuição de Seguros") + 
+    theme_void()
+
+
+rm(qtd_sinistros)
 
 
 ```
@@ -317,11 +329,207 @@ print(descr(Proagro_soja_mun_geral[Proagro_soja_mun_geral$INDICE_SINISTRO_QTD > 
 
 
 
-```{r qtd_sinistros_pie_chart}
-qtd_sinistros <- 
-  
-  Proagro_soja_mun_geral %>% 
-  group_by() %>% 
+
+### Sinistros Deflacionado Médio
+
+```{r qtd_sinistros_defl_medio_geral}
+ggplot(Proagro_soja_mun_geral) +
+ aes(x = VL_SINISTRO_MEDIO_Defl ) +
+ geom_histogram(bins = 30L, fill = "#0c4c8a") +
+ theme_minimal()
+
+print(descr(Proagro_soja_mun_geral$VL_SINISTRO_MEDIO_Defl, headings = FALSE), method = "render", headings = FALSE)
+
+```
+
+
+
+
+### Sinistralidade (Valor Total Sinistro/Qtd Total)
+
+```{r sinistralidae_defl_geral}
+ggplot(Proagro_soja_mun_geral) +
+ aes(x = SINISTRALIDADE_Defl ) +
+ geom_histogram(bins = 30L, fill = "#0c4c8a") +
+ theme_minimal()
+
+print(descr(Proagro_soja_mun_geral$SINISTRALIDADE_Defl, headings = FALSE), method = "render", headings = FALSE)
+
+```
+
+
+
+```{r sinistralidae_defl_geral_sem_zero}
+Proagro_soja_mun_geral[Proagro_soja_mun_geral$SINISTRALIDADE_Defl > 0,] %>% 
+ggplot() +
+ aes(x = SINISTRALIDADE_Defl ) +
+ geom_histogram(bins = 30L, fill = "#0c4c8a") +
+ theme_minimal()
+
+
+print(descr(Proagro_soja_mun_geral[Proagro_soja_mun_geral$SINISTRALIDADE_Defl > 0,"SINISTRALIDADE_Defl"], headings = FALSE), method = "render", headings = FALSE)
+
+```
+
+
+
+### Valor Total Sinistro/Valor Total
+
+
+
+
+
+
+## Proagro 
+
+
+### Valor Total Médio
+
+```{r valor_medio_proagro}
+ggplot(Proagro_soja_mun) +
+ aes(x = VL_TOTAL_Medio_Defl, fill = TP_SEGURO) +
+ geom_histogram(bins = 30L) +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+
+
+ggplot(Proagro_soja_mun) +
+ aes(x = "", y = VL_TOTAL_Medio_Defl, fill = TP_SEGURO) +
+ geom_boxplot() +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+
+
+
+stby(data = Proagro_soja_mun$VL_TOTAL_Medio_Defl, 
+     INDICES = Proagro_soja_mun$PROGRAMA, 
+     FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
+
+
+```
+
+
+
+
+### Prêmio Médio
+
+```{r premio_medio_proagro}
+ggplot(Proagro_soja_mun) +
+ aes(x = Premio_Liquido_Medio_Defl , fill = TP_SEGURO) +
+ geom_histogram(bins = 30L) +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+
+
+ggplot(Proagro_soja_mun) +
+ aes(x = "", y = Premio_Liquido_Medio_Defl, fill = TP_SEGURO) +
+ geom_boxplot() +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+
+
+
+stby(data = Proagro_soja_mun$Premio_Liquido_Medio_Defl, 
+     INDICES = Proagro_soja_mun$PROGRAMA, 
+     FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
+
+```
+
+
+
+
+### Valor Total Médio Deflacionado por Área
+
+```{r valor_medio_area_proagro}
+ggplot(Proagro_soja_mun) +
+ aes(x = VL_TOTAL_Medio_Area_Defl , fill = TP_SEGURO) +
+ geom_histogram(bins = 30L) +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+
+
+ggplot(Proagro_soja_mun) +
+ aes(x = "", y = VL_TOTAL_Medio_Area_Defl, fill = TP_SEGURO) +
+ geom_boxplot() +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+
+
+
+stby(data = Proagro_soja_mun$VL_TOTAL_Medio_Area_Defl, 
+     INDICES = Proagro_soja_mun$PROGRAMA, 
+     FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
+
+```
+
+
+
+### Prêmio Médio Deflacionado por Área
+
+```{r premio_medio_area_proagro}
+ggplot(Proagro_soja_mun) +
+ aes(x = Premio_Area_Defl , fill = TP_SEGURO) +
+ geom_histogram(bins = 30L) +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+
+
+ggplot(Proagro_soja_mun) +
+ aes(x = "", y = Premio_Area_Defl, fill = TP_SEGURO) +
+ geom_boxplot() +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+
+
+
+stby(data = Proagro_soja_mun$Premio_Area_Defl, 
+     INDICES = Proagro_soja_mun$PROGRAMA, 
+     FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
+
+
+
+```
+
+
+
+### Qtd Sinistros/Qtd Total
+
+```{r indice_sinistro_proagro}
+ggplot(Proagro_soja_mun) +
+ aes(x = INDICE_SINISTRO_QTD, fill = TP_SEGURO) +
+ geom_histogram(bins = 30L) +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+
+
+ggplot(Proagro_soja_mun) +
+ aes(x = "", y = INDICE_SINISTRO_QTD, fill = TP_SEGURO) +
+ geom_boxplot() +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+
+
+
+stby(data = Proagro_soja_mun$INDICE_SINISTRO_QTD, 
+     INDICES = Proagro_soja_mun$PROGRAMA, 
+     FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
+
+```
+
+
+```{r qtd_sinistros_pie_chart_proagro}
+qtd_sinistros <-  Proagro_soja_mun %>% 
+  group_by(PROGRAMA) %>% 
   summarise(
     num_mun = n(),
     num_mun_com_sinistro = sum(QT_SINISTROS != 0),
@@ -331,6 +539,248 @@ qtd_sinistros <-
   )
 
 
+qtd_sinistros_PRONAF <- qtd_sinistros[qtd_sinistros$PROGRAMA == "PRONAF",]
+qtd_sinistros_PRONAMP <- qtd_sinistros[qtd_sinistros$PROGRAMA == "PRONAMP",]
+qtd_sinistros_SemPrograma <- qtd_sinistros[qtd_sinistros$PROGRAMA == "SEM PROGRAMA",]
 
+
+data.frame(
+    qtd = c(qtd_sinistros_PRONAF$num_mun_com_sinistro,qtd_sinistros_PRONAF$num_mun_sem_sinistro),
+    prop = c(100*qtd_sinistros_PRONAF$num_mun_com_sinistro/qtd_sinistros_PRONAF$num_mun,100*qtd_sinistros_PRONAF$num_mun_sem_sinistro/qtd_sinistros_PRONAF$num_mun)
+    ) %>% 
+ggplot(aes(x="", y = qtd, fill = c("Municipios com Sinistro", "Municipios sem Sinistro"))) +  
+    geom_bar(stat="identity", width = 1, color = "white") +
+    coord_polar("y", start=0) + 
+    geom_text(aes(label = paste0(round(prop,2), "%")), position = position_stack(vjust = 0.5), color = "white") +
+    labs(x = NULL, y = NULL, fill = NULL, title = "Distribuição de Municípios com e sem Sinistro - PRONAF") + 
+    theme_void()
+
+
+data.frame(
+    qtd = c(qtd_sinistros_PRONAF$num_sinistros,qtd_sinistros_PRONAF$num_seguros),
+    prop = c(100*qtd_sinistros_PRONAF$num_sinistros/qtd_sinistros_PRONAF$num_seguros,100*(qtd_sinistros_PRONAF$num_seguros - qtd_sinistros_PRONAF$num_sinistros)/qtd_sinistros_PRONAF$num_seguros)
+    ) %>% 
+ggplot(aes(x="", y = qtd, fill = c("Seguros com Sinistro", "Seguros sem Sinistro"))) +  
+    geom_bar(stat="identity", width = 1, color = "white") +
+    coord_polar("y", start=0) + 
+    geom_text(aes(label = paste0(round(prop,2), "%")), position = position_stack(vjust = 0.5), color = "white") +
+    labs(x = NULL, y = NULL, fill = NULL, title = "Distribuição de Seguros - PRONAF") + 
+    theme_void()
+
+
+
+
+data.frame(
+    qtd = c(qtd_sinistros_PRONAMP$num_mun_com_sinistro,qtd_sinistros_PRONAMP$num_mun_sem_sinistro),
+    prop = c(100*qtd_sinistros_PRONAMP$num_mun_com_sinistro/qtd_sinistros_PRONAMP$num_mun,100*qtd_sinistros_PRONAMP$num_mun_sem_sinistro/qtd_sinistros_PRONAMP$num_mun)
+    ) %>% 
+ggplot(aes(x="", y = qtd, fill = c("Municipios com Sinistro", "Municipios sem Sinistro"))) +  
+    geom_bar(stat="identity", width = 1, color = "white") +
+    coord_polar("y", start=0) + 
+    geom_text(aes(label = paste0(round(prop,2), "%")), position = position_stack(vjust = 0.5), color = "white") +
+    labs(x = NULL, y = NULL, fill = NULL, title = "Distribuição de Municípios com e sem Sinistro - PRONAMP") + 
+    theme_void()
+
+
+data.frame(
+    qtd = c(qtd_sinistros_PRONAMP$num_sinistros,qtd_sinistros_PRONAMP$num_seguros),
+    prop = c(100*qtd_sinistros_PRONAMP$num_sinistros/qtd_sinistros_PRONAMP$num_seguros,100*(qtd_sinistros_PRONAMP$num_seguros - qtd_sinistros_PRONAMP$num_sinistros)/qtd_sinistros_PRONAMP$num_seguros)
+    ) %>% 
+ggplot(aes(x="", y = qtd, fill = c("Seguros com Sinistro", "Seguros sem Sinistro"))) +  
+    geom_bar(stat="identity", width = 1, color = "white") +
+    coord_polar("y", start=0) + 
+    geom_text(aes(label = paste0(round(prop,2), "%")), position = position_stack(vjust = 0.5), color = "white") +
+    labs(x = NULL, y = NULL, fill = NULL, title = "Distribuição de Seguros - PRONAMP") + 
+    theme_void()
+
+
+
+data.frame(
+    qtd = c(qtd_sinistros_SemPrograma$num_mun_com_sinistro,qtd_sinistros_SemPrograma$num_mun_sem_sinistro),
+    prop = c(100*qtd_sinistros_SemPrograma$num_mun_com_sinistro/qtd_sinistros_SemPrograma$num_mun,100*qtd_sinistros_SemPrograma$num_mun_sem_sinistro/qtd_sinistros_SemPrograma$num_mun)
+    ) %>% 
+ggplot(aes(x="", y = qtd, fill = c("Municipios com Sinistro", "Municipios sem Sinistro"))) +  
+    geom_bar(stat="identity", width = 1, color = "white") +
+    coord_polar("y", start=0) + 
+    geom_text(aes(label = paste0(round(prop,2), "%")), position = position_stack(vjust = 0.5), color = "white") +
+    labs(x = NULL, y = NULL, fill = NULL, title = "Distribuição de Municípios com e sem Sinistro - SEM PROGRAMA") + 
+    theme_void()
+
+
+data.frame(
+    qtd = c(qtd_sinistros_SemPrograma$num_sinistros,qtd_sinistros_SemPrograma$num_seguros),
+    prop = c(100*qtd_sinistros_SemPrograma$num_sinistros/qtd_sinistros_SemPrograma$num_seguros,100*(qtd_sinistros_SemPrograma$num_seguros - qtd_sinistros_SemPrograma$num_sinistros)/qtd_sinistros_SemPrograma$num_seguros)
+    ) %>% 
+ggplot(aes(x="", y = qtd, fill = c("Seguros com Sinistro", "Seguros sem Sinistro"))) +  
+    geom_bar(stat="identity", width = 1, color = "white") +
+    coord_polar("y", start=0) + 
+    geom_text(aes(label = paste0(round(prop,2), "%")), position = position_stack(vjust = 0.5), color = "white") +
+    labs(x = NULL, y = NULL, fill = NULL, title = "Distribuição de Seguros - SEM PROGRAMA") + 
+    theme_void()
+
+
+rm(qtd_sinistros)
+rm(qtd_sinistros_PRONAF)
+rm(qtd_sinistros_PRONAMP)
+rm(qtd_sinistros_SemPrograma)
 
 ```
+
+
+
+```{r qtd_sinistros_qt_total_sem_zero_proagro}
+ggplot(Proagro_soja_mun[Proagro_soja_mun$INDICE_SINISTRO_QTD > 0,]) +
+ aes(x = INDICE_SINISTRO_QTD, fill = TP_SEGURO) +
+ geom_histogram(bins = 30L) +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+
+
+ggplot(Proagro_soja_mun[Proagro_soja_mun$INDICE_SINISTRO_QTD > 0,]) +
+ aes(x = "", y = INDICE_SINISTRO_QTD, fill = TP_SEGURO) +
+ geom_boxplot() +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+
+stby(data = Proagro_soja_mun[Proagro_soja_mun$INDICE_SINISTRO_QTD > 0, "INDICE_SINISTRO_QTD"], 
+     INDICES = Proagro_soja_mun[Proagro_soja_mun$INDICE_SINISTRO_QTD > 0, "PROGRAMA"], 
+     FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
+
+```
+
+
+
+
+### Sinistro Médio
+
+```{r sinistro_medio_proagro}
+ggplot(Proagro_soja_mun) +
+ aes(x = VL_SINISTRO_MEDIO_Defl , fill = TP_SEGURO) +
+ geom_histogram(bins = 30L) +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+
+
+ggplot(Proagro_soja_mun) +
+ aes(x = "", y = VL_SINISTRO_MEDIO_Defl, fill = TP_SEGURO) +
+ geom_boxplot() +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+
+
+
+stby(data = Proagro_soja_mun$VL_SINISTRO_MEDIO_Defl, 
+     INDICES = Proagro_soja_mun$PROGRAMA, 
+     FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
+
+```
+
+
+
+### Sinistralidade (Valor Total Sinistro/Qtd Total)
+
+```{r sinistralidade_proagro}
+ggplot(Proagro_soja_mun) +
+ aes(x = SINISTRALIDADE_Defl, fill = TP_SEGURO) +
+ geom_histogram(bins = 30L) +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+
+
+ggplot(Proagro_soja_mun) +
+ aes(x = "", y = SINISTRALIDADE_Defl, fill = TP_SEGURO) +
+ geom_boxplot() +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+
+
+
+stby(data = Proagro_soja_mun$SINISTRALIDADE_Defl, 
+     INDICES = Proagro_soja_mun$PROGRAMA, 
+     FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
+
+```
+
+
+
+
+```{r sinistralidade_sem_zero_proagro}
+ggplot(Proagro_soja_mun[Proagro_soja_mun$SINISTRALIDADE_Defl > 0,]) +
+ aes(x = INDICE_SINISTRO_QTD, fill = TP_SEGURO) +
+ geom_histogram(bins = 30L) +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+
+
+ggplot(Proagro_soja_mun[Proagro_soja_mun$SINISTRALIDADE_Defl > 0,]) +
+ aes(x = "", y = INDICE_SINISTRO_QTD, fill = TP_SEGURO) +
+ geom_boxplot() +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+
+stby(data = Proagro_soja_mun[Proagro_soja_mun$SINISTRALIDADE_Defl > 0, "INDICE_SINISTRO_QTD"], 
+     INDICES = Proagro_soja_mun[Proagro_soja_mun$SINISTRALIDADE_Defl > 0, "PROGRAMA"], 
+     FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
+
+```
+
+
+
+
+
+### Valor Total Sinistro / Valor Total
+
+```{r indice_sinistro_valor_proagro}
+
+ggplot(Proagro_soja_mun) +
+ aes(x = INDICE_SINISTRO_VALOR_Defl, fill = TP_SEGURO) +
+ geom_histogram(bins = 30L) +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+
+
+ggplot(Proagro_soja_mun) +
+ aes(x = "", y = INDICE_SINISTRO_VALOR_Defl, fill = TP_SEGURO) +
+ geom_boxplot() +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+
+
+
+stby(data = Proagro_soja_mun$INDICE_SINISTRO_VALOR_Defl, 
+     INDICES = Proagro_soja_mun$PROGRAMA, 
+     FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
+```
+
+```{r indice_sinistro_valor_sem_zero_proagro}
+ggplot(Proagro_soja_mun[Proagro_soja_mun$INDICE_SINISTRO_VALOR_Defl > 0,]) +
+ aes(x = INDICE_SINISTRO_QTD, fill = TP_SEGURO) +
+ geom_histogram(bins = 30L) +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+
+
+ggplot(Proagro_soja_mun[Proagro_soja_mun$INDICE_SINISTRO_VALOR_Defl > 0,]) +
+ aes(x = "", y = INDICE_SINISTRO_QTD, fill = TP_SEGURO) +
+ geom_boxplot() +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+
+stby(data = Proagro_soja_mun[Proagro_soja_mun$INDICE_SINISTRO_VALOR_Defl > 0, "INDICE_SINISTRO_QTD"], 
+     INDICES = Proagro_soja_mun[Proagro_soja_mun$INDICE_SINISTRO_VALOR_Defl > 0, "PROGRAMA"], 
+     FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
+
+```
+
