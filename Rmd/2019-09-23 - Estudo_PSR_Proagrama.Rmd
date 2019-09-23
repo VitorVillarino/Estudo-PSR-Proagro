@@ -200,13 +200,37 @@ rm(stat_Maior_30_SAFRA)
 ```{r municipios_mais_30 }
 Proagro_soja_mun <- Proagro_soja_mun[Proagro_soja_mun$Pelo_Menos_30,]
 Proagro_soja_mun_geral <- Proagro_soja_mun_geral[Proagro_soja_mun_geral$Pelo_Menos_30,]
-Proagro_soja_mun_safra <- Proagro_soja_mun_safra[Proagro_soja_mun_safra$Pelo_Menos_30,]
+Proagro_soja_mun_safra <- Proagro_soja_mun[Proagro_soja_mun_safra$Pelo_Menos_30,]
 ```
 
-### Valor Total Médio por Área
 
-O Valor Médio por Área dos contratos do Proagro é de 1656.69, porém temos 2 municípios com valores muito baixos: Aratiba(RS) e Constantina(RS).
+### Valor Total Médio
 
+```{r valor_total_medio}
+ggplot(Proagro_soja_mun_geral) +
+ aes(x = VL_TOTAL_Medio_Defl) +
+ geom_histogram(bins = 30L, fill = "#0c4c8a") +
+ theme_minimal()
+
+print(descr(Proagro_soja_mun_geral$VL_TOTAL_Medio_Defl, headings = FALSE), method = "render", headings = FALSE)
+```
+
+
+
+### Prêmio Médio
+
+```{r premio_medio}
+ggplot(Proagro_soja_mun_geral) +
+ aes(x = Premio_Liquido_Medio_Defl ) +
+ geom_histogram(bins = 30L, fill = "#0c4c8a") +
+ theme_minimal()
+
+print(descr(Proagro_soja_mun_geral$Premio_Liquido_Medio_Defl, headings = FALSE), method = "render", headings = FALSE)
+```
+
+
+
+### Valor Total Médio Deflacionado por Área
 
 ```{r valor_medio_defl_area}
 ggplot(Proagro_soja_mun_geral) +
@@ -215,20 +239,6 @@ ggplot(Proagro_soja_mun_geral) +
  theme_minimal()
 
 print(descr(Proagro_soja_mun_geral$VL_TOTAL_Medio_Area_Defl, headings = FALSE), method = "render", headings = FALSE)
-```
-
-
-Para estes dois municípios acredito que tenha havido algum tipo de erro. Em uma das safras Constantina teve uma área toal mais de 10x maior que os outros anos.
-
-```{r erros_valor_medio_defl_area}
-Proagro_soja_mun_safra[Proagro_soja_mun_safra$Nome_Município == "Constantina", c("SAFRA", "PROGRAMA","TP_SEGURO","num_seguros","NR_AREA_TOTAL", "VL_TOTAL_deflacionado","VL_TOTAL_Medio_Area_Defl")] %>%
-arrange(SAFRA,PROGRAMA) %>% 
- kable(caption = "Seguros Constantina") %>% kable_styling(full_width = F)
-
-Proagro_soja_mun_safra[Proagro_soja_mun_safra$Nome_Município == "Aratiba", c("SAFRA", "PROGRAMA","TP_SEGURO","num_seguros","NR_AREA_TOTAL", "VL_TOTAL_deflacionado","VL_TOTAL_Medio_Area_Defl")] %>%
-  arrange(SAFRA,PROGRAMA) %>% 
- kable(caption = "Seguros Aratiba") %>% kable_styling(full_width = F)
-
 ```
 
 
