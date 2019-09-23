@@ -218,7 +218,7 @@ print(descr(Proagro_soja_mun_geral$VL_TOTAL_Medio_Area_Defl, headings = FALSE), 
 ```
 
 
-Para estes dois municípios acredito que tenha havido algum tipo de erro. Em uma das safras Constantina teve uma área toal mais de 10x maior que os outros anos.
+Para estes dois municípios acredito que tenha havido algum tipo de erro. Em uma das safras Constantina teve uma área toal mais de 10x maior que os outros anos e em Aratiba 15x.
 
 ```{r erros_valor_medio_defl_area}
 Proagro_soja_mun_safra[Proagro_soja_mun_safra$Nome_Município == "Constantina", c("SAFRA", "PROGRAMA","TP_SEGURO","num_seguros","NR_AREA_TOTAL", "VL_TOTAL_deflacionado","VL_TOTAL_Medio_Area_Defl")] %>%
