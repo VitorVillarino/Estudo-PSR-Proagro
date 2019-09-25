@@ -27,16 +27,11 @@ st_options(plain.ascii = FALSE,
            lang = "pt"
 )                                     
 st_css()                              
-
-library(plotly)
-Sys.setenv("plotly_username"="vitor.villarino")
-Sys.setenv("plotly_api_key"="y0rnl3Lz27XieNizsxmZ")
-
-
 library(tidyverse)
 library(pander)
 library(knitr)
 library(kableExtra)
+source("./Scripts/Function_Mapas.R", encoding = "UTF-8")
 
 ```
 
@@ -44,8 +39,9 @@ library(kableExtra)
 ```{r load_data, include=FALSE}
 # source("./Scripts/01_Load_Data.R", encoding = "UTF-8")
 # source("./Scripts/02_Transformacoes_Necessarias.R", encoding = "UTF-8")
-# save.image(file='myEnvironment.RData')
-load('myEnvironment.RData')
+# save.image(file='environment.RData')
+load('environment.RData')
+
 ```
 
 
@@ -193,8 +189,6 @@ rm(stat_Maior_30_SAFRA)
 
 
 
-
-
 ## Análise 
 
 ```{r municipios_mais_30 }
@@ -231,6 +225,17 @@ Proagro_soja_mun_safra[Proagro_soja_mun_safra$Nome_Município == "Aratiba", c("S
 
 ```
 
+
+
+
+```{r premio_medio_defl_area_mapa}
+plot_map_mun(dados = Proagro_soja_mun_geral, fill_var = "VL_TOTAL_Medio_Area_Defl", mp = (max(Proagro_soja_mun_geral$VL_TOTAL_Medio_Area_Defl) - min(Proagro_soja_mun_geral$VL_TOTAL_Medio_Area_Defl))/2)
+```
+
+test_plot <- PSR_Proagro_lado_lado_mun %>% select(Cod_Municipio,Diferenca_Premio)
+
+test_plot$Plot <- test_plot$Diferenca_Premio
+plot_map_mun(dados = test_plot, "Plot")
 
 
 ### Prêmio Médio Deflacionado por Área

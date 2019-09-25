@@ -256,16 +256,12 @@ Proagro_soja_mun_safra$Pelo_Menos_30 <- Proagro_soja_mun_safra$Cod_Municipio %in
 
 
 
-
-
-
-
+#Transformando em Numeric
+Proagro_soja_mun_geral$Cod_Municipio <- as.numeric(Proagro_soja_mun_geral$Cod_Municipio)
+Proagro_soja_mun_safra$Cod_Municipio <- as.numeric(Proagro_soja_mun_safra$Cod_Municipio)
+Proagro_soja_mun$Cod_Municipio <- as.numeric(Proagro_soja_mun$Cod_Municipio)
+municipios$Cod_Municipio <- as.numeric(municipios$Cod_Municipio)
 
 
 #limpando as variáveis
 rm(menos_30_em_alguma_safra)
-
-
-
-
-
