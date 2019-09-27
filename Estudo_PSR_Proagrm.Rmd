@@ -2,7 +2,8 @@
 title: "Estudo Proagro"
 author: "Vitor Villarino"
 date: "03/09/2019"
-output: html_document
+output:
+  html_document: default
 ---
 
 
@@ -31,8 +32,7 @@ library(tidyverse)
 library(pander)
 library(knitr)
 library(kableExtra)
-source("./Scripts/Function_Mapas.R", encoding = "UTF-8")
-
+library(brazilmaps)
 ```
 
 
@@ -40,8 +40,50 @@ source("./Scripts/Function_Mapas.R", encoding = "UTF-8")
 # source("./Scripts/01_Load_Data.R", encoding = "UTF-8")
 # source("./Scripts/02_Transformacoes_Necessarias.R", encoding = "UTF-8")
 # save.image(file='environment.RData')
-load('environment.RData')
 
+load('environment.RData')
+x <- get_brmap("City") %>% 
+  left_join(Proagro_soja_mun_geral, c("City" = "Cod_Municipio"))
+```
+
+```{r}
+#https://pt.stackoverflow.com/questions/332053/r-mapa-de-cidades-brasileiras
+
+ibrary(ggplot2)
+
+shpMun <- rgdal::readOGR('./shapefiles', 'municipios')
+mapaMun <- fortify(shpMun, region = 'GEOCODE')
+
+shpUFs <- rgdal::readOGR('./shapefiles', 'ufs')
+
+# Simulando as informações de cooperativas
+dadosCoop <- data.frame(
+  GEOCODE = shpMun@data$GEOCODE,
+  cooperativas = sample(1:20, length(shpMun@data$GEOCODE), replace = TRUE) )
+#
+
+ggplot(dadosCoop) +
+  geom_map(
+    map = mapaMun,
+    color = 'gray60', size = .1,
+    aes(map_id = GEOCODE, fill = cooperativas)
+  ) +
+  expand_limits(
+    x = mapaMun$long,
+    y = mapaMun$lat
+  ) +
+  scale_fill_gradient(
+    low = 'lightyellow',
+    high = 'darkred'
+  ) +
+  geom_path(
+    data = shpUFs,
+    size = .2,
+    aes(long, lat, group = group)
+  ) +
+  coord_map() +
+  theme_void() +
+  theme(legend.position = c(0.2,0.3))
 ```
 
 
@@ -226,16 +268,11 @@ Proagro_soja_mun_safra[Proagro_soja_mun_safra$Nome_Município == "Aratiba", c("S
 ```
 
 
+```{r valor_medio_defl_area_mapa}
+#plot_map_mun(dados = Proagro_soja_mun_geral, fill_var = "tmap", mp = (max(Proagro_soja_mun_geral$VL_TOTAL_Medio_Area_Defl) - min(Proagro_soja_mun_geral$VL_TOTAL_Medio_Area_Defl))/2)
 
 
-```{r premio_medio_defl_area_mapa}
-plot_map_mun(dados = Proagro_soja_mun_geral, fill_var = "VL_TOTAL_Medio_Area_Defl", mp = (max(Proagro_soja_mun_geral$VL_TOTAL_Medio_Area_Defl) - min(Proagro_soja_mun_geral$VL_TOTAL_Medio_Area_Defl))/2)
 ```
-
-test_plot <- PSR_Proagro_lado_lado_mun %>% select(Cod_Municipio,Diferenca_Premio)
-
-test_plot$Plot <- test_plot$Diferenca_Premio
-plot_map_mun(dados = test_plot, "Plot")
 
 
 ### Prêmio Médio Deflacionado por Área
@@ -250,6 +287,9 @@ print(descr(Proagro_soja_mun_geral$Premio_Area_Defl, headings = FALSE), method =
 ```
 
 
+```{r premio_medio_defl_area_mapa}
+#plot_map_mun(dados = Proagro_soja_mun_geral, fill_var = "VL_TOTAL_Medio_Area_Defl", mp = (max(Proagro_soja_mun_geral$VL_TOTAL_Medio_Area_Defl) - min(Proagro_soja_mun_geral$VL_TOTAL_Medio_Area_Defl))/2)
+```
 
 
 ### Qtd Sinistros Deferidos/Qtd Total
