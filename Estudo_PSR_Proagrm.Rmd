@@ -2,12 +2,47 @@
 title: "Estudo Proagro"
 author: "Vitor Villarino"
 date: "03/09/2019"
-output:
-  html_document: default
+#output:
+#  html_document: default
+output: 
+  rmarkdown::html_vignette:
+    css:
+    - !expr system.file("rmarkdown/templates/html_vignette/resources/vignette.css", package = "rmarkdown")
+vignette: >
+  %\VignetteIndexEntry{Recommendations for Rmarkdown}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 
 ```{r setup, include=FALSE}
+source("./Scripts/Function_Environment.R", encoding = "UTF-8")
+load_environment()
+source("./Scripts/Function_Mapas.R", encoding = "UTF-8") 
+
+plot_maps <- T
+
+library(tidyverse)
+
+library(summarytools)
+# st_options(plain.ascii = FALSE,     
+#            style = "rmarkdown",      
+#            footnote = NA,            
+#            subtitle.emphasis = FALSE,
+#            lang = "pt"
+# )
+
+st_options(bootstrap.css     = FALSE,       # Already part of the theme so no need for it
+           plain.ascii       = FALSE,       # One of the essential settings
+           style             = "rmarkdown", # Idem.
+           lang = "pt",
+           dfSummary.silent  = TRUE,        # Suppresses messages about temporary files
+           footnote          = NA,          # Keeping the results minimalistic
+           subtitle.emphasis = FALSE)       # For the vignette theme, this gives
+                                            # much better results. Your mileage may vary.
+
+library(knitr) 
+library(kableExtra)
 knitr::opts_chunk$set(
   echo = FALSE, 
   message = FALSE, 
@@ -20,70 +55,10 @@ knitr::opts_chunk$set(
   fig.pos='H'
 )
 
-library(summarytools)
-st_options(plain.ascii = FALSE,     
-           style = "rmarkdown",      
-           footnote = NA,            
-           subtitle.emphasis = FALSE,
-           lang = "pt"
-)                                     
+
 st_css()                              
-library(tidyverse)
-library(pander)
-library(knitr)
-library(kableExtra)
-library(brazilmaps)
-```
 
 
-```{r load_data, include=FALSE}
-# source("./Scripts/01_Load_Data.R", encoding = "UTF-8")
-# source("./Scripts/02_Transformacoes_Necessarias.R", encoding = "UTF-8")
-# save.image(file='environment.RData')
-
-load('environment.RData')
-x <- get_brmap("City") %>% 
-  left_join(Proagro_soja_mun_geral, c("City" = "Cod_Municipio"))
-```
-
-```{r}
-#https://pt.stackoverflow.com/questions/332053/r-mapa-de-cidades-brasileiras
-
-ibrary(ggplot2)
-
-shpMun <- rgdal::readOGR('./shapefiles', 'municipios')
-mapaMun <- fortify(shpMun, region = 'GEOCODE')
-
-shpUFs <- rgdal::readOGR('./shapefiles', 'ufs')
-
-# Simulando as informações de cooperativas
-dadosCoop <- data.frame(
-  GEOCODE = shpMun@data$GEOCODE,
-  cooperativas = sample(1:20, length(shpMun@data$GEOCODE), replace = TRUE) )
-#
-
-ggplot(dadosCoop) +
-  geom_map(
-    map = mapaMun,
-    color = 'gray60', size = .1,
-    aes(map_id = GEOCODE, fill = cooperativas)
-  ) +
-  expand_limits(
-    x = mapaMun$long,
-    y = mapaMun$lat
-  ) +
-  scale_fill_gradient(
-    low = 'lightyellow',
-    high = 'darkred'
-  ) +
-  geom_path(
-    data = shpUFs,
-    size = .2,
-    aes(long, lat, group = group)
-  ) +
-  coord_map() +
-  theme_void() +
-  theme(legend.position = c(0.2,0.3))
 ```
 
 
@@ -154,7 +129,7 @@ Valores_Deflacionados$VL_TOTAL_Medio_Defl        = Valores_Deflacionados$VL_TOTA
 
 Valores antes de deflacionar:
 
-```{r comparacao_inflacao_medio, caption = "Distribuição - Valores Médios Originais", fig.align="center"}
+```{r comparacao_inflacao_medio, caption = "Distribuição - Valores Médios Originais", fig.align="center", fig.width=6}
 ggplot(Valores_Deflacionados) +
   aes(x = "", y = VL_TOTAL_Medio, fill = SAFRA) +
   geom_boxplot() +
@@ -166,13 +141,17 @@ ggplot(Valores_Deflacionados) +
 ```{r comparacao_inflacao_medio_tabela, caption = "Distribuição - Valores Médios Originais"}
 print(stby(data = Valores_Deflacionados$VL_TOTAL_Medio, 
            INDICES = Valores_Deflacionados$SAFRA, 
-           FUN = descr, stats = c("mean", "sd", "min", "med", "max"), headings = FALSE), method = "render", headings = FALSE)
+           FUN = descr, stats = c("mean", "sd", "min", "med", "max"), headings = FALSE), 
+      method = "render", 
+      headings = FALSE,
+      table.classes = 'st-small'
+      )
 ```
 
 
 Valores depois de deflacionar:
 
-```{r comparacao_inflacao_deflacionado, caption = "Distribuição - Valores Médios Deflacionados", fig.align="center"}
+```{r comparacao_inflacao_deflacionado, caption = "Distribuição - Valores Médios Deflacionados", fig.align="center", fig.width=6}
 print(ggplot(Valores_Deflacionados) +
         aes(x = "", y = VL_TOTAL_Medio_Defl, fill = SAFRA) +
         geom_boxplot() +
@@ -184,7 +163,11 @@ print(ggplot(Valores_Deflacionados) +
 ```{r comparacao_inflacao_deflacionado_tabela, caption = "Distribuição - Valores Médios Deflacionados"}
 print(stby(data = Valores_Deflacionados$VL_TOTAL_Medio_Defl, 
            INDICES = Valores_Deflacionados$SAFRA, 
-           FUN = descr, stats = c("mean", "sd", "min", "med", "max"), headings = FALSE), method = "render", headings = FALSE)
+           FUN = descr, stats = c("mean", "sd", "min", "med", "max"), headings = FALSE), 
+      method = "render", 
+      headings = FALSE,
+      table.classes = 'st-small')
+
 rm(Valores_Deflacionados)
 ```
 
@@ -212,7 +195,10 @@ print(
   stat_Maior_30 %>%
     group_by("Sigla_UF") %>% 
     freq(stat_Maior_30$Sigla_UF, report.nas = F),
-  method = "render", headings = FALSE,  caption = "Distribuição dos Municipios por Estado")
+  method = "render", 
+  headings = FALSE,
+  table.classes = 'st-small',
+  caption = "Distribuição dos Municipios por Estado")
 ```
 
 Distribuição do número de seguros nesses estados
@@ -223,9 +209,15 @@ table <- ctable(stat_Maior_30_SAFRA$Sigla_UF, stat_Maior_30_SAFRA$SAFRA, report.
 table
 rm(table)
 ```
+
+```{r, fig.align="center", fig.width=6}
+if(plot_maps) {
+  plot_mun_brasil_alt(stat_Maior_30,"Qt_Seguros")  
+}
+```
+
 ```{r limpando_stat_municipios}
 rm(stat_Maior_30)
-rm(stat_Menor_30)
 rm(stat_Maior_30_SAFRA)
 ```
 
@@ -239,68 +231,98 @@ Proagro_soja_mun_geral <- Proagro_soja_mun_geral[Proagro_soja_mun_geral$Pelo_Men
 Proagro_soja_mun_safra <- Proagro_soja_mun_safra[Proagro_soja_mun_safra$Pelo_Menos_30,]
 ```
 
-### Valor Total Médio por Área
+### Valor Enquadrado Médio por Área
 
-O Valor Médio por Área dos contratos do Proagro é de 1656.69, porém temos 2 municípios com valores muito baixos: Aratiba(RS) e Constantina(RS).
+O Valor Enquadrado (Valor Financiado + Garantia Renda Mínima) por Área dos contratos do Proagro é de 1656.69, porém temos 2 municípios com valores muito baixos: Aratiba(RS) e Constantina(RS).
 
 
-```{r valor_medio_defl_area}
+```{r valor_medio_defl_area_grafico, fig.align="center", fig.width=6}
 ggplot(Proagro_soja_mun_geral) +
  aes(x = VL_TOTAL_Medio_Area_Defl ) +
  geom_histogram(bins = 30L, fill = "#0c4c8a") +
  theme_minimal()
-
-print(descr(Proagro_soja_mun_geral$VL_TOTAL_Medio_Area_Defl, headings = FALSE), method = "render", headings = FALSE)
 ```
 
-
-Para estes dois municípios acredito que tenha havido algum tipo de erro. Em uma das safras Constantina teve uma área toal mais de 10x maior que os outros anos e em Aratiba 15x.
-
-```{r erros_valor_medio_defl_area}
-Proagro_soja_mun_safra[Proagro_soja_mun_safra$Nome_Município == "Constantina", c("SAFRA", "PROGRAMA","TP_SEGURO","num_seguros","NR_AREA_TOTAL", "VL_TOTAL_deflacionado","VL_TOTAL_Medio_Area_Defl")] %>%
-arrange(SAFRA,PROGRAMA) %>% 
- kable(caption = "Seguros Constantina") %>% kable_styling(full_width = F)
-
-Proagro_soja_mun_safra[Proagro_soja_mun_safra$Nome_Município == "Aratiba", c("SAFRA", "PROGRAMA","TP_SEGURO","num_seguros","NR_AREA_TOTAL", "VL_TOTAL_deflacionado","VL_TOTAL_Medio_Area_Defl")] %>%
-  arrange(SAFRA,PROGRAMA) %>% 
- kable(caption = "Seguros Aratiba") %>% kable_styling(full_width = F)
-
+```{r valor_medio_defl_area_tabela}
+print(descr(Proagro_soja_mun_geral$VL_TOTAL_Medio_Area_Defl, headings = FALSE,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr")), method = "render", headings = FALSE, table.classes = 'st-small')
 ```
-
 
 ```{r valor_medio_defl_area_mapa}
-#plot_map_mun(dados = Proagro_soja_mun_geral, fill_var = "tmap", mp = (max(Proagro_soja_mun_geral$VL_TOTAL_Medio_Area_Defl) - min(Proagro_soja_mun_geral$VL_TOTAL_Medio_Area_Defl))/2)
+if(plot_maps) {
+  plot_mun_brasil_alt(Proagro_soja_mun_geral,"VL_TOTAL_Medio_Area_Defl")
+}
+```
 
+
+Para estes dois municípios acredito que tenha havido algum tipo de erro. Em uma das safras Constantina teve uma área total mais de 10x maior que a dos outros anos e em Aratiba 15x. A área muito grande interfere na média geral e joga lá para baixo o preço por área. Acredito que seja melhor tirar estes dois municípios.
+
+```{r erros_valor_medio_defl_area_Constantina}
+constantina <-  Proagro_soja_mun_safra[Proagro_soja_mun_safra$Nome_Município == "Constantina", c("SAFRA", "PROGRAMA","TP_SEGURO","num_seguros","NR_AREA_TOTAL", "VL_TOTAL_deflacionado","VL_TOTAL_Medio_Area_Defl")] %>%
+arrange(SAFRA,PROGRAMA) 
+
+constantina %>% 
+ kable(caption = "Seguros Constantina") %>% kable_styling(bootstrap_options = "striped",  full_width = F)  %>%
+ row_spec(which(constantina$NR_AREA_TOTAL > 90000), bold = T, color = "white", background = "red")
+```
+
+```{r erros_valor_medio_defl_area_Aratiba}
+aratiba <- Proagro_soja_mun_safra[Proagro_soja_mun_safra$Nome_Município == "Aratiba", c("SAFRA", "PROGRAMA","TP_SEGURO","num_seguros","NR_AREA_TOTAL", "VL_TOTAL_deflacionado","VL_TOTAL_Medio_Area_Defl")] %>%
+  arrange(SAFRA,PROGRAMA) 
+
+aratiba %>% 
+ kable(caption = "Seguros Aratiba") %>% kable_styling(full_width = F)  %>%
+ row_spec(which(aratiba$NR_AREA_TOTAL > 5000), bold = T, color = "white", background = "red")
 
 ```
 
 
-### Prêmio Médio Deflacionado por Área
+```{r, results="hide"}
+#Retirando os dois municípios problemáticos
+rm(constantina)
+rm(aratiba)
+Proagro_soja_mun <- Proagro_soja_mun[!Proagro_soja_mun$Cod_Municipio %in% c('4300901','4305801'),]
+Proagro_soja_mun_geral <- Proagro_soja_mun_geral[!Proagro_soja_mun_geral$Cod_Municipio %in% c('4300901','4305801'),]
+Proagro_soja_mun_safra <- Proagro_soja_mun_safra[!Proagro_soja_mun_safra$Cod_Municipio %in% c('4300901','4305801'),]
+```
 
-```{r premio_medio_defl_area}
+
+### Prêmio Médio por Área
+
+Ficou uma gaussiana muito boa. Média de 48 R$/hect.
+
+```{r premio_medio_defl_area_grafico, fig.align="center", fig.width=6}
 ggplot(Proagro_soja_mun_geral) +
  aes(x = Premio_Area_Defl ) +
  geom_histogram(bins = 30L, fill = "#0c4c8a") +
  theme_minimal()
+```
 
-print(descr(Proagro_soja_mun_geral$Premio_Area_Defl, headings = FALSE), method = "render", headings = FALSE)
+```{r premio_medio_defl_area_table}
+print(descr(Proagro_soja_mun_geral$Premio_Area_Defl, headings = FALSE,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr")), method = "render", headings = FALSE, table.classes = 'st-small')
 ```
 
 
 ```{r premio_medio_defl_area_mapa}
-#plot_map_mun(dados = Proagro_soja_mun_geral, fill_var = "VL_TOTAL_Medio_Area_Defl", mp = (max(Proagro_soja_mun_geral$VL_TOTAL_Medio_Area_Defl) - min(Proagro_soja_mun_geral$VL_TOTAL_Medio_Area_Defl))/2)
+if(plot_maps) {
+  plot_mun_brasil_alt(Proagro_soja_mun_geral,"Premio_Area_Defl")
+}
 ```
 
 
-### Qtd Sinistros Deferidos/Qtd Total
+### Índice de Incidência Global (Qtd Sinistros/Qtd Total de Seguros)
 
-```{r qtd_sinistros_qt_total}
+O índice de incidência é bem baixo, com média de 3,96% e mediana de 1%.
+O gráfico de pizza mostra que cerca de 10% dos municípios não tiveram nenhum sinistros entre 2013 - 2018.
+
+```{r qtd_sinistros_qt_total_grafico, fig.align="center", fig.width=6}
 ggplot(Proagro_soja_mun_geral) +
  aes(x = INDICE_SINISTRO_QTD ) +
  geom_histogram(bins = 30L, fill = "#0c4c8a") +
  theme_minimal()
+```
 
-print(descr(Proagro_soja_mun_geral$INDICE_SINISTRO_QTD, headings = FALSE), method = "render", headings = FALSE)
+```{r qtd_sinistros_qt_total_tabela}
+print(descr(Proagro_soja_mun_geral$INDICE_SINISTRO_QTD, headings = FALSE,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr")), method = "render", headings = FALSE)
 
 ```
 
@@ -350,15 +372,18 @@ rm(qtd_sinistros)
 
 
 
-```{r qtd_sinistros_qt_total_sem_zero}
+```{r qtd_sinistros_qt_total_sem_zero_grafico, fig.align="center", fig.width=6}
 Proagro_soja_mun_geral[Proagro_soja_mun_geral$INDICE_SINISTRO_QTD > 0,] %>% 
 ggplot() +
  aes(x = INDICE_SINISTRO_QTD ) +
  geom_histogram(bins = 30L, fill = "#0c4c8a") +
  theme_minimal()
+```
 
 
-print(descr(Proagro_soja_mun_geral[Proagro_soja_mun_geral$INDICE_SINISTRO_QTD > 0,"INDICE_SINISTRO_QTD"], headings = FALSE), method = "render", headings = FALSE)
+```{r qtd_sinistros_qt_total_sem_zero_tabela}
+print(
+  descr((Proagro_soja_mun_geral[Proagro_soja_mun_geral$INDICE_SINISTRO_QTD > 0,] %>% ungroup() %>% select(INDICE_SINISTRO_QTD)), headings = FALSE,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr")), method = "render", headings = FALSE)
 
 ```
 
@@ -367,13 +392,13 @@ print(descr(Proagro_soja_mun_geral[Proagro_soja_mun_geral$INDICE_SINISTRO_QTD > 
 
 ### Sinistros Deflacionado Médio
 
-```{r qtd_sinistros_defl_medio_geral}
+```{r qtd_sinistros_defl_medio_geral_grafico, fig.align="center", fig.width=6}
 ggplot(Proagro_soja_mun_geral) +
  aes(x = VL_SINISTRO_MEDIO_Defl ) +
  geom_histogram(bins = 30L, fill = "#0c4c8a") +
  theme_minimal()
 
-print(descr(Proagro_soja_mun_geral$VL_SINISTRO_MEDIO_Defl, headings = FALSE), method = "render", headings = FALSE)
+print(descr(Proagro_soja_mun_geral$VL_SINISTRO_MEDIO_Defl, headings = FALSE,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr")), method = "render", headings = FALSE)
 
 ```
 
@@ -382,19 +407,19 @@ print(descr(Proagro_soja_mun_geral$VL_SINISTRO_MEDIO_Defl, headings = FALSE), me
 
 ### Sinistralidade (Valor Total Sinistro/Qtd Total)
 
-```{r sinistralidae_defl_geral}
+```{r sinistralidae_defl_geral_grafico, fig.align="center", fig.width=6}
 ggplot(Proagro_soja_mun_geral) +
  aes(x = SINISTRALIDADE_Defl ) +
  geom_histogram(bins = 30L, fill = "#0c4c8a") +
  theme_minimal()
 
-print(descr(Proagro_soja_mun_geral$SINISTRALIDADE_Defl, headings = FALSE), method = "render", headings = FALSE)
+print(descr(Proagro_soja_mun_geral$SINISTRALIDADE_Defl, headings = FALSE,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr")), method = "render", headings = FALSE)
 
 ```
 
 
 
-```{r sinistralidae_defl_geral_sem_zero}
+```{r sinistralidae_defl_geral_sem_zero_grafico, fig.align="center", fig.width=6}
 Proagro_soja_mun_geral[Proagro_soja_mun_geral$SINISTRALIDADE_Defl > 0,] %>% 
 ggplot() +
  aes(x = SINISTRALIDADE_Defl ) +
@@ -402,7 +427,7 @@ ggplot() +
  theme_minimal()
 
 
-print(descr(Proagro_soja_mun_geral[Proagro_soja_mun_geral$SINISTRALIDADE_Defl > 0,"SINISTRALIDADE_Defl"], headings = FALSE), method = "render", headings = FALSE)
+print(descr(Proagro_soja_mun_geral[Proagro_soja_mun_geral$SINISTRALIDADE_Defl > 0,"SINISTRALIDADE_Defl"], headings = FALSE,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr")), method = "render", headings = FALSE)
 
 ```
 
@@ -420,7 +445,7 @@ print(descr(Proagro_soja_mun_geral[Proagro_soja_mun_geral$SINISTRALIDADE_Defl > 
 
 ### Valor Total Médio
 
-```{r valor_medio_proagro}
+```{r valor_medio_proagro_grafico, fig.align="center", fig.width=6}
 ggplot(Proagro_soja_mun) +
  aes(x = VL_TOTAL_Medio_Defl, fill = TP_SEGURO) +
  geom_histogram(bins = 30L) +
@@ -440,7 +465,7 @@ ggplot(Proagro_soja_mun) +
 
 stby(data = Proagro_soja_mun$VL_TOTAL_Medio_Defl, 
      INDICES = Proagro_soja_mun$PROGRAMA, 
-     FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
+     FUN = descr,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr"))
 
 
 ```
@@ -450,7 +475,7 @@ stby(data = Proagro_soja_mun$VL_TOTAL_Medio_Defl,
 
 ### Prêmio Médio
 
-```{r premio_medio_proagro}
+```{r premio_medio_proagro_grafico, fig.align="center", fig.width=6}
 ggplot(Proagro_soja_mun) +
  aes(x = Premio_Liquido_Medio_Defl , fill = TP_SEGURO) +
  geom_histogram(bins = 30L) +
@@ -470,7 +495,7 @@ ggplot(Proagro_soja_mun) +
 
 stby(data = Proagro_soja_mun$Premio_Liquido_Medio_Defl, 
      INDICES = Proagro_soja_mun$PROGRAMA, 
-     FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
+     FUN = descr,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr"))
 
 ```
 
@@ -479,7 +504,7 @@ stby(data = Proagro_soja_mun$Premio_Liquido_Medio_Defl,
 
 ### Valor Total Médio Deflacionado por Área
 
-```{r valor_medio_area_proagro}
+```{r valor_medio_area_proagro_grafico, fig.align="center", fig.width=6}
 ggplot(Proagro_soja_mun) +
  aes(x = VL_TOTAL_Medio_Area_Defl , fill = TP_SEGURO) +
  geom_histogram(bins = 30L) +
@@ -499,7 +524,7 @@ ggplot(Proagro_soja_mun) +
 
 stby(data = Proagro_soja_mun$VL_TOTAL_Medio_Area_Defl, 
      INDICES = Proagro_soja_mun$PROGRAMA, 
-     FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
+     FUN = descr,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr"))
 
 ```
 
@@ -527,7 +552,7 @@ ggplot(Proagro_soja_mun) +
 
 stby(data = Proagro_soja_mun$Premio_Area_Defl, 
      INDICES = Proagro_soja_mun$PROGRAMA, 
-     FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
+     FUN = descr,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr"))
 
 
 
@@ -557,7 +582,7 @@ ggplot(Proagro_soja_mun) +
 
 stby(data = Proagro_soja_mun$INDICE_SINISTRO_QTD, 
      INDICES = Proagro_soja_mun$PROGRAMA, 
-     FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
+     FUN = descr,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr"))
 
 ```
 
@@ -681,7 +706,7 @@ ggplot(Proagro_soja_mun[Proagro_soja_mun$INDICE_SINISTRO_QTD > 0,]) +
 
 stby(data = Proagro_soja_mun[Proagro_soja_mun$INDICE_SINISTRO_QTD > 0, "INDICE_SINISTRO_QTD"], 
      INDICES = Proagro_soja_mun[Proagro_soja_mun$INDICE_SINISTRO_QTD > 0, "PROGRAMA"], 
-     FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
+     FUN = descr,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr"))
 
 ```
 
@@ -710,7 +735,7 @@ ggplot(Proagro_soja_mun) +
 
 stby(data = Proagro_soja_mun$VL_SINISTRO_MEDIO_Defl, 
      INDICES = Proagro_soja_mun$PROGRAMA, 
-     FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
+     FUN = descr,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr"))
 
 ```
 
@@ -738,7 +763,7 @@ ggplot(Proagro_soja_mun) +
 
 stby(data = Proagro_soja_mun$SINISTRALIDADE_Defl, 
      INDICES = Proagro_soja_mun$PROGRAMA, 
-     FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
+     FUN = descr,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr"))
 
 ```
 
