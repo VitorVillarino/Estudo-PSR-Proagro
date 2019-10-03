@@ -29,13 +29,16 @@ plot_mun_brasil <- function (dados, fill_var, mp) {
 
 
 # roots
-plot_mun_brasil_alt <- function (dados, fill_var) {
+plot_mun_brasil_alt <- function (dados, fill_var, descr = "") {
   ggplot(dados) +
     geom_map(
       map = mapaMun,
-      color = 'gray60', size = 0,
+      color = NA,
       aes(map_id = Cod_Municipio, fill = get(fill_var))
     ) +
+    labs(
+      fill = descr
+    ) + 
     expand_limits(
       x = mapaMun$long,
       y = mapaMun$lat
@@ -50,8 +53,7 @@ plot_mun_brasil_alt <- function (dados, fill_var) {
       aes(long, lat, group = group)
     ) +
     coord_map() +
-    theme_void() +
-    theme(legend.position = c(0.2,0.3))
+    theme_void() 
     
 }
 
