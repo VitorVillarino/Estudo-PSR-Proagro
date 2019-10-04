@@ -455,7 +455,8 @@ Temos alguns valores acima de 15%. São eles: Diamante D'Oeste - PR, Japurá - P
 
 ```{r indice_sinistralidade_teste}
 Proagro_soja_mun_safra[Proagro_soja_mun_safra$Cod_Municipio %in%
-unlist(Proagro_soja_mun_geral[Proagro_soja_mun_geral$INDICE_SINISTRO_VALOR_Defl > 0.16, "Cod_Municipio"], use.names = F),]
+unlist(Proagro_soja_mun_geral[Proagro_soja_mun_geral$INDICE_SINISTRO_VALOR_Defl > 0.16, "Cod_Municipio"], use.names = F), c("SAFRA", "PROGRAMA","num_seguros","NR_AREA_TOTAL", "QT_SINISTROS","VL_SINISTRO_MEDIO_Defl")] %>%  arrange(SAFRA,PROGRAMA) 
+]
 ```
 
 
