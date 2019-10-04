@@ -20,7 +20,7 @@ source("./Scripts/Function_Environment.R", encoding = "UTF-8")
 load_environment()
 source("./Scripts/Function_Mapas.R", encoding = "UTF-8") 
 
-plot_maps <- F
+plot_maps <- T
 
 library(tidyverse)
 
@@ -451,19 +451,20 @@ print(descr(Proagro_soja_mun_geral$INDICE_SINISTRO_VALOR_Defl, headings = FALSE,
 ```
 
 
-Temos alguns valores acima de 15%. São eles: Diamante D'Oeste - PR, Japurá - PR e São Tomé - PR.
+Temos alguns valores acima de 15%. São eles: Diamante D'Oeste - PR, Japurá - PR e São Tomé - PR. Apesar dos Valores, não parece ter nada de errado.
 
 ```{r indice_sinistralidade_teste}
 Proagro_soja_mun_safra[Proagro_soja_mun_safra$Cod_Municipio %in%
-unlist(Proagro_soja_mun_geral[Proagro_soja_mun_geral$INDICE_SINISTRO_VALOR_Defl > 0.16, "Cod_Municipio"], use.names = F), c("SAFRA", "PROGRAMA","num_seguros","NR_AREA_TOTAL", "QT_SINISTROS","VL_SINISTRO_MEDIO_Defl")] %>%  arrange(SAFRA,PROGRAMA) 
-]
+                     unlist(Proagro_soja_mun_geral[Proagro_soja_mun_geral$INDICE_SINISTRO_VALOR_Defl > 0.16, "Cod_Municipio"], 
+                            use.names = F), c("Nome_Município", "SAFRA", "PROGRAMA", "QT_SINISTROS", "INDICE_SINISTRO_VALOR_Defl" )] %>%  
+  arrange(Nome_Município, SAFRA,PROGRAMA) %>% 
+  kable(caption = "Índice de Sinistralidade.") %>% 
+  kable_styling(bootstrap_options = "striped",  full_width = F)
 ```
 
 
 
-
 Se retirarmos os municipios que não tiveram 0, temos algo bem parecido.
-
 
 ```{r indice_sinistralidade_sem_zero_grafico}
 Proagro_soja_mun_geral[Proagro_soja_mun_geral$INDICE_SINISTRO_VALOR_Defl > 0,] %>% 
@@ -488,12 +489,16 @@ if(plot_maps) {
 ```
 
 
+
+
+
 ## Proagro 
 
+### Valor Enquadrado Médio
 
-### Valor Total Médio
+O valor enquadrado médio é mais alto no Proagro Tradicional do que no Proagro Mais, porém quando olhamos o valor enquadrado/área o valor do PRONAF é bem maior.
 
-```{r valor_medio_proagro_grafico,  fig.width=6}
+```{r valor_medio_proagro_grafico}
 ggplot(Proagro_soja_mun) +
  aes(x = VL_TOTAL_Medio_Defl, fill = TP_SEGURO) +
  geom_histogram(bins = 30L) +
@@ -508,51 +513,21 @@ ggplot(Proagro_soja_mun) +
  scale_fill_hue() +
  theme_minimal() +
  facet_wrap(vars(PROGRAMA))
+```
 
-
-
+```{r valor_medio_proagro_tabela}
 stby(data = Proagro_soja_mun$VL_TOTAL_Medio_Defl, 
      INDICES = Proagro_soja_mun$PROGRAMA, 
-     FUN = descr,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr"))
-
-
+     FUN = descr,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr"), 
+      method = "render", 
+      headings = FALSE,
+      table.classes = 'st-small')
 ```
 
 
+### Valor Enquadrado por Área
 
-
-### Prêmio Médio
-
-```{r premio_medio_proagro_grafico,  fig.width=6}
-ggplot(Proagro_soja_mun) +
- aes(x = Premio_Liquido_Medio_Defl , fill = TP_SEGURO) +
- geom_histogram(bins = 30L) +
- scale_fill_hue() +
- theme_minimal() +
- facet_wrap(vars(PROGRAMA))
-
-
-ggplot(Proagro_soja_mun) +
- aes(x = "", y = Premio_Liquido_Medio_Defl, fill = TP_SEGURO) +
- geom_boxplot() +
- scale_fill_hue() +
- theme_minimal() +
- facet_wrap(vars(PROGRAMA))
-
-
-
-stby(data = Proagro_soja_mun$Premio_Liquido_Medio_Defl, 
-     INDICES = Proagro_soja_mun$PROGRAMA, 
-     FUN = descr,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr"))
-
-```
-
-
-
-
-### Valor Total Médio Deflacionado por Área
-
-```{r valor_medio_area_proagro_grafico,  fig.width=6}
+```{r valor_medio_area_proagro_grafico}
 ggplot(Proagro_soja_mun) +
  aes(x = VL_TOTAL_Medio_Area_Defl , fill = TP_SEGURO) +
  geom_histogram(bins = 30L) +
@@ -572,13 +547,87 @@ ggplot(Proagro_soja_mun) +
 
 stby(data = Proagro_soja_mun$VL_TOTAL_Medio_Area_Defl, 
      INDICES = Proagro_soja_mun$PROGRAMA, 
+     FUN = descr,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr"), 
+      method = "render", 
+      headings = FALSE,
+      table.classes = 'st-small')
+```
+
+
+```{r valor_medio_area_proagro_mapa_PRONAF, fig.height=6}
+if(plot_maps) {
+  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAF",],"VL_TOTAL_Medio_Area_Defl", "Valor/Área - PRONAF")
+}
+```
+
+
+```{r valor_medio_area_proagro_mapa_PRONAMP, fig.height=6}
+if(plot_maps) {
+  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAMP",],"VL_TOTAL_Medio_Area_Defl", "Valor/Área - PRONAMP")
+}
+```
+
+```{r valor_medio_area_proagro_mapa_Sem_Programa, fig.height=6}
+if(plot_maps) {
+  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "SEM PROGRAMA",],"VL_TOTAL_Medio_Area_Defl", "Valor/Área - SEM PROG")
+}
+```
+
+
+
+
+### Prêmio Médio
+
+O Prêmio médio do Proagro Mais é bem concentrado e bem abaixo do Proagro Tradicional, porém o Prêmio/Área é bem parecido.
+
+```{r premio_medio_proagro_grafico}
+ggplot(Proagro_soja_mun) +
+ aes(x = Premio_Liquido_Medio_Defl , fill = TP_SEGURO) +
+ geom_histogram(bins = 30L) +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+
+
+ggplot(Proagro_soja_mun) +
+ aes(x = "", y = Premio_Liquido_Medio_Defl, fill = TP_SEGURO) +
+ geom_boxplot() +
+ scale_fill_hue() +
+ theme_minimal() +
+ facet_wrap(vars(PROGRAMA))
+```
+
+```{r premio_medio_proagro_tabela}
+stby(data = Proagro_soja_mun$Premio_Liquido_Medio_Defl, 
+     INDICES = Proagro_soja_mun$PROGRAMA, 
      FUN = descr,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr"))
 
 ```
 
 
+```{r premio_medio_proagro_mapa_PRONAF, fig.height=6}
+if(plot_maps) {
+  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAF",],"Premio_Liquido_Medio_Defl", "Prêmio Médio - PRONAF")
+}
+```
 
-### Prêmio Médio Deflacionado por Área
+
+```{r premio_medio_proagro_mapa_PRONAMP, fig.height=6}
+if(plot_maps) {
+  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAMP",],"Premio_Liquido_Medio_Defl", "Prêmio Médio - PRONAMP")
+}
+```
+
+```{r premio_medio_proagro_mapa_Sem_Programa, fig.height=6}
+if(plot_maps) {
+  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "SEM PROGRAMA",],"Premio_Liquido_Medio_Defl", "Prêmio Médio- SEM PROG")
+}
+```
+
+
+
+
+### Prêmio Médio por Área
 
 ```{r premio_medio_area_proagro}
 ggplot(Proagro_soja_mun) +
@@ -595,22 +644,42 @@ ggplot(Proagro_soja_mun) +
  scale_fill_hue() +
  theme_minimal() +
  facet_wrap(vars(PROGRAMA))
+```
 
-
-
+```{r premio_medio_area_proagro_tabela}
 stby(data = Proagro_soja_mun$Premio_Area_Defl, 
      INDICES = Proagro_soja_mun$PROGRAMA, 
      FUN = descr,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr"))
 
-
-
 ```
 
 
+```{r premio_medio_area_proagro_mapa_PRONAF, fig.height=6}
+if(plot_maps) {
+  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAF",],"Premio_Area_Defl", "Prêmio/Área - PRONAF")
+}
+```
 
-### Qtd Sinistros/Qtd Total
 
-```{r indice_sinistro_proagro}
+```{r premio_medio_area_proagro_mapa_PRONAMP, fig.height=6}
+if(plot_maps) {
+  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAMP",],"Premio_Area_Defl", "Prêmio/Área - PRONAMP")
+}
+```
+
+```{r premio_medio_area_proagro_mapa_Sem_Programa, fig.height=6}
+if(plot_maps) {
+  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "SEM PROGRAMA",],"Premio_Area_Defl", "Prêmio/Área - SEM PROG")
+}
+```
+
+
+### Índice de Incidência Global (Qtd Sinistros/Qtd Total)
+
+Apesar do número de municípios com sinistros do Proagro MAis ter sido bem superior aos demais, os Índices de Incidência são bem parecidos, uma vez que o % de seguros com sinistros são bem próximos.
+
+
+```{r indice_sinistro_proagro_grafico}
 ggplot(Proagro_soja_mun) +
  aes(x = INDICE_SINISTRO_QTD, fill = TP_SEGURO) +
  geom_histogram(bins = 30L) +
@@ -625,9 +694,9 @@ ggplot(Proagro_soja_mun) +
  scale_fill_hue() +
  theme_minimal() +
  facet_wrap(vars(PROGRAMA))
+```
 
-
-
+```{r indice_sinistro_proagro_tabela}
 stby(data = Proagro_soja_mun$INDICE_SINISTRO_QTD, 
      INDICES = Proagro_soja_mun$PROGRAMA, 
      FUN = descr,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr"))
@@ -736,6 +805,9 @@ rm(qtd_sinistros_SemPrograma)
 
 
 
+Retirando os zeros.
+
+
 ```{r qtd_sinistros_qt_total_sem_zero_proagro}
 ggplot(Proagro_soja_mun[Proagro_soja_mun$INDICE_SINISTRO_QTD > 0,]) +
  aes(x = INDICE_SINISTRO_QTD, fill = TP_SEGURO) +
@@ -758,10 +830,30 @@ stby(data = Proagro_soja_mun[Proagro_soja_mun$INDICE_SINISTRO_QTD > 0, "INDICE_S
 
 ```
 
+```{r indice_incidencia_proagro_mapa_PRONAF, fig.height=6}
+if(plot_maps) {
+  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAF",],"INDICE_SINISTRO_QTD", "Índice Incidência - PRONAF")
+}
+```
 
+
+```{r indice_incidencia_proagro_mapa_PRONAMP, fig.height=6}
+if(plot_maps) {
+  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAMP",],"INDICE_SINISTRO_QTD", "Índice Incidência - PRONAMP")
+}
+```
+
+```{r indice_incidencia_proagro_mapa_Sem_Programa, fig.height=6}
+if(plot_maps) {
+  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "SEM PROGRAMA",],"INDICE_SINISTRO_QTD", "Índice Incidência - SEM PROG")
+}
+```
 
 
 ### Sinistro Médio
+
+O sinistro médio do Proagro Mais é menor, porém não temos como comparar sem saber a área afetada. O ideal seria que tivéssemos a área que sofreu sinistro de cada município para compararmos Sinistro/Área.
+
 
 ```{r sinistro_medio_proagro}
 ggplot(Proagro_soja_mun) +
@@ -787,64 +879,28 @@ stby(data = Proagro_soja_mun$VL_SINISTRO_MEDIO_Defl,
 
 ```
 
-
-
-### Sinistralidade (Valor Total Sinistro/Qtd Total)
-
-```{r sinistralidade_proagro}
-ggplot(Proagro_soja_mun) +
- aes(x = SINISTRALIDADE_Defl, fill = TP_SEGURO) +
- geom_histogram(bins = 30L) +
- scale_fill_hue() +
- theme_minimal() +
- facet_wrap(vars(PROGRAMA))
-
-
-ggplot(Proagro_soja_mun) +
- aes(x = "", y = SINISTRALIDADE_Defl, fill = TP_SEGURO) +
- geom_boxplot() +
- scale_fill_hue() +
- theme_minimal() +
- facet_wrap(vars(PROGRAMA))
-
-
-
-stby(data = Proagro_soja_mun$SINISTRALIDADE_Defl, 
-     INDICES = Proagro_soja_mun$PROGRAMA, 
-     FUN = descr,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr"))
-
+```{r sinistro_medio_proagro_mapa_PRONAF, fig.height=6}
+if(plot_maps) {
+  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAF",],"VL_SINISTRO_MEDIO_Defl", "Índice Incidência - PRONAF")
+}
 ```
 
 
-
-
-```{r sinistralidade_sem_zero_proagro}
-ggplot(Proagro_soja_mun[Proagro_soja_mun$SINISTRALIDADE_Defl > 0,]) +
- aes(x = INDICE_SINISTRO_QTD, fill = TP_SEGURO) +
- geom_histogram(bins = 30L) +
- scale_fill_hue() +
- theme_minimal() +
- facet_wrap(vars(PROGRAMA))
-
-
-ggplot(Proagro_soja_mun[Proagro_soja_mun$SINISTRALIDADE_Defl > 0,]) +
- aes(x = "", y = INDICE_SINISTRO_QTD, fill = TP_SEGURO) +
- geom_boxplot() +
- scale_fill_hue() +
- theme_minimal() +
- facet_wrap(vars(PROGRAMA))
-
-stby(data = Proagro_soja_mun[Proagro_soja_mun$SINISTRALIDADE_Defl > 0, "INDICE_SINISTRO_QTD"], 
-     INDICES = Proagro_soja_mun[Proagro_soja_mun$SINISTRALIDADE_Defl > 0, "PROGRAMA"], 
-     FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
-
+```{r sinistro_medio_proagro_mapa_PRONAMP, fig.height=6}
+if(plot_maps) {
+  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAMP",],"VL_SINISTRO_MEDIO_Defl", "Índice Incidência - PRONAMP")
+}
 ```
 
+```{r sinistro_medio_proagro_mapa_Sem_Programa, fig.height=6}
+if(plot_maps) {
+  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "SEM PROGRAMA",],"VL_SINISTRO_MEDIO_Defl", "Índice Incidência - SEM PROG")
+}
+```
 
+### Índice de Sinistralidade
 
-
-
-### Valor Total Sinistro / Valor Total
+O índice de sinistralidade dos prorgamas possuem médias parecidas, porém temos um comportamento interessante. O Proagro Tradicional possui uma quantidade maior de índices zerados, porém, quando os valores ocorrem, tendem a ser maiores que o Proagro Mais.
 
 ```{r indice_sinistro_valor_proagro}
 
@@ -869,6 +925,27 @@ stby(data = Proagro_soja_mun$INDICE_SINISTRO_VALOR_Defl,
      INDICES = Proagro_soja_mun$PROGRAMA, 
      FUN = descr, stats = c("mean", "sd", "min", "med", "max"))
 ```
+
+
+```{r indice_sinistro_valor_proagro_mapa_PRONAF, fig.height=6}
+if(plot_maps) {
+  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAF",],"INDICE_SINISTRO_VALOR_Defl", "Índice Incidência - PRONAF")
+}
+```
+
+
+```{r indice_sinistro_valor_proagro_mapa_PRONAMP, fig.height=6}
+if(plot_maps) {
+  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAMP",],"INDICE_SINISTRO_VALOR_Defl", "Índice Incidência - PRONAMP")
+}
+```
+
+```{r indice_sinistro_valor_proagro_mapa_Sem_Programa, fig.height=6}
+if(plot_maps) {
+  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "SEM PROGRAMA",],"INDICE_SINISTRO_VALOR_Defl", "Índice Incidência - SEM PROG")
+}
+```
+
 
 ```{r indice_sinistro_valor_sem_zero_proagro}
 ggplot(Proagro_soja_mun[Proagro_soja_mun$INDICE_SINISTRO_VALOR_Defl > 0,]) +
