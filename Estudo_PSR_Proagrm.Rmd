@@ -20,7 +20,7 @@ source("./Scripts/Function_Environment.R", encoding = "UTF-8")
 load_environment()
 source("./Scripts/Function_Mapas.R", encoding = "UTF-8") 
 
-plot_maps <- T
+plot_maps <- F
 
 library(tidyverse)
 
@@ -68,6 +68,12 @@ st_css()
 ### Produto
 
 Por enquanto apenas **SOJA**. No futuro teremos Milho.
+
+
+### Severidade e Intensidade 
+
+A Severidade é o valor deferido dividido pelo valor enquadrado das operações deferidas, porém, como a base é agregada e não abre os seguros um a um, não temos os valores enquadrados das operações deferidas. 
+Uma saída é pedir para que eles calculem e nos envie o agregado.
 
 ### SAFRA
 
@@ -291,7 +297,7 @@ Proagro_soja_mun_safra <- Proagro_soja_mun_safra[!Proagro_soja_mun_safra$Cod_Mun
 
 Ficou uma gaussiana muito boa. Média de 48 R$/hect.
 
-```{r premio_medio_defl_area_grafico,  fig.width=6}
+```{r premio_medio_defl_area_grafico}
 ggplot(Proagro_soja_mun_geral) +
  aes(x = Premio_Area_Defl ) +
  geom_histogram(bins = 30L, fill = "#0c4c8a") +
@@ -303,7 +309,7 @@ print(descr(Proagro_soja_mun_geral$Premio_Area_Defl, headings = FALSE,  stats = 
 ```
 
 
-```{r premio_medio_defl_area_mapa}
+```{r premio_medio_defl_area_mapa, fig.height=6}
 if(plot_maps) {
   plot_mun_brasil_alt(Proagro_soja_mun_geral,"Premio_Area_Defl", "Prêmio/Área")
 }
@@ -372,8 +378,10 @@ rm(qtd_sinistros)
 ```
 
 
+Se retirarmos os municipios que não tiveram 0, temos algo bem parecido.
 
-```{r qtd_sinistros_qt_total_sem_zero_grafico,  fig.height = 6}
+
+```{r qtd_sinistros_qt_total_sem_zero_grafico}
 Proagro_soja_mun_geral[Proagro_soja_mun_geral$INDICE_SINISTRO_QTD > 0,] %>% 
 ggplot() +
  aes(x = INDICE_SINISTRO_QTD ) +
@@ -389,8 +397,7 @@ print(
 ```
 
 
-
-```{r qtd_sinistros_qt_total_sem_zero_mapa,  fig.width=6, fig.height=6}
+```{r qtd_sinistros_qt_total_sem_zero_mapa, fig.height=6}
 if(plot_maps) {
   plot_mun_brasil_alt(Proagro_soja_mun_geral,"INDICE_SINISTRO_QTD", "Índice de Incidência Global")
 }
@@ -398,7 +405,9 @@ if(plot_maps) {
 
 
 
-### Sinistros Deflacionado Médio
+### Sinistro Médio
+
+O sinistro médio tem média de R\$16.759 e desvio padrão de aproximadamente R\$ 10.000. O municipio de maior média é Piratini-RS. Apesar do valor, não parece ter nada de errado com ele.
 
 ```{r qtd_sinistros_defl_medio_geral_grafico,  fig.width=6}
 ggplot(Proagro_soja_mun_geral) +
@@ -408,44 +417,74 @@ ggplot(Proagro_soja_mun_geral) +
 
 print(descr(Proagro_soja_mun_geral$VL_SINISTRO_MEDIO_Defl, headings = FALSE,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr")), method = "render", headings = FALSE)
 
+
+
+```
+
+```{r erros__sinistros_defl_medio_piratini}
+piratini <- Proagro_soja_mun_safra[Proagro_soja_mun_safra$Cod_Municipio == 4314605, c("SAFRA", "PROGRAMA","num_seguros","NR_AREA_TOTAL", "QT_SINISTROS","VL_SINISTRO_MEDIO_Defl")] %>%  arrange(SAFRA,PROGRAMA) 
+
+piratini %>% 
+ kable(caption = "Seguros Piratini") %>% kable_styling(full_width = F) 
+
+rm(piratini)
 ```
 
 
 
+### Índice de Sinistralidade
 
-### Sinistralidade (Valor Total Sinistro/Qtd Total)
 
-```{r sinistralidae_defl_geral_grafico,  fig.width=6}
+O índice de sinistralidade também é bem baixo, com média de 2% e mediana de 1%.
+
+
+```{r indice_sinistralidade_grafico}
 ggplot(Proagro_soja_mun_geral) +
- aes(x = SINISTRALIDADE_Defl ) +
+ aes(x = INDICE_SINISTRO_VALOR_Defl) +
  geom_histogram(bins = 30L, fill = "#0c4c8a") +
  theme_minimal()
+```
 
-print(descr(Proagro_soja_mun_geral$SINISTRALIDADE_Defl, headings = FALSE,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr")), method = "render", headings = FALSE)
+```{r indice_sinistralidade_tabela}
+print(descr(Proagro_soja_mun_geral$INDICE_SINISTRO_VALOR_Defl, headings = FALSE,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr")), method = "render", headings = FALSE)
 
 ```
 
 
+Temos alguns valores acima de 15%. São eles: Diamante D'Oeste - PR, Japurá - PR e São Tomé - PR.
 
-```{r sinistralidae_defl_geral_sem_zero_grafico,  fig.width=6}
-Proagro_soja_mun_geral[Proagro_soja_mun_geral$SINISTRALIDADE_Defl > 0,] %>% 
+```{r indice_sinistralidade_teste}
+Proagro_soja_mun_safra[Proagro_soja_mun_safra$Cod_Municipio %in%
+unlist(Proagro_soja_mun_geral[Proagro_soja_mun_geral$INDICE_SINISTRO_VALOR_Defl > 0.16, "Cod_Municipio"], use.names = F),]
+```
+
+
+
+
+Se retirarmos os municipios que não tiveram 0, temos algo bem parecido.
+
+
+```{r indice_sinistralidade_sem_zero_grafico}
+Proagro_soja_mun_geral[Proagro_soja_mun_geral$INDICE_SINISTRO_VALOR_Defl > 0,] %>% 
 ggplot() +
- aes(x = SINISTRALIDADE_Defl ) +
+ aes(x = INDICE_SINISTRO_VALOR ) +
  geom_histogram(bins = 30L, fill = "#0c4c8a") +
  theme_minimal()
+```
 
 
-print(descr(Proagro_soja_mun_geral[Proagro_soja_mun_geral$SINISTRALIDADE_Defl > 0,"SINISTRALIDADE_Defl"], headings = FALSE,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr")), method = "render", headings = FALSE)
+```{r indice_sinistralidade_sem_zero_tabela}
+print(
+  descr((Proagro_soja_mun_geral[Proagro_soja_mun_geral$INDICE_SINISTRO_VALOR_Defl > 0,] %>% ungroup() %>% select(INDICE_SINISTRO_VALOR)), headings = FALSE,  stats = c("mean","sd","min","q1","med","q3","max","mad","iqr")), method = "render", headings = FALSE)
 
 ```
 
 
-
-### Valor Total Sinistro/Valor Total
-
-
-
-
+```{r indice_sinistralidade_sem_zero_mapa, fig.height=6}
+if(plot_maps) {
+  plot_mun_brasil_alt(Proagro_soja_mun_geral,"INDICE_SINISTRO_VALOR", "Índice de Sinistralidade")
+}
+```
 
 
 ## Proagro 
