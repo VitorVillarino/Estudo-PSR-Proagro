@@ -112,14 +112,15 @@ data_PSR <- data_PSR %>%
 
 
 #Verificando quais os municípios com menos de 30 seguros em alguma safra
-Cont_Seg_Safra <- data_Proagro %>% 
+Cont_Seg_Safra_Proagro <- data_Proagro %>% 
   filter(Produto_Padronizado == "SOJA", SAFRA != "2019/2020") %>% 
   group_by(Cod_Municipio, Produto_Padronizado, SAFRA) %>%
   summarise(
     num_seguros = sum(QT_ENQ))
-menos_30_em_alguma_safra <- Cont_Seg_Safra[Cont_Seg_Safra$num_seguros<30,]
-Cont_Seg_Safra <- Cont_Seg_Safra[!(Cont_Seg_Safra$Cod_Municipio %in% menos_30_em_alguma_safra$Cod_Municipio),]
 
+menos_30_em_alguma_safra_Proagro <- Cont_Seg_Safra_Proagro[Cont_Seg_Safra_Proagro$num_seguros<30,]
+Cont_Seg_Safra_Proagro <- Cont_Seg_Safra_Proagro[!(Cont_Seg_Safra_Proagro$Cod_Municipio %in% menos_30_em_alguma_safra_Proagro$Cod_Municipio),]
+unique(Cont_Seg_Safra_Proagro$Cod_Municipio)
 
 
 
@@ -161,7 +162,7 @@ Proagro_soja_mun_geral$VL_SINISTRO_MEDIO_Defl     = Proagro_soja_mun_geral$VL_SI
 Proagro_soja_mun_geral$INDICE_SINISTRO_VALOR      = Proagro_soja_mun_geral$VL_SINISTROS/Proagro_soja_mun_geral$VL_TOTAL
 Proagro_soja_mun_geral$INDICE_SINISTRO_VALOR_Defl = Proagro_soja_mun_geral$VL_SINISTROS_Deflacionado/Proagro_soja_mun_geral$VL_TOTAL_deflacionado
 Proagro_soja_mun_geral$Tipo                     = "Proagro"
-Proagro_soja_mun_geral$Pelo_Menos_30 <- Proagro_soja_mun_geral$Cod_Municipio %in% Cont_Seg_Safra$Cod_Municipio
+Proagro_soja_mun_geral$Pelo_Menos_30 <- Proagro_soja_mun_geral$Cod_Municipio %in% Cont_Seg_Safra_Proagro$Cod_Municipio
 
 
 
@@ -204,7 +205,7 @@ Proagro_soja_mun$VL_SINISTRO_MEDIO_Defl     = Proagro_soja_mun$VL_SINISTROS_Defl
 Proagro_soja_mun$INDICE_SINISTRO_VALOR      = Proagro_soja_mun$VL_SINISTROS/Proagro_soja_mun$VL_TOTAL
 Proagro_soja_mun$INDICE_SINISTRO_VALOR_Defl = Proagro_soja_mun$VL_SINISTROS_Deflacionado/Proagro_soja_mun$VL_TOTAL_deflacionado
 Proagro_soja_mun$Tipo                     = "Proagro"
-Proagro_soja_mun$Pelo_Menos_30 <- Proagro_soja_mun$Cod_Municipio %in% Cont_Seg_Safra$Cod_Municipio
+Proagro_soja_mun$Pelo_Menos_30 <- Proagro_soja_mun$Cod_Municipio %in% Cont_Seg_Safra_Proagro$Cod_Municipio
 
 
 
@@ -249,7 +250,7 @@ Proagro_soja_mun_safra$VL_SINISTRO_MEDIO_Defl     = Proagro_soja_mun_safra$VL_SI
 Proagro_soja_mun_safra$INDICE_SINISTRO_VALOR      = Proagro_soja_mun_safra$VL_SINISTROS/Proagro_soja_mun_safra$VL_TOTAL
 Proagro_soja_mun_safra$INDICE_SINISTRO_VALOR_Defl = Proagro_soja_mun_safra$VL_SINISTROS_Deflacionado/Proagro_soja_mun_safra$VL_TOTAL_deflacionado
 Proagro_soja_mun_safra$Tipo                     = "Proagro"
-Proagro_soja_mun_safra$Pelo_Menos_30 <- Proagro_soja_mun_safra$Cod_Municipio %in% Cont_Seg_Safra$Cod_Municipio
+Proagro_soja_mun_safra$Pelo_Menos_30 <- Proagro_soja_mun_safra$Cod_Municipio %in% Cont_Seg_Safra_Proagro$Cod_Municipio
 
 
 
@@ -261,4 +262,47 @@ municipios$Cod_Municipio <- as.numeric(municipios$Cod_Municipio)
 
 
 #limpando as variáveis
-rm(menos_30_em_alguma_safra)
+rm(menos_30_em_alguma_safra_Proagro)
+
+
+
+
+
+################################# PSR #################################
+
+#Verificando quais os municípios com menos de 30 seguros em alguma safra
+Cont_Seg_Safra_PSR<- data_PSR %>% 
+  filter(Produto_Padronizado == "SOJA", SAFRA != "2019/2020") %>% 
+  group_by(Cod_Municipio, Produto_Padronizado, SAFRA) %>%
+  summarise(
+    num_seguros = n()
+  )
+sum(Cont_Seg_Safra_PSR$num_seguros)
+
+library(xlsx)
+library(xlsxjars)
+attributes(Cont_Seg_Safra_PSR)$class <- c("data.frame")
+write.xlsx(Cont_Seg_Safra_PSR,"teste.xlsx", row.names=FALSE)
+
+menos_30_em_alguma_safra_PSR <- Cont_Seg_Safra_PSR[Cont_Seg_Safra_PSR$num_seguros<30,]
+
+teste <- data_PSR[is.na(data_PSR$Cod_Municipio),]
+
+Cont_Seg_Safra_PSR[is.na(Cont_Seg_Safra_PSR$Cod_Municipio),]
+
+Cont_Seg_Safra_PSR <- Cont_Seg_Safra_PSR[!(Cont_Seg_Safra_PSR$Cod_Municipio %in% menos_30_em_alguma_safra_PSR$Cod_Municipio),]
+
+
+Cont_Seg_Safra_Proagro
+Cont_Seg_Safra_PSR
+
+unique(Cont_Seg_Safra_PSR$Cod_Municipio)
+
+
+
+teste <- Cont_Seg_Safra_Proagro %>% left_join(Cont_Seg_Safra_PSR, by = c("Cod_Municipio", "Produto_Padronizado", "SAFRA"))
+
+esquisse::esquisser()
+
+
+
