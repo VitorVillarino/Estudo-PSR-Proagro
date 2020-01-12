@@ -57,7 +57,7 @@ knitr::opts_chunk$set(
 )
 
 
-st_css()                              
+st_css()   
 
 
 ```
@@ -190,18 +190,18 @@ Proagro_soja_mun <- Proagro_soja_mun %>% left_join(municipios, by = "Cod_Municip
 Proagro_soja_mun_geral <- Proagro_soja_mun_geral %>% left_join(municipios, by = "Cod_Municipio")
 Proagro_soja_mun_safra <- Proagro_soja_mun_safra %>% left_join(municipios, by = "Cod_Municipio")
 
-stat_Maior_30 <- Proagro_soja_mun %>% filter(Pelo_Menos_30 == T) %>% group_by(Cod_Municipio, Sigla_UF) %>% summarise(Qt_Seguros = sum(num_seguros))
+stat_Maior_qtd <- Proagro_soja_mun %>% filter(Pelo_menos_qtd == T) %>% group_by(Cod_Municipio, Sigla_UF) %>% summarise(Qt_Seguros = sum(num_seguros))
 
-stat_Maior_30_SAFRA <- Proagro_soja_mun_safra %>% filter(Pelo_Menos_30 == T) %>% group_by(Sigla_UF, SAFRA) %>% summarise(Qt_Seguros = sum(num_seguros))
+stat_Maior_qtd_SAFRA <- Proagro_soja_mun_safra %>% filter(Pelo_menos_qtd == T) %>% group_by(Sigla_UF, SAFRA) %>% summarise(Qt_Seguros = sum(num_seguros))
 ```
 
 Distribuição por Estado
 
 ```{r Estatisticas_Municipios_Dist_Estados, caption = "Distribuição dos Municipios por Estado"}
 print(
-  stat_Maior_30 %>%
+  stat_Maior_qtd %>%
     group_by("Sigla_UF") %>% 
-    freq(stat_Maior_30$Sigla_UF, report.nas = F),
+    freq(stat_Maior_qtd$Sigla_UF, report.nas = F),
   method = "render", 
   headings = FALSE,
   table.classes = 'st-small',
@@ -210,7 +210,7 @@ print(
 
 Distribuição do número de seguros nesses estados
 ```{r, results="hide"}
-table <- ctable(stat_Maior_30_SAFRA$Sigla_UF, stat_Maior_30_SAFRA$SAFRA, report.nas = F, weights = stat_Maior_30_SAFRA$Qt_Seguros, headings = FALSE)[[1]] %>%  kable(caption = "Distribuição dos Seguros por Estado") %>% kable_styling(full_width = F)
+table <- ctable(stat_Maior_qtd_SAFRA$Sigla_UF, stat_Maior_qtd_SAFRA$SAFRA, report.nas = F, weights = stat_Maior_qtd_SAFRA$Qt_Seguros, headings = FALSE)[[1]] %>%  kable(caption = "Distribuição dos Seguros por Estado") %>% kable_styling(full_width = F)
 ```
 ```{r Estatisticas_Seguros_Dist_Estados, caption = "Distribuição dos Municipios por Estado"}
 table
@@ -219,23 +219,25 @@ rm(table)
 
 ```{r,  fig.height = 6}
 if(plot_maps) {
-  plot_mun_brasil_alt(stat_Maior_30,"Qt_Seguros", "Quantidade de Seguros (Total)")  
+  #plot_mun_brasil_alt(stat_Maior_qtd,"Qt_Seguros", "Quantidade de Seguros (Total)")  
+  #plot_mun_brasil(stat_Maior_qtd,"Qt_Seguros")  
+  plot_mun_brasil_brazilmaps(stat_Maior_qtd, "Qt_Seguros")  
 }
 ```
 
 ```{r limpando_stat_municipios}
-rm(stat_Maior_30)
-rm(stat_Maior_30_SAFRA)
+rm(stat_Maior_qtd)
+rm(stat_Maior_qtd_SAFRA)
 ```
 
 
 
 ## Análise 
 
-```{r municipios_mais_30 }
-Proagro_soja_mun <- Proagro_soja_mun[Proagro_soja_mun$Pelo_Menos_30,]
-Proagro_soja_mun_geral <- Proagro_soja_mun_geral[Proagro_soja_mun_geral$Pelo_Menos_30,]
-Proagro_soja_mun_safra <- Proagro_soja_mun_safra[Proagro_soja_mun_safra$Pelo_Menos_30,]
+```{r municipios_mais_qtd }
+Proagro_soja_mun <- Proagro_soja_mun[Proagro_soja_mun$Pelo_menos_qtd,]
+Proagro_soja_mun_geral <- Proagro_soja_mun_geral[Proagro_soja_mun_geral$Pelo_menos_qtd,]
+Proagro_soja_mun_safra <- Proagro_soja_mun_safra[Proagro_soja_mun_safra$Pelo_menos_qtd,]
 ```
 
 ### Valor Enquadrado Médio por Área
@@ -256,7 +258,7 @@ print(descr(Proagro_soja_mun_geral$VL_TOTAL_Medio_Area_Defl, headings = FALSE,  
 
 ```{r valor_medio_defl_area_mapa,  fig.height = 6}
 if(plot_maps) {
-  plot_mun_brasil_alt(Proagro_soja_mun_geral,"VL_TOTAL_Medio_Area_Defl", "Valor Enquadrado/Área")
+  plot_mun_brasil_brazilmaps(Proagro_soja_mun_geral,"VL_TOTAL_Medio_Area_Defl", "Valor Enquadrado/Área")
 }
 ```
 
@@ -311,7 +313,7 @@ print(descr(Proagro_soja_mun_geral$Premio_Area_Defl, headings = FALSE,  stats = 
 
 ```{r premio_medio_defl_area_mapa, fig.height=6}
 if(plot_maps) {
-  plot_mun_brasil_alt(Proagro_soja_mun_geral,"Premio_Area_Defl", "Prêmio/Área")
+  plot_mun_brasil_brazilmaps(Proagro_soja_mun_geral,"Premio_Area_Defl", "Prêmio/Área")
 }
 ```
 
@@ -399,7 +401,7 @@ print(
 
 ```{r qtd_sinistros_qt_total_sem_zero_mapa, fig.height=6}
 if(plot_maps) {
-  plot_mun_brasil_alt(Proagro_soja_mun_geral,"INDICE_SINISTRO_QTD", "Índice de Incidência Global")
+  plot_mun_brasil_brazilmaps(Proagro_soja_mun_geral,"INDICE_SINISTRO_QTD", "Índice de Incidência Global")
 }
 ```
 
@@ -484,7 +486,7 @@ print(
 
 ```{r indice_sinistralidade_sem_zero_mapa, fig.height=6}
 if(plot_maps) {
-  plot_mun_brasil_alt(Proagro_soja_mun_geral,"INDICE_SINISTRO_VALOR", "Índice de Sinistralidade")
+  plot_mun_brasil_brazilmaps(Proagro_soja_mun_geral,"INDICE_SINISTRO_VALOR", "Índice de Sinistralidade")
 }
 ```
 
@@ -556,20 +558,20 @@ stby(data = Proagro_soja_mun$VL_TOTAL_Medio_Area_Defl,
 
 ```{r valor_medio_area_proagro_mapa_PRONAF, fig.height=6}
 if(plot_maps) {
-  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAF",],"VL_TOTAL_Medio_Area_Defl", "Valor/Área - PRONAF")
+  plot_mun_brasil_brazilmaps(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAF",],"VL_TOTAL_Medio_Area_Defl", "Valor/Área - PRONAF")
 }
 ```
 
 
 ```{r valor_medio_area_proagro_mapa_PRONAMP, fig.height=6}
 if(plot_maps) {
-  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAMP",],"VL_TOTAL_Medio_Area_Defl", "Valor/Área - PRONAMP")
+  plot_mun_brasil_brazilmaps(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAMP",],"VL_TOTAL_Medio_Area_Defl", "Valor/Área - PRONAMP")
 }
 ```
 
 ```{r valor_medio_area_proagro_mapa_Sem_Programa, fig.height=6}
 if(plot_maps) {
-  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "SEM PROGRAMA",],"VL_TOTAL_Medio_Area_Defl", "Valor/Área - SEM PROG")
+  plot_mun_brasil_brazilmaps(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "SEM PROGRAMA",],"VL_TOTAL_Medio_Area_Defl", "Valor/Área - SEM PROG")
 }
 ```
 
@@ -607,20 +609,20 @@ stby(data = Proagro_soja_mun$Premio_Liquido_Medio_Defl,
 
 ```{r premio_medio_proagro_mapa_PRONAF, fig.height=6}
 if(plot_maps) {
-  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAF",],"Premio_Liquido_Medio_Defl", "Prêmio Médio - PRONAF")
+  plot_mun_brasil_brazilmaps(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAF",],"Premio_Liquido_Medio_Defl", "Prêmio Médio - PRONAF")
 }
 ```
 
 
 ```{r premio_medio_proagro_mapa_PRONAMP, fig.height=6}
 if(plot_maps) {
-  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAMP",],"Premio_Liquido_Medio_Defl", "Prêmio Médio - PRONAMP")
+  plot_mun_brasil_brazilmaps(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAMP",],"Premio_Liquido_Medio_Defl", "Prêmio Médio - PRONAMP")
 }
 ```
 
 ```{r premio_medio_proagro_mapa_Sem_Programa, fig.height=6}
 if(plot_maps) {
-  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "SEM PROGRAMA",],"Premio_Liquido_Medio_Defl", "Prêmio Médio- SEM PROG")
+  plot_mun_brasil_brazilmaps(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "SEM PROGRAMA",],"Premio_Liquido_Medio_Defl", "Prêmio Médio- SEM PROG")
 }
 ```
 
@@ -656,20 +658,20 @@ stby(data = Proagro_soja_mun$Premio_Area_Defl,
 
 ```{r premio_medio_area_proagro_mapa_PRONAF, fig.height=6}
 if(plot_maps) {
-  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAF",],"Premio_Area_Defl", "Prêmio/Área - PRONAF")
+  plot_mun_brasil_brazilmaps(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAF",],"Premio_Area_Defl", "Prêmio/Área - PRONAF")
 }
 ```
 
 
 ```{r premio_medio_area_proagro_mapa_PRONAMP, fig.height=6}
 if(plot_maps) {
-  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAMP",],"Premio_Area_Defl", "Prêmio/Área - PRONAMP")
+  plot_mun_brasil_brazilmaps(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAMP",],"Premio_Area_Defl", "Prêmio/Área - PRONAMP")
 }
 ```
 
 ```{r premio_medio_area_proagro_mapa_Sem_Programa, fig.height=6}
 if(plot_maps) {
-  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "SEM PROGRAMA",],"Premio_Area_Defl", "Prêmio/Área - SEM PROG")
+  plot_mun_brasil_brazilmaps(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "SEM PROGRAMA",],"Premio_Area_Defl", "Prêmio/Área - SEM PROG")
 }
 ```
 
@@ -832,20 +834,20 @@ stby(data = Proagro_soja_mun[Proagro_soja_mun$INDICE_SINISTRO_QTD > 0, "INDICE_S
 
 ```{r indice_incidencia_proagro_mapa_PRONAF, fig.height=6}
 if(plot_maps) {
-  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAF",],"INDICE_SINISTRO_QTD", "Índice Incidência - PRONAF")
+  plot_mun_brasil_brazilmaps(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAF",],"INDICE_SINISTRO_QTD", "Índice Incidência - PRONAF")
 }
 ```
 
 
 ```{r indice_incidencia_proagro_mapa_PRONAMP, fig.height=6}
 if(plot_maps) {
-  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAMP",],"INDICE_SINISTRO_QTD", "Índice Incidência - PRONAMP")
+  plot_mun_brasil_brazilmaps(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAMP",],"INDICE_SINISTRO_QTD", "Índice Incidência - PRONAMP")
 }
 ```
 
 ```{r indice_incidencia_proagro_mapa_Sem_Programa, fig.height=6}
 if(plot_maps) {
-  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "SEM PROGRAMA",],"INDICE_SINISTRO_QTD", "Índice Incidência - SEM PROG")
+  plot_mun_brasil_brazilmaps(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "SEM PROGRAMA",],"INDICE_SINISTRO_QTD", "Índice Incidência - SEM PROG")
 }
 ```
 
@@ -881,20 +883,20 @@ stby(data = Proagro_soja_mun$VL_SINISTRO_MEDIO_Defl,
 
 ```{r sinistro_medio_proagro_mapa_PRONAF, fig.height=6}
 if(plot_maps) {
-  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAF",],"VL_SINISTRO_MEDIO_Defl", "Índice Incidência - PRONAF")
+  plot_mun_brasil_brazilmaps(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAF",],"VL_SINISTRO_MEDIO_Defl", "Índice Incidência - PRONAF")
 }
 ```
 
 
 ```{r sinistro_medio_proagro_mapa_PRONAMP, fig.height=6}
 if(plot_maps) {
-  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAMP",],"VL_SINISTRO_MEDIO_Defl", "Índice Incidência - PRONAMP")
+  plot_mun_brasil_brazilmaps(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAMP",],"VL_SINISTRO_MEDIO_Defl", "Índice Incidência - PRONAMP")
 }
 ```
 
 ```{r sinistro_medio_proagro_mapa_Sem_Programa, fig.height=6}
 if(plot_maps) {
-  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "SEM PROGRAMA",],"VL_SINISTRO_MEDIO_Defl", "Índice Incidência - SEM PROG")
+  plot_mun_brasil_brazilmaps(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "SEM PROGRAMA",],"VL_SINISTRO_MEDIO_Defl", "Índice Incidência - SEM PROG")
 }
 ```
 
@@ -929,20 +931,20 @@ stby(data = Proagro_soja_mun$INDICE_SINISTRO_VALOR_Defl,
 
 ```{r indice_sinistro_valor_proagro_mapa_PRONAF, fig.height=6}
 if(plot_maps) {
-  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAF",],"INDICE_SINISTRO_VALOR_Defl", "Índice Incidência - PRONAF")
+  plot_mun_brasil_brazilmaps(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAF",],"INDICE_SINISTRO_VALOR_Defl", "Índice Incidência - PRONAF")
 }
 ```
 
 
 ```{r indice_sinistro_valor_proagro_mapa_PRONAMP, fig.height=6}
 if(plot_maps) {
-  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAMP",],"INDICE_SINISTRO_VALOR_Defl", "Índice Incidência - PRONAMP")
+  plot_mun_brasil_brazilmaps(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "PRONAMP",],"INDICE_SINISTRO_VALOR_Defl", "Índice Incidência - PRONAMP")
 }
 ```
 
 ```{r indice_sinistro_valor_proagro_mapa_Sem_Programa, fig.height=6}
 if(plot_maps) {
-  plot_mun_brasil_alt(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "SEM PROGRAMA",],"INDICE_SINISTRO_VALOR_Defl", "Índice Incidência - SEM PROG")
+  plot_mun_brasil_brazilmaps(Proagro_soja_mun[Proagro_soja_mun$PROGRAMA == "SEM PROGRAMA",],"INDICE_SINISTRO_VALOR_Defl", "Índice Incidência - SEM PROG")
 }
 ```
 

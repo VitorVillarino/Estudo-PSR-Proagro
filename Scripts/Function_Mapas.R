@@ -1,4 +1,5 @@
 library(geobr)
+library(brazilmaps)
 library(ggplot2)
 
 load_maps <- function() {
@@ -56,4 +57,26 @@ plot_mun_brasil_alt <- function (dados, fill_var, descr = "") {
     theme_void() 
     
 }
+
+
+
+
+# brazil_maps
+plot_mun_brasil_brazilmaps <- function (dados, fill_var, mp) {
+  
+  get_brmap("City") %>% 
+    left_join(dados, c("City" = "Cod_Municipio")) %>% 
+    ggplot() +
+    geom_sf(aes(fill = get(fill_var)), colour = "transparent") +
+    scale_fill_gradient(
+      low = 'lightyellow',
+      high = 'darkred'
+    )  +
+    geom_path(
+      data = shpUFs,
+      size = .2,
+      aes(long, lat, group = group)
+    ) 
+}
+
 
