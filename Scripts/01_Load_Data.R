@@ -2,6 +2,17 @@ library(readxl)
 library(dplyr)
 
 
+#################################################### Inflação #################################################### 
+inflacao <- data.frame(jul2014 = 6.5, jul2015 = 9.56, jul2016 = 8.74, jul2017=2.71, jul2018=4.48, jul2019=3.22)
+
+
+
+################################################### Qtd Mínima ################################################### 
+qtd_min_PSR <- 20
+qtd_min_proagro <- 20
+
+
+
 #################################################### BASES IBGE ####################################################
 
 #Base de Municípiops do IBGE. Pegaremos daqui o código do Município para fazer algo mais simples e eficiente do que 
@@ -221,43 +232,45 @@ data_Proagro$PRODUTO <- NULL
 
 
 
-
-#################################################### Inflação #################################################### 
-inflacao <- data.frame(jul2014 = 6.5, jul2015 = 9.56, jul2016 = 8.74, jul2017=2.71, jul2018=4.48, jul2019=3.22)
-
-
-
-
-################################################### Qtd Mínima ################################################### 
-qtd_min_PSR <- 0
-qtd_min_proagro <- 0
-
-
 #################################################### CENSO RURAL #################################################### 
+
+data_Censo_Rural <- NULL
 
 # Tabela 6615 - Número de estabelecimentos por produtos da lavoura temporária - resultados preliminares 2017
 data_Censo_6615 <- read.csv("./Dados/Raw/Censo - 2017/tabela6615.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM', stringsAsFactors = FALSE)
 data_Censo_6615[data_Censo_6615=="-"]<-0
 data_Censo_6615[data_Censo_6615 == "X"] <- NA
+data_Censo_6615 <- data_Censo_6615 %>% 
+    left_join(
+      produtos_padronizados %>%  select ("Tabela 6615 - 2017", "Produto_Padronizado"), 
+      by = c("Produtos" = "Tabela 6615 - 2017")
+    )
 
 
-# Tabela 6616 - Número de estabelecimentos agropecuários e Número de pés existentes, por produtos da lavoura permanente - resultados preliminares 2017
-data_Censo_6616 <- read.csv("./Dados/Raw/Censo - 2017/tabela6616.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM', stringsAsFactors = FALSE)
-data_Censo_6616[data_Censo_6616=="-"]<-0
-data_Censo_6616[data_Censo_6616=="X"]<-NA
+# # Tabela 6616 - Número de estabelecimentos agropecuários e Número de pés existentes, por produtos da lavoura permanente - resultados preliminares 2017
+# data_Censo_6616 <- read.csv("./Dados/Raw/Censo - 2017/tabela6616.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM', stringsAsFactors = FALSE)
+# data_Censo_6616[data_Censo_6616=="-"]<-0
+# data_Censo_6616[data_Censo_6616=="X"]<-NA
+# 
+# 
+# # Tabela 6618 - Número de estabelecimentos agropecuários e Quantidade produzida, por produtos da agroindústria rural - resultados preliminares 2017
+# data_Censo_6618 <- read.csv("./Dados/Raw/Censo - 2017/tabela6618.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM', stringsAsFactors = FALSE)
+# data_Censo_6618[data_Censo_6618=="-"]<-0
+# data_Censo_6618[data_Censo_6618=="X"]<-NA
+# 
+# 
+# # Tabela 6619 - Número de estabelecimentos agropecuários e Quantidade produzida, por produtos da horticultura - resultados preliminares 2017
+# data_Censo_6619 <- read.csv("./Dados/Raw/Censo - 2017/tabela6619.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM', stringsAsFactors = FALSE)
+# data_Censo_6619[data_Censo_6619=="-"]<-0
+# data_Censo_6619[data_Censo_6619=="X"]<-NA
 
 
-# Tabela 6618 - Número de estabelecimentos agropecuários e Quantidade produzida, por produtos da agroindústria rural - resultados preliminares 2017
-data_Censo_6618 <- read.csv("./Dados/Raw/Censo - 2017/tabela6618.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM', stringsAsFactors = FALSE)
-data_Censo_6618[data_Censo_6618=="-"]<-0
-data_Censo_6618[data_Censo_6618=="X"]<-NA
+data_Censo_Rural <- data_Censo_6615 
+rm(data_Censo_6615)
 
 
-# Tabela 6619 - Número de estabelecimentos agropecuários e Quantidade produzida, por produtos da horticultura - resultados preliminares 2017
-data_Censo_6619 <- read.csv("./Dados/Raw/Censo - 2017/tabela6619.csv", header = TRUE, sep = ';', fileEncoding = 'UTF-8-BOM', stringsAsFactors = FALSE)
-data_Censo_6619[data_Censo_6619=="-"]<-0
-data_Censo_6619[data_Censo_6619=="X"]<-NA
 
+data_Censo_Rural
 
 
 ######################### Dados Censo Geral ##################################
@@ -270,7 +283,7 @@ data_Censo_6635[data_Censo_6635=="-"]<-0
 data_Censo_6635[data_Censo_6635=="X"]<-NA
 data_Censo_6635[, c(3:30)] <- sapply(data_Censo_6635[, c(3:30)], as.numeric)
 
-data_Censo_Geral <- data_Censo_6635[, -c(11,13,15,17,19,21,23,25,27,29)]
+data_Censo_Geral <- data_Censo_6635[, -c(2,11,13,15,17,19,21,23,25,27,29)]
 rm(data_Censo_6635)
 
 #Tabela 6639 - Número de estabelecimentos agropecuários e Número de unidades armazenadoras e capacidade, por tipo de unidade armazenadora - resultados preliminares 2017														
@@ -279,7 +292,7 @@ data_Censo_6639[data_Censo_6639=="-"]<-0
 data_Censo_6639[data_Censo_6639=="X"]<-NA
 data_Censo_6639[, c(3:26)] <- sapply(data_Censo_6639[, c(3:26)], as.numeric)
 
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6639[, -c(3,5,7,9,11,13,15,17,19,21,23,25)] , by = "Cód.")
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6639[, -c(2,3,5,7,9,11,13,15,17,19,21,23,25)] , by = "Cód.")
 rm(data_Censo_6639)
 
 #Tabela 6640 - Número de estabelecimentos agropecuários, Sistema de preparo do solo e Área com plantio direto na palha - resultados preliminares 2017					
@@ -288,7 +301,7 @@ data_Censo_6640[data_Censo_6640=="-"]<-0
 data_Censo_6640[data_Censo_6640=="X"]<-NA
 data_Censo_6640[, c(3:12)] <- sapply(data_Censo_6640[, c(3:12)], as.numeric)
 
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6640[, -c(3,5,7,9,11)], by = "Cód.")
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6640[, -c(2,3,5,7,9,11)], by = "Cód.")
 rm(data_Censo_6640)
 
 
@@ -298,7 +311,7 @@ data_Censo_6641[data_Censo_6641=="-"]<-0
 data_Censo_6641[data_Censo_6641=="X"]<-NA
 data_Censo_6641[, c(3:18)] <- sapply(data_Censo_6641[, c(3:18)], as.numeric)
 
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6641[, -c(3,5,7,9,11,13,15,17)], by = "Cód.")
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6641[, -c(2,3,5,7,9,11,13,15,17)], by = "Cód.")
 rm(data_Censo_6641)
 
 
@@ -308,7 +321,7 @@ data_Censo_6642[data_Censo_6642=="-"]<-0
 data_Censo_6642[data_Censo_6642=="X"]<-NA
 data_Censo_6642[, c(3:22)] <- sapply(data_Censo_6642[, c(3:22)], as.numeric)
 
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6642[, -c(3,5,7,9,11,13,15,17,19,21)], by = "Cód.")
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6642[, -c(2,3,5,7,9,11,13,15,17,19,21)], by = "Cód.")
 rm(data_Censo_6642)
 
 
@@ -318,7 +331,7 @@ data_Censo_6643[data_Censo_6643=="-"]<-0
 data_Censo_6643[data_Censo_6643=="X"]<-NA
 data_Censo_6643[, c(3:14)] <- sapply(data_Censo_6643[, c(3:14)], as.numeric)
 
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6643[, -c(3,5,7,9,11,13)], by = "Cód.")
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6643[, -c(2,3,5,7,9,11,13)], by = "Cód.")
 rm(data_Censo_6643)
 
 
@@ -330,7 +343,7 @@ data_Censo_6647[data_Censo_6647==".."]<-NA
 data_Censo_6647[data_Censo_6647=="..."]<-NA
 data_Censo_6647[, c(3:27)] <- sapply(data_Censo_6647[, c(3:27)], as.numeric)
 
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6647[, -c(3,4,6,8,10,12,14,16,18,20,22,24,26)], by = "Cód.")
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6647[, -c(2,3,4,6,8,10,12,14,16,18,20,22,24,26)], by = "Cód.")
 rm(data_Censo_6647)
 
 
@@ -340,7 +353,7 @@ data_Censo_6649[data_Censo_6649=="-"]<-0
 data_Censo_6649[data_Censo_6649=="X"]<-NA
 data_Censo_6649[, c(3:28)] <- sapply(data_Censo_6649[, c(3:28)], as.numeric)
 
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6649[, -c(3,5,7,9,11,13,15,17,19,21,23,25,27)], by = "Cód.")
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6649[, -c(2,3,5,7,9,11,13,15,17,19,21,23,25,27)], by = "Cód.")
 rm(data_Censo_6649)
 
 
@@ -350,7 +363,7 @@ data_Censo_6650[data_Censo_6650=="-"]<-0
 data_Censo_6650[data_Censo_6650=="X"]<-NA
 data_Censo_6650[, c(3:24)] <- sapply(data_Censo_6650[, c(3:24)], as.numeric)
 
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6650[, -c(3,5,7,9,11,13,15,17,19,21,23)], by = "Cód.")
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6650[, -c(2,3,5,7,9,11,13,15,17,19,21,23)], by = "Cód.")
 rm(data_Censo_6650)
 
 
@@ -360,7 +373,7 @@ data_Censo_6651[data_Censo_6651=="-"]<-0
 data_Censo_6651[data_Censo_6651=="X"]<-NA
 data_Censo_6651[, c(3:48)] <- sapply(data_Censo_6651[, c(3:48)], as.numeric)
 
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6651[, -c(seq(3,48,2))], by = "Cód.")
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6651[, -c(2,seq(3,48,2))], by = "Cód.")
 rm(data_Censo_6651)
 
 
@@ -370,7 +383,7 @@ data_Censo_6652[data_Censo_6652=="-"]<-0
 data_Censo_6652[data_Censo_6652=="X"]<-NA
 data_Censo_6652[, c(3:12)] <- sapply(data_Censo_6652[, c(3:12)], as.numeric)
 
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6652[, -c(seq(3,12,2))], by = "Cód.")
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6652[, -c(2,seq(3,12,2))], by = "Cód.")
 rm(data_Censo_6652)
 
 
@@ -380,7 +393,7 @@ data_Censo_6655[data_Censo_6655=="-"]<-0
 data_Censo_6655[data_Censo_6655=="X"]<-NA
 data_Censo_6655[, c(3:24)] <- sapply(data_Censo_6655[, c(3:24)], as.numeric)
 
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6655[, -c(seq(3,24,2))], by = "Cód.")
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6655[, -c(2,seq(3,24,2))], by = "Cód.")
 rm(data_Censo_6655)
 
 
@@ -390,7 +403,7 @@ data_Censo_6658[data_Censo_6658=="-"]<-0
 data_Censo_6658[data_Censo_6658=="X"]<-NA
 data_Censo_6658[, c(3:30)] <- sapply(data_Censo_6658[, c(3:30)], as.numeric)
 
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6658[, -c(seq(3,30,2))], by = "Cód.")
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6658[, -c(2,seq(3,30,2))], by = "Cód.")
 rm(data_Censo_6658)
 
 
@@ -401,7 +414,7 @@ data_Censo_6707_2[data_Censo_6707_2=="-"]<-0
 data_Censo_6707_2[data_Censo_6707_2=="X"]<-NA
 data_Censo_6707_2[, c(3:30)] <- sapply(data_Censo_6707_2[, c(3:30)], as.numeric)
 
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6707_2[, -c(seq(3,30,2))], by = "Cód.")
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6707_2[, -c(2,seq(3,30,2))], by = "Cód.")
 rm(data_Censo_6707_2)
 
 
@@ -412,7 +425,7 @@ data_Censo_6707[data_Censo_6707=="-"]<-0
 data_Censo_6707[data_Censo_6707=="X"]<-NA
 data_Censo_6707[, c(3:18)] <- sapply(data_Censo_6707[, c(3:18)], as.numeric)
 
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6707[, -c(seq(3,18,2))], by = "Cód.")
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6707[, -c(2,seq(3,18,2))], by = "Cód.")
 rm(data_Censo_6707)
 
 
@@ -422,7 +435,7 @@ data_Censo_6709[data_Censo_6709=="-"]<-0
 data_Censo_6709[data_Censo_6709=="X"]<-NA
 data_Censo_6709[, c(3:6)] <- sapply(data_Censo_6709[, c(3:6)], as.numeric)
 
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6709[, -c(seq(3,6,2))], by = "Cód.")
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6709[, -c(2,seq(3,6,2))], by = "Cód.")
 rm(data_Censo_6709)
 
 #Tabela 6710 - Número de estabelecimentos agropecuários, Área dos estabelecimentos agropecuários, por condição legal das terras, condição legal do produtor, direção dos trabalhos do estabelecimento agropecuário e grupos de área total - resultados preliminares 2017																										
@@ -433,7 +446,7 @@ data_Censo_6710[data_Censo_6710==".."]<-NA
 data_Censo_6710[data_Censo_6710=="..."]<-NA
 data_Censo_6710[, c(3:14)] <- sapply(data_Censo_6710[, c(3:14)], as.numeric)
 
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6710[, -c(seq(3,14,2))], by = "Cód.")
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6710[, -c(2,seq(3,14,2))], by = "Cód.")
 rm(data_Censo_6710)
 
 
@@ -443,7 +456,7 @@ data_Censo_6790[data_Censo_6790=="-"]<-0
 data_Censo_6790[data_Censo_6790=="X"]<-NA
 data_Censo_6790[, c(3:8)] <- sapply(data_Censo_6790[, c(3:8)], as.numeric)
 
-data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6790, by = "Cód.")
+data_Censo_Geral <- data_Censo_Geral %>% left_join(data_Censo_6790[, -c(2)], by = "Cód.")
 rm(data_Censo_6790)
 
 

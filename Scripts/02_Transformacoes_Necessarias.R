@@ -42,6 +42,7 @@ data_Proagro <- data_Proagro %>%
 
 
 
+
 ################################# Inflação - PSR #################################
 
 data_PSR <- data_PSR %>% 
@@ -316,7 +317,7 @@ rm(menos_qtd_em_alguma_safra_Proagro)
 
 #Verificando quais os municípios com menos que a qtd mínima seguros em alguma safra
 Cont_Seg_Safra_PSR<- data_PSR %>% 
-  filter(Produto_Padronizado == "SOJA", SAFRA != "2019/2020") %>% 
+  filter(Produto_Padronizado == "SOJA", SAFRA != "2019/2020", SAFRA != "2012/2013") %>% 
   group_by(Cod_Municipio, Produto_Padronizado, SAFRA) %>%
   summarise(
     num_seguros = n()
@@ -328,7 +329,7 @@ Cont_Seg_Safra_PSR <- Cont_Seg_Safra_PSR[!(Cont_Seg_Safra_PSR$Cod_Municipio %in%
 
 #PSR - Agrupando Municipio Produto - Geral
 PSR_soja_mun <- data_PSR %>% 
-  filter(Produto_Padronizado == "SOJA", SAFRA != '2019/2020', VL_LIMITE_GARANTIA <= 300000) %>% 
+  filter(Produto_Padronizado == "SOJA", SAFRA != '2019/2020', SAFRA != '2012/2013', VL_LIMITE_GARANTIA <= 300000) %>% 
   group_by(Cod_Municipio, Produto_Padronizado) %>% 
   summarise(
     num_seguros = n(),
@@ -377,7 +378,7 @@ PSR_soja_mun$Pelo_menos_qtd <- PSR_soja_mun$Cod_Municipio %in% Cont_Seg_Safra_PS
 
 #PSR - Agrupando Municipio, Produto e Safra
 PSR_soja_mun_safra <- data_PSR %>% 
-  filter(Produto_Padronizado == "SOJA", SAFRA != '2019/2020', VL_LIMITE_GARANTIA <= 300000) %>% 
+  filter(Produto_Padronizado == "SOJA", SAFRA != '2019/2020', SAFRA != '2012/2013', VL_LIMITE_GARANTIA <= 300000) %>% 
   group_by(Cod_Municipio, Produto_Padronizado, SAFRA) %>% 
   summarise(
     num_seguros = n(),
@@ -431,3 +432,16 @@ PSR_soja_mun_safra$Cod_Municipio <- as.numeric(PSR_soja_mun_safra$Cod_Municipio)
 
 #limpando as variáveis
 rm(menos_qtd_em_alguma_safra_PSR)
+
+
+
+
+######################## Censo Rural #######################
+
+
+#Transformando em Numeric - para fazer join com os mapas
+data_Censo_Geral$Cód. <- as.numeric(data_Censo_Geral$Cód.)
+data_Censo_Rural$Cód. <- as.numeric(data_Censo_Rural$Cód.)
+
+
+
